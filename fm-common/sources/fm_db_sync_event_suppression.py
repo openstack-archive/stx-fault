@@ -36,6 +36,7 @@ class EventSuppression(Base):
     suppression_status = Column('suppression_status', String(255))
     set_for_deletion = Column('set_for_deletion', Boolean)
     mgmt_affecting = Column('mgmt_affecting', String(255))
+    degrade_affecting = Column('degrade_affecting', String(255))
 
 
 class ialarm(Base):
@@ -146,9 +147,13 @@ for event_type in event_types:
         event_mgmt_affecting = str(event_types.get(event_type).get(
             'Management_Affecting_Severity', 'warning'))
 
+        event_degrade_affecting = str(event_types.get(event_type).get(
+            'Degrade_Affecting_Severity', 'none'))
+
         if event_supp:
             event_supp.description = event_description
             event_supp.mgmt_affecting = event_mgmt_affecting
+            event_supp.degrade_affecting = event_degrade_affecting
         else:
             event_supp = EventSuppression(created_at=event_created_at, 
                                           uuid=event_uuid, 
@@ -156,7 +161,8 @@ for event_type in event_types:
                                           description=event_description,
                                           suppression_status='unsuppressed',
                                           set_for_deletion=False,
-                                          mgmt_affecting=event_mgmt_affecting)
+                                          mgmt_affecting=event_mgmt_affecting,
+                                          degrade_affecting=event_degrade_affecting)
             session.add(event_supp)
             logInfo("Created Event Type {} in event_suppression table.".format(string_event_type))
 

@@ -25,6 +25,7 @@ import constants
 #   Service_Affecting: False
 #   Suppression: True
 #   Management_Affecting_Severity: warning
+#   Degrade_Affecting_Severity: none
 # 
 
 type_FieldName = 'Type'
@@ -64,6 +65,8 @@ suppression_FieldValues = [ True, False ]
 managementAffectingSeverity_FieldName = 'Management_Affecting_Severity'
 managementAffectingSeverity_FieldValues = constants.ALARM_SEVERITY.append('none')
 
+degradeAffecting_FieldName = 'Degrade_Affecting_Severity'
+degradeAffecting_FieldValues = constants.ALARM_SEVERITY.append('none')
 
 alarmFields = {
 type_FieldName : type_FieldValues, 
@@ -77,7 +80,8 @@ alarmType_FieldName : alarmType_FieldValues,
 probableCause_FieldName : probableCause_FieldValues, 
 serviceAffecting_FieldName : serviceAffecting_FieldValues, 
 suppression_FieldName : suppression_FieldValues,
-managementAffectingSeverity_FieldName : managementAffectingSeverity_FieldValues
+managementAffectingSeverity_FieldName : managementAffectingSeverity_FieldValues,
+degradeAffecting_FieldName: degradeAffecting_FieldValues
 }
 
 logFields = {
