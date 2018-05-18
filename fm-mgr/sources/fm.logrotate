@@ -8,7 +8,7 @@ nodateext
 /var/log/fm-event.log
 {
     nodateext
-    size 200M
+    size 100M
     start 1
     missingok
     rotate 20
