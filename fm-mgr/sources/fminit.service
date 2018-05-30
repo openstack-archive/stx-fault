@@ -1,0 +1,17 @@
+[Unit]
+Description=Titanium Cloud Fault Management Initialization
+After=network.target syslog.target
+
+[Service]
+Type=forking
+Restart=no
+KillMode=process
+RemainAfterExit=yes
+ExecStart=/etc/rc.d/init.d/fminit start
+ExecStop=/etc/rc.d/init.d/fminit stop
+ExecReload=/etc/rc.d/init.d/fminit reload
+PIDFile=/var/run/fmManager.pid
+
+[Install]
+WantedBy=multi-user.target
+

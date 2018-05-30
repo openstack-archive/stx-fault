@@ -1,0 +1,6 @@
+cgcs/middleware/fault/recipes-common/fm-api|fm-api
+cgcs/middleware/fault/recipes-common/fm-common|fm-common
+cgcs/middleware/fault/recipes-common/fm-doc|fm-doc
+cgcs/middleware/fault/recipes-control/fm-mgr|fm-mgr
+cgcs/middleware/fault/recipes-control/snmp-audittrail|snmp-audittrail
+cgcs/middleware/fault/recipes-control/snmp-ext|snmp-ext

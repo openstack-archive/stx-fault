@@ -1,0 +1,132 @@
+------------------------------------------------------------------------------
+--
+--  File         : wrsEnterpriseReg.mib
+--  Description  : Wind River Enterprise Registration Hierarchy MIB
+--  Version      : 1.2.0
+--  Date         : June 2, 2017
+--  OBSOLETES    : wrsMasterMib.mib v0.6 (August 29, 2000)
+--
+--  Copyright (c) 2014-2017 Wind River Systems, Inc.  All Rights Reserved.
+--
+--  This module defines the Wind River Systems (WRS) registration hierarchy, 
+--
+--  The Wind River Systems registration tree is administered with the following
+--  hierarchy:
+--      iso(1).org(3).dod(6).internet(1).private(4).enterprise(1)
+--          .wrs(731)
+--          .wrs(731).wrsCommon(1)
+--          .wrs(731).wrsCommon(1).wrs<Module>(1-...) ... cont'd in wrsCommon<Module>.mib
+--          .wrs(731).wrs<Product>(2-...)             ... cont'd in wrs<Product>.mib
+--
+--  Reproduction of this document is authorized on condition that this
+--  copyright notice is included.  This Wind River Enterprise Registration MIB
+--  embodies proprietary intellectual property of Wind River Systems (WRS). 
+--  WRS retains all title and ownership in the specification, including any
+--  revisions.
+--
+--  It is the intent of WRS to encourage the widespread use of this
+--  specification in connection with the management of Wind River products.  
+--  WRS grants vendors, end-users, and other interested parties a
+--  non-exclusive license to use this specification in connection with the
+--  management of Wind River products.
+--
+--  This specification is supplied "AS IS", and WRS makes no warranty,
+--  either express or implied, as to the use, operations, condition,
+--  or performance of this specification.
+--
+------------------------------------------------------------------------------
+
+WRS-ENTERPRISE-REG-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    TEXTUAL-CONVENTION                        FROM SNMPv2-TC
+    MODULE-IDENTITY, enterprises              FROM SNMPv2-SMI;
+
+    wrs MODULE-IDENTITY
+        LAST-UPDATED    "201407100000Z"  -- July 10, 2014
+        ORGANIZATION    "Wind River Systems, Inc."
+        CONTACT-INFO    "Wind River Systems, Inc.
+                         500 Wind River Way
+                         Alameda, CA 94501, USA
+                         Contact: Wind River Systems Support
+                         E-mail : support@windriver.com
+                         Phone  : 510.748.4100"
+        DESCRIPTION     "This module defines the Wind River Systems, Inc. Registration hierarchy."
+
+        -- Revision history
+        REVISION     "201407100000Z" -- July 10, 2014
+        DESCRIPTION  "Initial Version of MIB."
+
+        ::= { enterprises 731 }
+    
+-- WRS Common Enterprise MIB Modules
+    wrsCommon       OBJECT IDENTIFIER ::= { wrs 1 } 
+    wrsAlarms       OBJECT IDENTIFIER ::= { wrsCommon 1 } -- Common WRS Enterprise Alarm MIB
+
+-- WRS Products
+--  tms1_0          OBJECT IDENTIFIER ::= { wrs 1 } Obsolete
+    tms             OBJECT IDENTIFIER ::= { wrs 2 }
+    wrsTs         OBJECT IDENTIFIER ::= { wrs 3 } -- WRS Titanium Cloud specific Enterprise MIBs
+
+
+
+
+
+
+---------------------------------------------------------------------------
+-- TMS OID Definitions
+--
+
+-- TMS Major MIB Categories
+    idb             OBJECT IDENTIFIER ::= { tms 1 }     -- IDB MIBs
+    tmsGeneric      OBJECT IDENTIFIER ::= { tms 2 }     -- TMS Generic MIBs
+    oemSwapi        OBJECT IDENTIFIER ::= { tms 3 }     -- OEM swAPI MIBs
+    oemProd         OBJECT IDENTIFIER ::= { tms 4 }     -- OEM Product MIBs
+
+-- TMS IDB Internal Module MIBs
+    rmonMib         OBJECT IDENTIFIER ::= { idb 1 }
+--  garpMib         OBJECT IDENTIFIER ::= { idb 2 }         SMIv2
+--  stpMib          OBJECT IDENTIFIER ::= { idb 3 }         SMIv2
+    
+-- TMS Generic MIBs
+--  tmsCommonMib    OBJECT IDENTIFIER ::= { tmsGeneric 1 }  SMIv2
+--  tmsL3Mib        OBJECT IDENTIFIER ::= { tmsGeneric 2 }  SMIv2
+
+-- OEM swAPI MIBs
+--  pmSwapi         OBJECT IDENTIFIER ::= { oemSwapi 1 }    SMIv2
+--  bcmSwapi        OBJECT IDENTIFIER ::= { oemSwapi 2 }    SMIv2
+--  pcSwapi         OBJECT IDENTIFIER ::= { oemSwapi 3 }    SMIv2
+
+-- OEM Product MIBs
+--  pm3575          OBJECT IDENTIFIER ::= { oemProd 1 }     SMIv2
+--  bcm5600         OBJECT IDENTIFIER ::= { oemProd 2 }     SMIv2
+--  pcSwitch        OBJECT IDENTIFIER ::= { oemProd 3 }     SMIv2
+
+
+
+---------------------------------------------------------------------------
+-- General Textual Conventions
+--
+
+WrsUUID ::= TEXTUAL-CONVENTION
+   STATUS       current
+   DESCRIPTION "Universally Unique IDentifier;
+                format is typically XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ,
+                where X is a hex-digit."
+   SYNTAX       OCTET STRING (SIZE (0..36))
+
+WrsBoolean ::= TEXTUAL-CONVENTION
+   STATUS      current
+   DESCRIPTION "Boolean type."
+   SYNTAX      INTEGER
+               {
+                 false (0),
+                 true (1)
+               }
+
+
+--
+-- END of WRS-ENTERPRISE-REG-MIB
+--
+
+END
