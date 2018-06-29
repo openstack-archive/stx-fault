@@ -56,6 +56,8 @@
 #   Suppression: < True | False >               // NOTE ALARM ONLY FIELD
 #   Management_Affecting_Severity: < none | critical | major | minor | warning >
 #       // lowest alarm level of this type that will block forced upgrades & orchestration actions
+#   Degrade_Affecting_Severity: < none | critical | major | minor >
+#       // lowest alarm level of this type sets a host to 'degraded' 
 #
 #
 #   Other Notes:
@@ -104,6 +106,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: major
+    Degrade_Affecting_Severity: critical
 
 100.102:
     Type: Alarm
@@ -124,6 +127,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 100.103:
     Type: Alarm
@@ -144,6 +148,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: critical
 
 100.104:    # NOTE This should really be split into two different Alarms.
     Type: Alarm
@@ -171,6 +176,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: critical
+    Degrade_Affecting_Severity: critical
 
 #--------
 # 100.105: Retired (with R2 release): previously monitored /etc/nova/instances
@@ -190,6 +196,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 100.107:
     Type: Alarm
@@ -209,6 +216,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 100.108:
     Type: Alarm
@@ -223,6 +231,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 100.109:
     Type: Alarm
@@ -242,6 +251,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 100.110:
     Type: Alarm
@@ -256,6 +266,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 100.111:
     Type: Alarm
@@ -275,6 +286,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 100.112:
     Type: Alarm
@@ -289,6 +301,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: major
 
 100.113:
     Type: Alarm
@@ -307,6 +320,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: major
 
 100.114:
     Type: Alarm
@@ -325,6 +339,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 100.115:
     Type: Alarm
@@ -341,6 +356,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: critical
 
 100.116:
     Type: Alarm
@@ -357,6 +373,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: critical
 
 100.117:
     Type: Alarm
@@ -373,6 +390,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: major
+    Degrade_Affecting_Severity: critical
 
 100.118:
     Type: Alarm
@@ -387,6 +405,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 #---------------------------------------------------------------------------
 #   MAINTENANCE
@@ -406,6 +425,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 200.004:
     Type: Alarm
@@ -422,6 +442,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 200.011:
     Type: Alarm
@@ -436,6 +457,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 200.010:
     Type: Alarm
@@ -450,6 +472,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 200.012:
     Type: Alarm
@@ -464,6 +487,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 200.013:
     Type: Alarm
@@ -478,6 +502,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 200.005:
     Type: Alarm
@@ -497,6 +522,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 200.009:
     Type: Alarm
@@ -516,6 +542,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 200.006:
@@ -550,7 +577,7 @@
         minor: False
     Suppression: True
     Management_Affecting_Severity: warning
-
+    Degrade_Affecting_Severity: major
 
 # 200.006:      // NOTE using duplicate ID of a completely analogous Alarm for this
 #     Type: Log
@@ -595,6 +622,7 @@
         minor: False
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: critical
 
 200.014:
     Type: Alarm
@@ -609,6 +637,7 @@
     Service_Affecting: False
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 200.015:
     Type: Alarm
@@ -623,6 +652,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 
 200.020:
@@ -712,6 +742,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 #---------------------------------------------------------------------------
@@ -731,6 +762,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 250.002:
     Type: Alarm
@@ -745,6 +777,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 #---------------------------------------------------------------------------
@@ -763,6 +796,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 270.101:
     Type: Log
@@ -819,6 +853,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 280.002:
     Type: Alarm
@@ -833,6 +868,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 #---------------------------------------------------------------------------
@@ -852,6 +888,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 300.002:
@@ -870,6 +907,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: critical
 
 
 300.003:
@@ -885,6 +923,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 300.004:
@@ -900,6 +939,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 300.005:
@@ -918,6 +958,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 300.010:
@@ -940,6 +981,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 300.012:
@@ -955,6 +997,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: critical
 
 
 300.013:
@@ -973,6 +1016,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: critical
 
 
 300.014:
@@ -988,6 +1032,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: critical
 
 
 300.015:
@@ -1003,6 +1048,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: critical
 
 300.016:
     Type: Alarm
@@ -1017,6 +1063,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 #---------------------------------------------------------------------------
@@ -1041,6 +1088,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: major
 
 
 400.002:
@@ -1063,6 +1111,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 400.003:
@@ -1085,6 +1134,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: critical
+    Degrade_Affecting_Severity: none
 
 
 # 400.004:    // NOTE Removed
@@ -1117,6 +1167,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 
 #---------------------------------------------------------------------------
@@ -1203,6 +1254,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 500.101:
     Type: Alarm
@@ -1217,6 +1269,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 500.500:
     Type: Log
@@ -1248,6 +1301,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.002:
     Type: Alarm
@@ -1262,6 +1316,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.003:
     Type: Alarm
@@ -1276,6 +1331,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.004:
     Type: Alarm
@@ -1290,6 +1346,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.005:
     Type: Alarm
@@ -1304,6 +1361,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.006:
     Type: Alarm
@@ -1318,6 +1376,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.007:
     Type: Alarm
@@ -1332,6 +1391,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.008:
     Type: Alarm
@@ -1346,6 +1406,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.009:
     Type: Alarm
@@ -1360,6 +1421,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.010:
     Type: Alarm
@@ -1374,6 +1436,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.011:
     Type: Alarm
@@ -1388,6 +1451,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.012:
     Type: Alarm
@@ -1402,6 +1466,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.013:
     Type: Alarm
@@ -1416,6 +1481,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.014:
     Type: Alarm
@@ -1430,6 +1496,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.015:
     Type: Alarm
@@ -1444,6 +1511,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.016:
     Type: Alarm
@@ -1458,6 +1526,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 700.017:
     Type: Alarm
@@ -1472,6 +1541,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 
 700.101:
@@ -2551,6 +2621,7 @@
         major: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 800.010:
     Type: Alarm
@@ -2569,6 +2640,7 @@
         critical: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 800.011:
     Type: Alarm
@@ -2587,6 +2659,7 @@
         major: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 800.002:
     Type: Alarm
@@ -2631,6 +2704,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 
 800.003:
@@ -2648,6 +2722,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 
 800.100:
@@ -2666,6 +2741,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
 
 800.101:
     Type: Alarm
@@ -2684,6 +2760,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 800.102:
     Type: Alarm
@@ -2700,6 +2777,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: major 
+    Degrade_Affecting_Severity: none
 
 800.103:
     Type: Alarm
@@ -2719,6 +2797,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: major 
+    Degrade_Affecting_Severity: none
 
 800.104:
     Type: Alarm
@@ -2737,6 +2816,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: major
+    Degrade_Affecting_Severity: none
 
 
 
@@ -2757,6 +2837,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.002:
     Type: Alarm
@@ -2771,6 +2852,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.003:
     Type: Alarm
@@ -2785,6 +2867,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.004:
     Type: Alarm
@@ -2799,6 +2882,7 @@
     Service_Affecting: True
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.005:
     Type: Alarm
@@ -2813,6 +2897,7 @@
     Service_Affecting: False
     Suppression: False
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.101:
     Type: Alarm
@@ -2827,6 +2912,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.102:
     Type: Alarm
@@ -2841,6 +2927,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.103:
     Type: Alarm
@@ -2855,6 +2942,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.111:
     Type: Log
@@ -2968,6 +3056,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.202:
     Type: Alarm
@@ -2982,6 +3071,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.203:
     Type: Alarm
@@ -2996,6 +3086,7 @@
     Service_Affecting: True
     Suppression: True
     Management_Affecting_Severity: warning
+    Degrade_Affecting_Severity: none
 
 900.211:
     Type: Log
