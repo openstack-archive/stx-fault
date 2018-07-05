@@ -105,15 +105,15 @@ EVENT_TYPES_FILE = get_events_yaml_filename()
 if not os.path.isfile(EVENT_TYPES_FILE):
     exit (-1)
 
-stream = file(EVENT_TYPES_FILE, 'r')
-event_types = yaml.load(stream)
+with open(EVENT_TYPES_FILE, 'r') as stream:
+    event_types = yaml.load(stream)
 
 for alarm_id in event_types:
     if isinstance(alarm_id, float):
         # force 3 digits after the decimal point,
         # to include trailing zero's (ex.: 200.010)
-        formatted_alarm_id = "{:.3f}".format(alarm_id)               
-        event_types[formatted_alarm_id] = event_types.pop(alarm_id)  
+        formatted_alarm_id = "{:.3f}".format(alarm_id)
+        event_types[formatted_alarm_id] = event_types.pop(alarm_id)
 
 event_types = collections.OrderedDict(sorted(event_types.items()))
 
