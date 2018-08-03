@@ -68,7 +68,7 @@ def logInfo(msg):
         with open(FM_LOG_EVENT_LOG_FILE,"a") as logFile:
             logFile.write(output)
     except Exception as e:
-        print e
+        print(e)
 
 
 def get_events_yaml_filename():

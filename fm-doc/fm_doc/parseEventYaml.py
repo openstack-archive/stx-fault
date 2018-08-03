@@ -99,7 +99,7 @@ serviceAffecting_FieldName : serviceAffecting_FieldValues
 
 def checkField( fieldKey, fieldValues, key, event ):
     if not event.has_key(fieldKey):
-        print "\n    ERROR: %s missing \'%s\' field." % (key, fieldKey)
+        print("\n    ERROR: %s missing \'%s\' field." % (key, fieldKey))
         return False
     # print "START: %s :END" % event[fieldKey]
 
@@ -109,8 +109,8 @@ def checkField( fieldKey, fieldValues, key, event ):
         if event[fieldKey] in fieldValues:
             return True
         else:
-            print "\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (event[fieldKey], fieldKey)
-            print   "           Valid values are:", fieldValues
+            print("\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (event[fieldKey], fieldKey))
+            print("           Valid values are:", fieldValues)
             return False
 
     if type(event[fieldKey]) is list:
@@ -118,31 +118,31 @@ def checkField( fieldKey, fieldValues, key, event ):
             return True
         for listvalue in event[fieldKey]:
             if not listvalue in fieldValues:
-                print "\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (listvalue, fieldKey)
-                print   "           Valid values are:", fieldValues
+                print("\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (listvalue, fieldKey))
+                print("           Valid values are:", fieldValues)
                 return False
             
     if type(event[fieldKey]) is dict:
         for dictKey, dictValue in event[fieldKey].iteritems():
             if not dictKey in severity_FieldValues:
-                print "\n    ERROR: \'%s\' is not a valid \'%s\' index value." % (dictKey, fieldKey)
-                print   "           Valid index values are:", severity_FieldValues
+                print("\n    ERROR: \'%s\' is not a valid \'%s\' index value." % (dictKey, fieldKey))
+                print("           Valid index values are:", severity_FieldValues)
                 return False
             if fieldValues:
                 if not dictValue in fieldValues:
-                    print "\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (dictValue, fieldKey)
-                    print   "           Valid values are:", fieldValues
+                    print("\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (dictValue, fieldKey))
+                    print("           Valid values are:", fieldValues)
                     return False
     return True
 
 
 def checkTypeField( key, event ):
     if not event.has_key(type_FieldName):
-        print "\n    ERROR: %s missing \'%s\' field." % (key, type_FieldName)
+        print("\n    ERROR: %s missing \'%s\' field." % (key, type_FieldName))
         return False
     if event[type_FieldName] in type_FieldValues:
         return True
-    print "\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (event[type_FieldName], type_FieldName)
+    print("\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (event[type_FieldName], type_FieldName))
     return False
 
 
@@ -160,7 +160,7 @@ def checkFields( key, event ):
 
     for itemKey, itemValue in event.iteritems():
         if not eventFields.has_key(itemKey):
-            print "\n    ERROR: \'%s\' is not a valid \'%s\' field." % (itemKey, ("Alarm" if isAlarm else "Log") )
+            print("\n    ERROR: \'%s\' is not a valid \'%s\' field." % (itemKey, ("Alarm" if isAlarm else "Log") ))
             isOk = False
 
     return isOk
@@ -171,11 +171,11 @@ def checkFields( key, event ):
 #
 
 if len(sys.argv) == 1:
-    print "Missing file argument.\n"
+    print("Missing file argument.\n")
     exit(1)
 
 if not os.path.isfile(sys.argv[1]):
-    print "File \'%s\' does not exist.\n" % (sys.argv[1])
+    print("File \'%s\' does not exist.\n" % (sys.argv[1]))
     exit(1)
 
 with open(sys.argv[1], 'r') as stream:
@@ -184,14 +184,14 @@ with open(sys.argv[1], 'r') as stream:
         exitValue = 0
 
         for key in events:
-            print "%6.3f: checking ... " % key,
+            print("%6.3f: checking ... " % key, end=' ')
             if not checkFields( key, events[key] ):
-                print
+                print()
                 exitValue = 1
             else:
-                print 'OK.'
+                print('OK.')
 
-        print 'Done.'
+        print('Done.')
 
     except yaml.YAMLError as exc:
         print(exc)
