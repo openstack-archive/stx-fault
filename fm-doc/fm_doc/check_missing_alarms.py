@@ -80,11 +80,11 @@ def get_fm_alarms():
 #
 
 if len(sys.argv) == 1:
-    print "Missing file argument.\n"
+    print("Missing file argument.\n")
     exit(1)
 
 if not os.path.isfile(sys.argv[1]):
-    print "File \'%s\' does not exist.\n" % (sys.argv[1])
+    print("File \'%s\' does not exist.\n" % (sys.argv[1]))
     exit(1)
 
 exitValue = 0
@@ -100,13 +100,13 @@ with open(sys.argv[1], 'r') as stream:
 constants_alarms = get_constants_alarms()
 for alarm_id in constants_alarms:
     if alarm_id not in events_alarm_list:
-        print "\n    ERROR: constants.py alarm \'%s\' must be defined in file events.yaml.\n" % (alarm_id)
+        print("\n    ERROR: constants.py alarm \'%s\' must be defined in file events.yaml.\n" % (alarm_id))
         exitValue = 1
 
 fm_alarms = get_fm_alarms()
 for alarm_id in fm_alarms:
     if alarm_id not in events_alarm_list:
-        print "\n    ERROR: fmAlarm.h alarm \'%s\' must be defined in file events.yaml.\n" % (alarm_id)
+        print("\n    ERROR: fmAlarm.h alarm \'%s\' must be defined in file events.yaml.\n" % (alarm_id))
         exitValue = 1
 
 exit (exitValue)
