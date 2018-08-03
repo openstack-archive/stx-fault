@@ -28,7 +28,7 @@ def print_alarm(alarm):
                  + "entity_type_id: " + alarm.entity_type_id + ", timestamp: "+ alarm.timestamp + "\n"
     alarm_str += "entity_instance_id: " + alarm.entity_instance_id + ", "
     alarm_str += "probable cause:" + alarm.probable_cause + "\n"
-    print alarm_str
+    print(alarm_str)
 
 
 def create():
@@ -45,19 +45,19 @@ def create():
                   service_affecting = False,
                   suppression = False)
     uuid =ser.set_fault(fault)
-    print uuid
+    print(uuid)
 
 
 def delete(alarm_id, instance_id):
     ser=FaultAPIs()
     ret = ser.clear_fault(alarm_id,instance_id)
-    print "Delete fault return %s" % str(ret)
+    print("Delete fault return %s" % str(ret))
 
 
 def del_all(instance_id):
     ser=FaultAPIs()
     ret= ser.clear_all(instance_id)
-    print "Delete faults return: %s" % str(ret)
+    print("Delete faults return: %s" % str(ret))
 
 
 def get(alarm_id, instance_id):
@@ -66,29 +66,29 @@ def get(alarm_id, instance_id):
     if a is not None:
         print_alarm(a)
     else:
-        print "Alarm not found"
+        print("Alarm not found")
 
 
 def get_all(instance_id):
     ser=FaultAPIs()
     ll= ser.get_faults(instance_id)
     if ll is not None:
-        print "Total alarm returned: %d\n" % len(ll)
+        print("Total alarm returned: %d\n" % len(ll))
         for i in ll:
             print_alarm(i)
     else:
-        print "No alarm returned"
+        print("No alarm returned")
 
 
 def get_list(alarm_id):
     ser=FaultAPIs()
     ll= ser.get_faults_by_id(alarm_id)
     if ll is not None:
-        print "Total alarm returned: %d\n" % len(ll)
+        print("Total alarm returned: %d\n" % len(ll))
         for i in ll:
             print_alarm(i)
     else:
-        print "No alarm returned"
+        print("No alarm returned")
 
 if __name__ == "__main__":
     if sys.argv[1] == "create":
