@@ -12,7 +12,7 @@
 
 import copy
 import subprocess
-import constants
+from . import constants
 import six
 
 
