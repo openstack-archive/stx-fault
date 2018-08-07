@@ -53,7 +53,7 @@ def get_fm_alarms():
     with open(FM_ALARM_H) as f:
         fm_alarms_file = f.readlines()
 
-    fm_alarm_group_lines = filter(lambda k: 'define ALARM_GROUP_' in k, fm_alarms_file)
+    fm_alarm_group_lines = [k for k in fm_alarms_file if 'define ALARM_GROUP_' in k]
     
     for line in fm_alarm_group_lines:
         group_name = line.split()[1]
@@ -61,7 +61,7 @@ def get_fm_alarms():
         group_value = group_value[1:-1]  # remove quotes  
         fm_alarm_groups[group_name] = group_value
 
-    fm_alarm_lines = filter(lambda k: 'FM_ALARM_ID' in k, fm_alarms_file)
+    fm_alarm_lines = [k for k in fm_alarms_file if 'FM_ALARM_ID' in k]
 
     for line in fm_alarm_lines:
         alarm_name = line.split()[1]
