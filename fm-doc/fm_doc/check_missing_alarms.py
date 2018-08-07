@@ -33,7 +33,7 @@ def get_events_alarm_list(events):
 def get_constants_alarms():
     fm_constants_raw_dict = fm_constants.__dict__
 
-    fm_constants_alarms_dict = {k:v for k,v in fm_constants_raw_dict.iteritems() if 'FM_ALARM_ID' in k}
+    fm_constants_alarms_dict = {k:v for k,v in fm_constants_raw_dict.items() if 'FM_ALARM_ID' in k}
     del fm_constants_alarms_dict['FM_ALARM_ID_INDEX'] # this is not an alarm
 
     fm_constants_alarms = []

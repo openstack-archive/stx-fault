@@ -101,7 +101,7 @@ serviceAffecting_FieldName : serviceAffecting_FieldValues
 
 
 def checkField( fieldKey, fieldValues, key, event ):
-    if not event.has_key(fieldKey):
+    if fieldKey not in event:
         print("\n    ERROR: %s missing \'%s\' field." % (key, fieldKey))
         return False
     # print ("START: %s :END" % event[fieldKey])
@@ -126,7 +126,7 @@ def checkField( fieldKey, fieldValues, key, event ):
                 return False
             
     if type(event[fieldKey]) is dict:
-        for dictKey, dictValue in event[fieldKey].iteritems():
+        for dictKey, dictValue in event[fieldKey].items():
             if not dictKey in severity_FieldValues:
                 print("\n    ERROR: \'%s\' is not a valid \'%s\' index value." % (dictKey, fieldKey))
                 print("           Valid index values are:", severity_FieldValues)
@@ -140,7 +140,7 @@ def checkField( fieldKey, fieldValues, key, event ):
 
 
 def checkTypeField( key, event ):
-    if not event.has_key(type_FieldName):
+    if type_FieldName not in event:
         print("\n    ERROR: %s missing \'%s\' field." % (key, type_FieldName))
         return False
     if event[type_FieldName] in type_FieldValues:
@@ -157,12 +157,12 @@ def checkFields( key, event ):
     isAlarm = (event[type_FieldName] == type_FieldValue_Alarm)
     eventFields = alarmFields if isAlarm else logFields
 
-    for fieldKey, fieldValues in eventFields.iteritems():
+    for fieldKey, fieldValues in eventFields.items():
         if not checkField(fieldKey, fieldValues, key, event) :
             isOk = False
 
-    for itemKey, itemValue in event.iteritems():
-        if not eventFields.has_key(itemKey):
+    for itemKey, itemValue in event.items():
+        if itemKey not in eventFields:
             print("\n    ERROR: \'%s\' is not a valid \'%s\' field." % (itemKey, ("Alarm" if isAlarm else "Log") ))
             isOk = False
 
