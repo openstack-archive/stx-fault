@@ -19,6 +19,7 @@ import six
 class ClientException(Exception):
     pass
 
+
 # Fields explanation:
 #
 # alarm_id: a text string of the alarm identifier
@@ -148,38 +149,39 @@ class FaultAPIs(object):
         sep = constants.FM_CLIENT_STR_SEP
         return (sep + self._check_val(data.uuid) + sep + data.alarm_id + sep +
                 data.alarm_state + sep + data.entity_type_id + sep +
-                data.entity_instance_id + sep + self._check_val(data.timestamp)
-                + sep + data.severity + sep + self._check_val(data.reason_text)
-                + sep + data.alarm_type + sep + data.probable_cause + sep +
+                data.entity_instance_id + sep +
+                self._check_val(data.timestamp) +
+                sep + data.severity + sep + self._check_val(data.reason_text) +
+                sep + data.alarm_type + sep + data.probable_cause + sep +
                 self._check_val(data.proposed_repair_action) + sep +
                 str(data.service_affecting) + sep + str(data.suppression) + sep)
 
     @staticmethod
     def _str_to_alarm(alarm_str):
-        l = alarm_str.split(constants.FM_CLIENT_STR_SEP)
-        if len(l) < constants.MAX_ALARM_ATTRIBUTES:
+        line = alarm_str.split(constants.FM_CLIENT_STR_SEP)
+        if len(line) < constants.MAX_ALARM_ATTRIBUTES:
             return None
         else:
-            data = Fault(l[constants.FM_ALARM_ID_INDEX],
-                         l[constants.FM_ALARM_STATE_INDEX],
-                         l[constants.FM_ENT_TYPE_ID_INDEX],
-                         l[constants.FM_ENT_INST_ID_INDEX],
-                         l[constants.FM_SEVERITY_INDEX],
-                         l[constants.FM_REASON_TEXT_INDEX],
-                         l[constants.FM_ALARM_TYPE_INDEX],
-                         l[constants.FM_CAUSE_INDEX],
-                         l[constants.FM_REPAIR_ACTION_INDEX],
-                         l[constants.FM_SERVICE_AFFECTING_INDEX],
-                         l[constants.FM_SUPPRESSION_INDEX],
-                         l[constants.FM_UUID_INDEX],
-                         l[constants.FM_TIMESTAMP_INDEX])
+            data = Fault(line[constants.FM_ALARM_ID_INDEX],
+                         line[constants.FM_ALARM_STATE_INDEX],
+                         line[constants.FM_ENT_TYPE_ID_INDEX],
+                         line[constants.FM_ENT_INST_ID_INDEX],
+                         line[constants.FM_SEVERITY_INDEX],
+                         line[constants.FM_REASON_TEXT_INDEX],
+                         line[constants.FM_ALARM_TYPE_INDEX],
+                         line[constants.FM_CAUSE_INDEX],
+                         line[constants.FM_REPAIR_ACTION_INDEX],
+                         line[constants.FM_SERVICE_AFFECTING_INDEX],
+                         line[constants.FM_SUPPRESSION_INDEX],
+                         line[constants.FM_UUID_INDEX],
+                         line[constants.FM_TIMESTAMP_INDEX])
             return data
 
     @staticmethod
     def _run_cmd_and_get_resp(cmd):
         resp = []
         cmd = cmd.encode('utf-8')
-        pro = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+        pro = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         output = pro.communicate()[0]
         lines = output.split('\n')
         for line in lines:
@@ -217,10 +219,10 @@ class FaultAPIs(object):
         if data.severity not in constants.ALARM_SEVERITY:
                 raise ClientException("Invalid Fault Severity: %s" %
                                       data.severity)
-        if  data.alarm_type not in constants.ALARM_TYPE:
+        if data.alarm_type not in constants.ALARM_TYPE:
                 raise ClientException("Invalid Fault Type: %s" %
                                       data.alarm_type)
-        if  data.probable_cause not in constants.ALARM_PROBABLE_CAUSE:
+        if data.probable_cause not in constants.ALARM_PROBABLE_CAUSE:
                 raise ClientException("Invalid Fault Probable Cause: %s" %
                                       data.probable_cause)
 
@@ -243,5 +245,3 @@ class FaultAPIs(object):
         if given < threshold:
             return True
         return False
-
-
