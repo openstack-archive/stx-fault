@@ -17,15 +17,18 @@
 #    under the License.
 
 import sys
-from fm_api import *
+from fm_api import Fault, FaultAPIs
 from fm_api import constants
 
 
 def print_alarm(alarm):
-    alarm_str = "alarm_id: " + alarm.alarm_id + ", " + "uuid: " + alarm.uuid + ", "
+    alarm_str = "alarm_id: " + alarm.alarm_id + ", "
+    alarm_str += "uuid: " + alarm.uuid + ", "
     alarm_str += "alarm_type: " + alarm.alarm_type + "\n"
-    alarm_str += "state: " + alarm.alarm_state + ", ""severity: " + alarm.severity + ", " \
-                 + "entity_type_id: " + alarm.entity_type_id + ", timestamp: "+ alarm.timestamp + "\n"
+    alarm_str += "state: " + alarm.alarm_state + ", "
+    alarm_str += "severity: " + alarm.severity + ", "
+    alarm_str += "entity_type_id: " + alarm.entity_type_id + ", "
+    alarm_str += "timestamp: " + alarm.timestamp + "\n"
     alarm_str += "entity_instance_id: " + alarm.entity_instance_id + ", "
     alarm_str += "probable cause:" + alarm.probable_cause + "\n"
     print(alarm_str)
@@ -37,31 +40,31 @@ def create():
                   alarm_state=constants.FM_ALARM_STATE_SET,
                   entity_type_id=constants.FM_ENTITY_TYPE_INSTANCE,
                   entity_instance_id=constants.FM_ENTITY_TYPE_INSTANCE + '=' + 'a4e4cdb7-2ee6-4818-84c8-5310fcd67b5d',
-                  severity = constants.FM_ALARM_SEVERITY_CRITICAL,
-                  reason_text = "Unknown",
-                  alarm_type = constants.FM_ALARM_TYPE_5,
-                  probable_cause = constants.ALARM_PROBABLE_CAUSE_8,
-                  proposed_repair_action = None,
-                  service_affecting = False,
-                  suppression = False)
-    uuid =ser.set_fault(fault)
+                  severity=constants.FM_ALARM_SEVERITY_CRITICAL,
+                  reason_text="Unknown",
+                  alarm_type=constants.FM_ALARM_TYPE_5,
+                  probable_cause=constants.ALARM_PROBABLE_CAUSE_8,
+                  proposed_repair_action=None,
+                  service_affecting=False,
+                  suppression=False)
+    uuid = ser.set_fault(fault)
     print(uuid)
 
 
 def delete(alarm_id, instance_id):
-    ser=FaultAPIs()
-    ret = ser.clear_fault(alarm_id,instance_id)
+    ser = FaultAPIs()
+    ret = ser.clear_fault(alarm_id, instance_id)
     print("Delete fault return %s" % str(ret))
 
 
 def del_all(instance_id):
-    ser=FaultAPIs()
-    ret= ser.clear_all(instance_id)
+    ser = FaultAPIs()
+    ret = ser.clear_all(instance_id)
     print("Delete faults return: %s" % str(ret))
 
 
 def get(alarm_id, instance_id):
-    ser=FaultAPIs()
+    ser = FaultAPIs()
     a = ser.get_fault(alarm_id, instance_id)
     if a is not None:
         print_alarm(a)
@@ -70,10 +73,11 @@ def get(alarm_id, instance_id):
 
 
 def get_all(instance_id):
-    ser=FaultAPIs()
-    ll= ser.get_faults(instance_id)
+    ser = FaultAPIs()
+    ll = ser.get_faults(instance_id)
     if ll is not None:
-        print("Total alarm returned: %d\n" % len(ll))
+        print("Total alarm returned: %d\n"
+              % len(ll))
         for i in ll:
             print_alarm(i)
     else:
@@ -81,22 +85,24 @@ def get_all(instance_id):
 
 
 def get_list(alarm_id):
-    ser=FaultAPIs()
-    ll= ser.get_faults_by_id(alarm_id)
+    ser = FaultAPIs()
+    ll = ser.get_faults_by_id(alarm_id)
     if ll is not None:
-        print("Total alarm returned: %d\n" % len(ll))
+        print("Total alarm returned: %d\n"
+              % len(ll))
         for i in ll:
             print_alarm(i)
     else:
         print("No alarm returned")
 
+
 if __name__ == "__main__":
     if sys.argv[1] == "create":
         sys.exit(create())
     elif sys.argv[1] == "del":
-        sys.exit(delete(sys.argv[2],sys.argv[3]))
+        sys.exit(delete(sys.argv[2], sys.argv[3]))
     elif sys.argv[1] == "get":
-        sys.exit(get(sys.argv[2],sys.argv[3]))
+        sys.exit(get(sys.argv[2], sys.argv[3]))
     elif sys.argv[1] == "get_all":
         sys.exit(get_all(sys.argv[2]))
     elif sys.argv[1] == "del_all":
