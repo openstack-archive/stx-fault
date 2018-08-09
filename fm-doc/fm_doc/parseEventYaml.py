@@ -4,18 +4,18 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Python3 compatibility
+from __future__ import print_function
+
 import sys
 import os
 
 import yaml
 import constants
 
-# Python3 compatibility
-from __future__ import print_function
-
 # Record Format  (for full description see events.yaml)
-# 
-# 100.001: 
+#
+# 100.001:
 #   Type: Alarm
 #   Description: "Degrade: <hostname> is experiencing an intermittent 'Management Network'  communication failure."
 #   Entity_Instance_ID: host=<hostname>
@@ -29,11 +29,11 @@ from __future__ import print_function
 #   Suppression: True
 #   Management_Affecting_Severity: warning
 #   Degrade_Affecting_Severity: none
-# 
+#
 
 type_FieldName = 'Type'
 type_FieldValue_Alarm = 'Alarm'
-type_FieldValues = [ type_FieldValue_Alarm, 'Log' ]
+type_FieldValues = [type_FieldValue_Alarm, 'Log']
 
 description_FieldName = 'Description'
 description_FieldValues = []  # arbitrary string
@@ -51,7 +51,7 @@ maintenanceAction_FieldName = 'Maintenance_Action'
 maintenanceAction_FieldValues = []  # arbitrary string
 
 inhibitAlarms_FieldName = 'Inhibit_Alarms'
-inhibitAlarms_FieldValues = [ True, False ]
+inhibitAlarms_FieldValues = [True, False]
 
 alarmType_FieldName = 'Alarm_Type'
 alarmType_FieldValues = constants.ALARM_TYPE
@@ -60,10 +60,10 @@ probableCause_FieldName = 'Probable_Cause'
 probableCause_FieldValues = constants.ALARM_PROBABLE_CAUSE
 
 serviceAffecting_FieldName = 'Service_Affecting'
-serviceAffecting_FieldValues = [ True, False ]
+serviceAffecting_FieldValues = [True, False]
 
-suppression_FieldName = 'Suppression' 
-suppression_FieldValues = [ True, False ]
+suppression_FieldName = 'Suppression'
+suppression_FieldValues = [True, False]
 
 managementAffectingSeverity_FieldName = 'Management_Affecting_Severity'
 managementAffectingSeverity_FieldValues = constants.ALARM_SEVERITY.append('none')
@@ -72,39 +72,37 @@ degradeAffecting_FieldName = 'Degrade_Affecting_Severity'
 degradeAffecting_FieldValues = constants.ALARM_SEVERITY.append('none')
 
 alarmFields = {
-type_FieldName : type_FieldValues, 
-description_FieldName : description_FieldValues, 
-entityInstanceId_FieldName : entityInstanceId_FieldValues, 
-severity_FieldName : severity_FieldValues, 
-proposedRepairAction_FieldName : proposedRepairAction_FieldValues, 
-maintenanceAction_FieldName : maintenanceAction_FieldValues, 
-inhibitAlarms_FieldName : inhibitAlarms_FieldValues, 
-alarmType_FieldName : alarmType_FieldValues, 
-probableCause_FieldName : probableCause_FieldValues, 
-serviceAffecting_FieldName : serviceAffecting_FieldValues, 
-suppression_FieldName : suppression_FieldValues,
-managementAffectingSeverity_FieldName : managementAffectingSeverity_FieldValues,
-degradeAffecting_FieldName: degradeAffecting_FieldValues
+    type_FieldName: type_FieldValues,
+    description_FieldName: description_FieldValues,
+    entityInstanceId_FieldName: entityInstanceId_FieldValues,
+    severity_FieldName: severity_FieldValues,
+    proposedRepairAction_FieldName: proposedRepairAction_FieldValues,
+    maintenanceAction_FieldName: maintenanceAction_FieldValues,
+    inhibitAlarms_FieldName: inhibitAlarms_FieldValues,
+    alarmType_FieldName: alarmType_FieldValues,
+    probableCause_FieldName: probableCause_FieldValues,
+    serviceAffecting_FieldName: serviceAffecting_FieldValues,
+    suppression_FieldName: suppression_FieldValues,
+    managementAffectingSeverity_FieldName: managementAffectingSeverity_FieldValues,
+    degradeAffecting_FieldName: degradeAffecting_FieldValues
 }
 
 logFields = {
-type_FieldName : type_FieldValues, 
-description_FieldName : description_FieldValues, 
-entityInstanceId_FieldName : entityInstanceId_FieldValues, 
-severity_FieldName : severity_FieldValues, 
-alarmType_FieldName : alarmType_FieldValues, 
-probableCause_FieldName : probableCause_FieldValues,
-serviceAffecting_FieldName : serviceAffecting_FieldValues
+    type_FieldName: type_FieldValues,
+    description_FieldName: description_FieldValues,
+    entityInstanceId_FieldName: entityInstanceId_FieldValues,
+    severity_FieldName: severity_FieldValues,
+    alarmType_FieldName: alarmType_FieldValues,
+    probableCause_FieldName: probableCause_FieldValues,
+    serviceAffecting_FieldName: serviceAffecting_FieldValues
 }
 
 
-
-
-def checkField( fieldKey, fieldValues, key, event ):
+def checkField(fieldKey, fieldValues, key, event):
     if fieldKey not in event:
         print("\n    ERROR: %s missing \'%s\' field." % (key, fieldKey))
         return False
-    # print ("START: %s :END" % event[fieldKey])
+    # print("START: %s :END" % event[fieldKey])
 
     if type(event[fieldKey]) is str:
         if not fieldValues:
@@ -120,26 +118,26 @@ def checkField( fieldKey, fieldValues, key, event ):
         if not fieldValues:
             return True
         for listvalue in event[fieldKey]:
-            if not listvalue in fieldValues:
+            if listvalue not in fieldValues:
                 print("\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (listvalue, fieldKey))
                 print("           Valid values are:", fieldValues)
                 return False
-            
+
     if type(event[fieldKey]) is dict:
         for dictKey, dictValue in event[fieldKey].items():
-            if not dictKey in severity_FieldValues:
+            if dictKey not in severity_FieldValues:
                 print("\n    ERROR: \'%s\' is not a valid \'%s\' index value." % (dictKey, fieldKey))
                 print("           Valid index values are:", severity_FieldValues)
                 return False
             if fieldValues:
-                if not dictValue in fieldValues:
+                if dictValue not in fieldValues:
                     print("\n    ERROR: \'%s\' is not a valid \'%s\' field value." % (dictValue, fieldKey))
                     print("           Valid values are:", fieldValues)
                     return False
     return True
 
 
-def checkTypeField( key, event ):
+def checkTypeField(key, event):
     if type_FieldName not in event:
         print("\n    ERROR: %s missing \'%s\' field." % (key, type_FieldName))
         return False
@@ -149,21 +147,20 @@ def checkTypeField( key, event ):
     return False
 
 
-
-def checkFields( key, event ):
+def checkFields(key, event):
     isOk = True
-    if not checkTypeField(key, event) :
+    if not checkTypeField(key, event):
         return False
     isAlarm = (event[type_FieldName] == type_FieldValue_Alarm)
     eventFields = alarmFields if isAlarm else logFields
 
     for fieldKey, fieldValues in eventFields.items():
-        if not checkField(fieldKey, fieldValues, key, event) :
+        if not checkField(fieldKey, fieldValues, key, event):
             isOk = False
 
     for itemKey, itemValue in event.items():
         if itemKey not in eventFields:
-            print("\n    ERROR: \'%s\' is not a valid \'%s\' field." % (itemKey, ("Alarm" if isAlarm else "Log") ))
+            print("\n    ERROR: \'%s\' is not a valid \'%s\' field." % (itemKey, ("Alarm" if isAlarm else "Log")))
             isOk = False
 
     return isOk
@@ -188,7 +185,7 @@ with open(sys.argv[1], 'r') as stream:
 
         for key in events:
             print("%6.3f: checking ... " % key)
-            if not checkFields( key, events[key] ):
+            if not checkFields(key, events[key]):
                 print()
                 exitValue = 1
             else:
@@ -199,5 +196,4 @@ with open(sys.argv[1], 'r') as stream:
     except yaml.YAMLError as exc:
         print(exc)
 
-exit (exitValue)
-
+exit(exitValue)
