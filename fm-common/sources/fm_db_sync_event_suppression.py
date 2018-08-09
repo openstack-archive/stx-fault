@@ -53,7 +53,7 @@ class event_log(Base):
 
 
 def prettyDict(dict):
-    output = json.dumps(dict,sort_keys=True, indent=4)
+    output = json.dumps(dict, sort_keys=True, indent=4)
     return output
 
 
@@ -64,8 +64,8 @@ def logInfo(msg):
         caller = getframeinfo(stack()[1][0])
         line_no = str(caller.lineno)
         output = "\n" + timestamp + " " + host_name + " fmManager: info " \
-                 + current_file_name + "(" + line_no + "):" + " " +  msg+"\n"
-        with open(FM_LOG_EVENT_LOG_FILE,"a") as logFile:
+                 + current_file_name + "(" + line_no + "):" + " " + msg + "\n"
+        with open(FM_LOG_EVENT_LOG_FILE, "a") as logFile:
             logFile.write(output)
     except Exception as e:
         print(e)
@@ -77,12 +77,13 @@ def get_events_yaml_filename():
         return events_yaml_name
     return "/etc/fm/events.yaml"
 
+
 #
 # Main
-# 
+#
 
 if len(sys.argv) < 2:
-  sys.exit("Postgres credentials required as argument.")
+    sys.exit("Postgres credentials required as argument.")
 
 postgresql_credentials = str(sys.argv[1])
 
@@ -103,7 +104,7 @@ session = Session()
 EVENT_TYPES_FILE = get_events_yaml_filename()
 
 if not os.path.isfile(EVENT_TYPES_FILE):
-    exit (-1)
+    exit(-1)
 
 with open(EVENT_TYPES_FILE, 'r') as stream:
     event_types = yaml.load(stream)
@@ -132,7 +133,7 @@ for event_type in event_types:
         yaml_event_list.append(string_event_type)
 
         if str(event_type) not in uneditable_descriptions:
-            event_description = (event_types.get(event_type) \
+            event_description = (event_types.get(event_type)
                                  .get('Description'))
         else:
             event_description = event_types.get(event_type).get('Description')
@@ -155,9 +156,9 @@ for event_type in event_types:
             event_supp.mgmt_affecting = event_mgmt_affecting
             event_supp.degrade_affecting = event_degrade_affecting
         else:
-            event_supp = EventSuppression(created_at=event_created_at, 
-                                          uuid=event_uuid, 
-                                          alarm_id=string_event_type, 
+            event_supp = EventSuppression(created_at=event_created_at,
+                                          uuid=event_uuid,
+                                          alarm_id=string_event_type,
                                           description=event_description,
                                           suppression_status='unsuppressed',
                                           set_for_deletion=False,
@@ -187,15 +188,11 @@ for event_type in event_supp:
             session.delete(event_supp)
             logInfo("Deleted Event Type {} from event_suppression table.".format(event_type.alarm_id))
         else:
-            event_supp.suppression_status='unsuppressed'
+            event_supp.suppression_status = 'unsuppressed'
             event_supp.set_for_deletion = True
             logInfo("Event Type {} no longer in events.yaml, but still used by alarm in database.".format(event_type.alarm_id))
             logInfo("Event Type {} marked as set for deletion in event_suppression table.".format(event_type.alarm_id))
 
         session.commit()
- 
+
 session.close()
-
-
-
-

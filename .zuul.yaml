@@ -2,5 +2,9 @@
 - project:
     check:
       jobs:
+        - openstack-tox-pep8
         - openstack-tox-linters:
             voting: false
+    gate:
+      jobs:
+        - openstack-tox-pep8
