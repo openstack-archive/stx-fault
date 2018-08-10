@@ -1,0 +1,8 @@
+Code-Review+2: Lachlan Plant <lachlan.plant@windriver.com>
+Workflow+1: Lachlan Plant <lachlan.plant@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 10 Aug 2018 13:59:11 +0000
+Reviewed-on: https://review.openstack.org/590102
+Project: openstack/stx-fault
+Branch: refs/heads/master
