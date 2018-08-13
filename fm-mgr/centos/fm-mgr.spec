@@ -15,7 +15,7 @@ BuildRequires: systemd-devel
 BuildRequires: libuuid-devel
 
 %description
-CGTS platform Fault Manager that serves the client 
+CGTS platform Fault Manager that serves the client
 application fault management requests and raise/clear/update  
 alarms in the active alarm database.
 

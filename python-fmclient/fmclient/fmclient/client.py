@@ -37,7 +37,7 @@ def get_client(version, endpoint=None, session=None, auth_token=None,
     elif auth_url:
         auth_kwargs = {}
         auth_type = 'password'
-        auth_kwargs.update ({
+        auth_kwargs.update({
             'auth_url': auth_url,
             'project_id': project_id,
             'project_name': project_name,

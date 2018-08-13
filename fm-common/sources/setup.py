@@ -9,4 +9,3 @@ setup(name="fm_core", version="1.0",
                              "fmcommon"],
                              library_dirs=['.']
                              )])
-

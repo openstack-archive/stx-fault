@@ -62,7 +62,6 @@ def setup_logging():
     logging.setup(cfg.CONF, "fm")
     LOG.debug("Logging enabled!")
     LOG.debug("%(prog)s version %(version)s",
-             {'prog': sys.argv[0],
-              'version': version_info.release_string()})
+              {'prog': sys.argv[0],
+               'version': version_info.release_string()})
     LOG.debug("command line: %s", " ".join(sys.argv))
-

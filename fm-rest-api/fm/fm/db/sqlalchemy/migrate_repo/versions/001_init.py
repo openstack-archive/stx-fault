@@ -5,8 +5,8 @@
 #
 
 
-from sqlalchemy import Column, MetaData, String, Table, UniqueConstraint
-from sqlalchemy import Boolean, Integer, Enum, Text, ForeignKey, DateTime
+from sqlalchemy import Column, MetaData, String, Table
+from sqlalchemy import Boolean, Integer, DateTime
 from sqlalchemy.schema import ForeignKeyConstraint
 
 ENGINE = 'InnoDB'
@@ -70,7 +70,7 @@ def upgrade(migrate_engine):
 
         mysql_engine=ENGINE,
         mysql_charset=CHARSET,
-                    )
+    )
     alarm.create()
 
     event_log = Table(
@@ -110,4 +110,3 @@ def upgrade(migrate_engine):
 
 def downgrade(migrate_engine):
     raise NotImplementedError('Downgrade from Initial is unsupported.')
-

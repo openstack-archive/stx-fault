@@ -38,7 +38,7 @@ class Alarm(base.FmObject):
         'suppression_status': utils.str_or_none,
         'mgmt_affecting': utils.str_or_none,
         'degrade_affecting': utils.str_or_none,
-         }
+    }
 
     @staticmethod
     def _from_db_object(server, db_server):

@@ -9,7 +9,7 @@ INCLUDES = -I./
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
 
 LIBFMCOMMON_SO := libfmcommon.so
-build: lib fmClientCli  
+build: lib fmClientCli
 
 .cpp.o:
 	$(CXX) $(CCFLAGS) $(INCLUDES) $(EXTRACCFLAGS) -c $< -o $@

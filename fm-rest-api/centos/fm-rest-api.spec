@@ -20,7 +20,6 @@ Requires: python-eventlet
 Requires: python-routes
 Requires: python-webob
 Requires: python-paste
- 
 
 BuildRequires: systemd
 

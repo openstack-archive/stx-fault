@@ -28,8 +28,6 @@ MIGRATE_REPO_PATH = os.path.join(
 def get_backend():
     global _IMPL
     if not _IMPL:
-        #CONF.register_opts(db_opts, 'database_migrate')
-        #CONF.import_opt('backend', 'oslo_db.options', group='database_migrate')
         _IMPL = driver.DriverManager("fm.database.migration_backend",
                                      cfg.CONF.database.backend).driver
     return _IMPL

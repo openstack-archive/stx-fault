@@ -87,6 +87,3 @@ def check_is_admin(context):
     credentials = context.to_dict()
 
     return _ENFORCER.enforce('context_is_admin', target, credentials)
-
-
-

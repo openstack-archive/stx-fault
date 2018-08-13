@@ -70,7 +70,7 @@ class V1(base.APIBase):
                                          pecan.request.host_url,
                                          'alarms', '',
                                          bookmark=True)
-                      ]
+                     ]
 
         v1.event_log = [link.Link.make_link('self', pecan.request.host_url,
                                             'event_log', ''),

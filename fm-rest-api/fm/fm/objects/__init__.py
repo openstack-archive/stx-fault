@@ -38,4 +38,3 @@ event_suppression = event_suppression.EventSuppression
 __all__ = (alarm,
            event_log,
            event_suppression)
-

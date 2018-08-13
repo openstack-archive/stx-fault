@@ -74,7 +74,7 @@ def do_alarm_list(cc, args={}):
     faults = cc.alarm.list(q=options.cli_to_array(args.query), include_suppress=include_suppress)
     for f in faults:
         utils.normalize_field_data(f, ['entity_type_id', 'entity_instance_id',
-                                            'reason_text', 'proposed_repair_action'])
+                                   'reason_text', 'proposed_repair_action'])
 
     # omit action initially to keep output width sane
     # (can switch over to vertical formatting when available from CLIFF)
@@ -124,7 +124,7 @@ def do_alarm_list(cc, args={}):
     formatters = wrapping_formatters.build_wrapping_formatters(faults, fields, field_labels, formatterSpec)
 
     utils.print_list(faults, fields, field_labels, formatters=formatters,
-                          sortby=fields.index('timestamp'), reversesort=True)
+                     sortby=fields.index('timestamp'), reversesort=True)
 
 
 @utils.arg('--include_suppress',

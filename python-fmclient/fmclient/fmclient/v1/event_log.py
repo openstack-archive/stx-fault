@@ -36,8 +36,8 @@ class EventLogManager(base.Manager):
 
         restAPIURL = options.build_url(self._path(), q, params)
 
-        l = self._list(restAPIURL, 'event_log')
-        return l
+        lst = self._list(restAPIURL, 'event_log')
+        return lst
 
     def get(self, iid):
         try:

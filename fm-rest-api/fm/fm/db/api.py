@@ -75,7 +75,7 @@ class Connection(object):
 
     @abc.abstractmethod
     def alarm_get_list(self, limit=None, marker=None,
-                        sort_key=None, sort_dir=None):
+                       sort_key=None, sort_dir=None):
         """Return a list of alarms.
 
         :param limit: Maximum number of alarm to return.
@@ -140,7 +140,7 @@ class Connection(object):
 
     @abc.abstractmethod
     def event_log_get_list(self, limit=None, marker=None,
-                                sort_key=None, sort_dir=None, evtType="ALL"):
+                           sort_key=None, sort_dir=None, evtType="ALL"):
         """Return a list of event_log.
 
         :param limit: Maximum number of event_log to return.

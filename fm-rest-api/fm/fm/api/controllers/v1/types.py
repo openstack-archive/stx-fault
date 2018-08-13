@@ -98,6 +98,7 @@ class JsonType(wtypes.UserType):
     def frombasetype(value):
         return JsonType.validate(value)
 
+
 jsontype = JsonType()
 uuid = UuidType()
 

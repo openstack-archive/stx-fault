@@ -113,7 +113,7 @@ def _wrapping_formatter_callback_decorator(subparser, command, callback):
     try:
         subparser.add_argument('--nowrap', action='store_true',
                                help='No wordwrapping of output')
-    except Exception as e:
+    except Exception:
         # exception happens when nowrap option already configured
         # for command - so get out with callback undecorated
         return callback
@@ -289,16 +289,19 @@ def _sort_for_list(objs, fields, formatters={}, sortby=0, reversesort=False):
         return objs
 
     sort_field = fields[sortby]
-
     # figure out sort key function
     if sort_field in formatters:
         field_formatter = formatters[sort_field]
-        if wrapping_formatters.WrapperFormatter.is_wrapper_formatter(field_formatter):
-            sort_key = lambda o: field_formatter.wrapper_formatter.get_unwrapped_field_value(o)
+        if wrapping_formatters.WrapperFormatter.is_wrapper_formatter(
+                field_formatter):
+            def sort_key(x):
+                return field_formatter.wrapper_formatter.get_unwrapped_field_value(x)
         else:
-            sort_key = lambda o: field_formatter(o)
+            def sort_key(x):
+                return field_formatter(x)
     else:
-        sort_key = lambda o: getattr(o, sort_field, '')
+        def sort_key(x):
+            return getattr(x, sort_field, '')
 
     objs.sort(reverse=reversesort, key=sort_key)
 

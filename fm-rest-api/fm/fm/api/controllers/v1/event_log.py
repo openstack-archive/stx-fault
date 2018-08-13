@@ -219,12 +219,12 @@ class EventLogController(rest.RestController):
             marker_obj = objects.event_log.get_by_uuid(pecan.request.context,
                                                        marker)
 
-            ilog = pecan.request.dbapi.event_log_get_list(limit, marker_obj,
-                                                          sort_key=sort_key,
-                                                          sort_dir=sort_dir,
-                                                          evtType=evtType,
-                                                          include_suppress=
-                                                          include_suppress)
+            ilog = pecan.request.dbapi.event_log_get_list(
+                limit, marker_obj,
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                evtType=evtType,
+                include_suppress=include_suppress)
         else:
             kwargs['limit'] = limit
             ilog = pecan.request.dbapi.event_log_get_all(**kwargs)
@@ -253,8 +253,8 @@ class EventLogController(rest.RestController):
         """
         return self._get_eventlog_collection(marker, limit, sort_key,
                                              sort_dir, q=q, alarms=alarms,
-                                             logs=logs, include_suppress=
-                                             include_suppress)
+                                             logs=logs,
+                                             include_suppress=include_suppress)
 
     @wsme_pecan.wsexpose(EventLogCollection, types.uuid, int,
                          wtypes.text, wtypes.text, bool, bool)

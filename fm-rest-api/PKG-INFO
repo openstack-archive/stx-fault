@@ -2,12 +2,11 @@ Metadata-Version: 1.1
 Name: fm-rest-api
 Version: 1.0
 Summary: Fault Manager REST API
-Home-page: 
+Home-page:
 Author: Windriver
 Author-email: info@windriver.com
 License: windriver
 
 Description: Fault Manager REST API
-
         
 Platform: UNKNOWN

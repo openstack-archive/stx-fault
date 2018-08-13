@@ -23,7 +23,7 @@ def cgtsclient(context, version=1, endpoint=None):
     """Constructs a cgts client object for making API requests.
 
     :param context: The FM request context for auth.
-    :param version: API endpoint version.        
+    :param version: API endpoint version.
     :param endpoint: Optional If the endpoint is not available, it will be
                      retrieved from session
     """

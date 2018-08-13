@@ -136,5 +136,3 @@ class RequestContext(context.RequestContext):
 
 def make_context(*args, **kwargs):
     return RequestContext(*args, **kwargs)
-
-

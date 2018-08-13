@@ -125,8 +125,8 @@ def add_event_log_filter_by_event_suppression(query, include_suppress):
         return query
 
     return query.filter(or_(models.EventLog.state == 'log',
-                            models.EventSuppression.suppression_status
-                            == constants.FM_UNSUPPRESSED))
+                            models.EventSuppression.suppression_status ==
+                            constants.FM_UNSUPPRESSED))
 
 
 def add_alarm_filter_by_event_suppression(query, include_suppress):
@@ -146,8 +146,8 @@ def add_alarm_filter_by_event_suppression(query, include_suppress):
     if include_suppress:
         return query
 
-    return query.filter(models.EventSuppression.suppression_status
-                        == constants.FM_UNSUPPRESSED)
+    return query.filter(models.EventSuppression.suppression_status ==
+                        constants.FM_UNSUPPRESSED)
 
 
 def add_alarm_mgmt_affecting_by_event_suppression(query):

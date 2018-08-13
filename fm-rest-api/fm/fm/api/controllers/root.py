@@ -55,7 +55,7 @@ class Version(base.APIBase):
         return version
 
 
-class Root(base.APIBase):# Copyright (c) 2013-2014 Wind River Systems, Inc.
+class Root(base.APIBase):
 
     name = wtypes.text
     """The name of the API"""

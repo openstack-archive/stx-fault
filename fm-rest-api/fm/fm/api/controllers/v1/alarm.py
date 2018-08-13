@@ -121,8 +121,8 @@ class Alarm(base.APIBase):
         alm = Alarm(**alarms.as_dict())
         if not expand:
             alm.unset_fields_except(['uuid', 'alarm_id', 'entity_instance_id',
-                                      'severity', 'timestamp', 'reason_text',
-                                      'mgmt_affecting ', 'degrade_affecting'])
+                                     'severity', 'timestamp', 'reason_text',
+                                     'mgmt_affecting ', 'degrade_affecting'])
 
         alm.entity_instance_id = \
             api_utils.make_display_id(alm.entity_instance_id, replace=False)
@@ -162,7 +162,7 @@ class AlarmCollection(collection.Collection):
 
         collection = AlarmCollection()
         collection.alarms = [Alarm.convert_with_links(ch, expand)
-                              for ch in ialms]
+                             for ch in ialms]
         # url = url or None
         collection.next = collection.get_next(limit, url=url, **kwargs)
         return collection
@@ -261,11 +261,11 @@ class AlarmController(rest.RestController):
 
             marker_obj = objects.alarm.get_by_uuid(pecan.request.context,
                                                    marker)
-            ialm = pecan.request.dbapi.alarm_get_list(limit, marker_obj,
-                                                      sort_key=sort_key,
-                                                      sort_dir=sort_dir,
-                                                      include_suppress=
-                                                      include_suppress)
+            ialm = pecan.request.dbapi.alarm_get_list(
+                limit, marker_obj,
+                sort_key=sort_key,
+                sort_dir=sort_dir,
+                include_suppress=include_suppress)
         else:
             kwargs['limit'] = limit
             ialm = pecan.request.dbapi.alarm_get_all(**kwargs)
@@ -279,7 +279,7 @@ class AlarmController(rest.RestController):
     @wsme_pecan.wsexpose(AlarmCollection, [Query],
                          types.uuid, int, wtypes.text, wtypes.text, bool)
     def get_all(self, q=[], marker=None, limit=None, sort_key='id',
-                sort_dir='asc',include_suppress=False):
+                sort_dir='asc', include_suppress=False):
         """Retrieve a list of alarm.
 
         :param marker: pagination marker for large data sets.
@@ -289,8 +289,8 @@ class AlarmController(rest.RestController):
         :param include_suppress: filter on suppressed alarms. Default: False
         """
         return self._get_alarm_collection(marker, limit, sort_key,
-                                           sort_dir, q=q,
-                                           include_suppress=include_suppress)
+                                          sort_dir, q=q,
+                                          include_suppress=include_suppress)
 
     @wsme_pecan.wsexpose(AlarmCollection, types.uuid, int,
                          wtypes.text, wtypes.text)

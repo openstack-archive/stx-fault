@@ -26,9 +26,9 @@ import urlparse
 
 from oslo_config import cfg
 
-from sqlalchemy import Column, ForeignKey, Integer, BigInteger, Boolean
-from sqlalchemy import Enum, UniqueConstraint, String, Table, Text, Float
-from sqlalchemy import DateTime, LargeBinary
+from sqlalchemy import Column, ForeignKey, Integer, Boolean
+from sqlalchemy import String
+from sqlalchemy import DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from oslo_db.sqlalchemy import models
