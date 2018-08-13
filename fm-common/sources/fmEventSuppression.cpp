@@ -1,13 +1,12 @@
 //
-// Copyright (c) 2016 Wind River Systems, Inc.
+// Copyright (c) 2016-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
 
 #include <stdlib.h>
 #include <string>
 
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmLog.h"
 #include "fmDbAlarm.h"
 #include "fmEventSuppression.h"
@@ -73,6 +72,7 @@ bool CFmEventSuppressionOperation::set_table_notify_listen(CFmDBSession &sess){
 	sql = "SELECT rulename FROM pg_rules WHERE rulename='watch_event_supression'";
 
 	if ((sess.query(sql.c_str(), rule_name)) != true){
+		FM_DEBUG_LOG("Failed to query the existing rule");
 		return false;
 	}
 
@@ -84,7 +84,8 @@ bool CFmEventSuppressionOperation::set_table_notify_listen(CFmDBSession &sess){
 		sql += FM_EVENT_SUPPRESSION_TABLE_NAME;
 		sql += ")";
 
-		if (sess.cmd(sql.c_str()) != true){
+		if (sess.cmd(sql.c_str(), false) != true){
+			FM_INFO_LOG("Failed to set rule CMD: (%s)", sql.c_str());
 			return false;
 		}
 
@@ -95,10 +96,6 @@ bool CFmEventSuppressionOperation::set_table_notify_listen(CFmDBSession &sess){
 	sql += FM_EVENT_SUPPRESSION_TABLE_NAME;
 
 	FM_DEBUG_LOG("CMD:(%s)\n", sql.c_str());
-	sess.cmd(sql.c_str());  // TODO: sess.cmd() returns false since no row affected by LISTEN command
-/*	if (sess.cmd(sql.c_str()) != true){
-		return false;
-	} */
-
-	return true;
+	// no row affected by LISTEN command
+	return sess.cmd(sql.c_str(), false);
 }

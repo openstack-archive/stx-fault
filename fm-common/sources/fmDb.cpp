@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2016 Wind River Systems, Inc.
+// Copyright (c) 2016-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -16,7 +16,7 @@
 #include "fmAlarmUtils.h"
 #include "fmDbUtils.h"
 #include "fmDb.h"
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmThread.h"
 
 
@@ -62,11 +62,7 @@ bool CFmDBSession::connect(const char *uri){
 	m_conn.uri = uri;
 
 	val = get_parameter_status("standard_conforming_strings");
-	//FM_INFO_LOG("connect: server standard_conforming_strings parameter: %s",
-	//		val ? val : "unavailable");
 	m_conn.equote = (val && (0 == strcmp("off", val)));
-	//FM_INFO_LOG("connect: server requires E'' quotes: %s", m_conn.equote ? "YES" : "NO");
-
 	m_conn.server_version = PQserverVersion(m_conn.pgconn);
 	m_conn.protocol = PQprotocolVersion(m_conn.pgconn);
 	m_conn.encoding = get_parameter_status("client_encoding");
@@ -132,7 +128,7 @@ bool CFmDBSession::query(const char *db_cmd,fm_db_result_t & result) {
 	return true;
 }
 
-bool CFmDBSession::cmd(const char *db_cmd){
+bool CFmDBSession::cmd(const char *db_cmd, bool check_row){
 	PGresult *res;
 	bool rc = true;
 
@@ -147,7 +143,7 @@ bool CFmDBSession::cmd(const char *db_cmd){
 		FM_ERROR_LOG("Failed to execute (%s) (%s)", db_cmd, PQresultErrorMessage(res));
 		rc = false;
 	}
-	if (rc){
+	if (rc && check_row){
 		int row = atoi(PQcmdTuples(res));
 		FM_DEBUG_LOG("SQL command returned successful: %d rows affected.\n", row);
 		if (row < 1) rc = false;

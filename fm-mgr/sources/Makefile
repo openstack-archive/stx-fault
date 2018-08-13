@@ -23,7 +23,6 @@ install_non_bb:
 	install -m 755 -d $(DEST_DIR)/etc/logrotate.d
 	install -m 755 -d $(DEST_DIR)/usr/local
 	install -m 755 -d $(DEST_DIR)/usr/local/bin
-	install -m 644 fm.conf $(DEST_DIR)/etc/fm.conf
 	install -m 755 fminit $(DEST_DIR)/etc/init.d/fminit
 	install -m 755 fmManager $(DEST_DIR)/usr/local/bin/fmManager
 	install -m 644 fm.logrotate $(DEST_DIR)/etc/logrotate.d/fm.logrotate

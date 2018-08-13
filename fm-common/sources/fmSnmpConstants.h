@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2017-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -14,12 +14,13 @@
 
 #define FM_CUSTOMER_LOG 10
 
-/* Trap Destination table name */
-#define FM_TRAPDEST_TABLE_NAME       "i_trap_destination"
+/* Trap Destination definitions */
 
-#define FM_TRAPDEST_IP_COLUMN        "ip_address"
+#define FM_SNMP_TRAPDEST      "trap_destinations"
 
-#define FM_TRAPDEST_COMM_COLUMN      "community"
+#define FM_TRAPDEST_IP        "ip_address"
+
+#define FM_TRAPDEST_COMM      "community"
 
 /* MIB Trap definitions */
 const std::string WRS_ALARM_MIB = "WRS-ALARM-MIB";
