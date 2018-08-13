@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -7,12 +7,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
+#include <syslog.h>
+
 #include "fmLog.h"
 #include "fmDbAlarm.h"
 #include "fmDbEventLog.h"
-
-#include <stdarg.h>
-#include <syslog.h>
+#include "fmConfig.h"
+#include "fmConstants.h"
 
 static pthread_mutex_t mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
@@ -22,6 +24,13 @@ void fmLoggingInit() {
 	static bool has_inited=false;
 	if (!has_inited){
 		openlog(NULL,LOG_CONS | LOG_NDELAY,LOG_LOCAL1);
+		setlogmask(LOG_UPTO (LOG_INFO));
+	}
+	std::string val;
+	std::string key = FM_DEBUG_FLAG;
+	if ((fm_get_config_key(key, val)) && (val.compare("True") == 0)){
+		setlogmask(LOG_UPTO (LOG_DEBUG));
+	} else {
 		setlogmask(LOG_UPTO (LOG_INFO));
 	}
 	has_inited=true;
@@ -34,11 +43,6 @@ void fmLogMsg(int level, const char *data,...){
 	va_start(ap, data);
 	vsyslog(level,data,ap);
 	va_end(ap);
-}
-
-bool fmLogFileInit(){
-    fmLoggingInit();
-    return true;
 }
 
 // formats event into json form for logging

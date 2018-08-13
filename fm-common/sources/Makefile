@@ -1,6 +1,6 @@
 SRCS = fmAPI.cpp fmFile.cpp fmLog.cpp fmMsgServer.cpp fmMutex.cpp fmSocket.cpp fmThread.cpp fmTime.cpp \
        fmAlarmUtils.cpp fmDb.cpp fmDbUtils.cpp fmDbAlarm.cpp fmSnmpUtils.cpp \
-       fmDbEventLog.cpp fmEventSuppression.cpp
+       fmDbEventLog.cpp fmEventSuppression.cpp fmConfig.cpp
 CLI_SRCS = fm_cli.cpp
 OBJS = $(SRCS:.cpp=.o)
 CLI_OBJS = fm_cli.o
@@ -9,7 +9,7 @@ INCLUDES = -I./
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
 
 LIBFMCOMMON_SO := libfmcommon.so
-build: lib fmClientCli  
+build: lib fmClientCli
 
 .cpp.o:
 	$(CXX) $(CCFLAGS) $(INCLUDES) $(EXTRACCFLAGS) -c $< -o $@

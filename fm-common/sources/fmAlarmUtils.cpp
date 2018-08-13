@@ -472,7 +472,7 @@ bool fm_alarm_to_string(const SFmAlarmDataT *alarm, std::string &str) {
 	return str.size()>0;
 }
 
-bool fm_alarm_from_string(const std::string &alstr,SFmAlarmDataT *a) {
+bool fm_alarm_from_string(const std::string &alstr, SFmAlarmDataT *a) {
 	strvect_t s;
 	str_to_vector(alstr, s);
 

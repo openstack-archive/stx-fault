@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2016 Wind River Systems, Inc.
+# Copyright (c) 2016-2018 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -40,13 +40,13 @@ class EventSuppression(Base):
 
 
 class ialarm(Base):
-    __tablename__ = 'i_alarm'
+    __tablename__ = 'alarm'
     id = Column(Integer, primary_key=True, nullable=False)
     alarm_id = Column('alarm_id', String(255), index=True)
 
 
 class event_log(Base):
-    __tablename__ = 'i_event_log'
+    __tablename__ = 'event_log'
     id = Column(Integer, primary_key=True, nullable=False)
     event_log_id = Column('event_log_id', String(255), index=True)
     state = Column(String(255))
@@ -106,8 +106,8 @@ EVENT_TYPES_FILE = get_events_yaml_filename()
 if not os.path.isfile(EVENT_TYPES_FILE):
     exit(-1)
 
-with open(EVENT_TYPES_FILE, 'r') as stream:
-    event_types = yaml.load(stream)
+stream = file(EVENT_TYPES_FILE, 'r')
+event_types = yaml.load(stream)
 
 for alarm_id in event_types:
     if isinstance(alarm_id, float):

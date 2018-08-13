@@ -6,25 +6,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <fmAPI.h>
-
 #include <stdbool.h>
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
 
+#include <fmAPI.h>
+#include <fmConfig.h>
+#include <fmLog.h>
+
 void sig_handler(int signo) {
-	int result = 0;
 	if (signo == SIGHUP){
-		result = setlogmask(LOG_UPTO (LOG_DEBUG));
-		if (result == LOG_UPTO (LOG_DEBUG)){
-			result = setlogmask(LOG_UPTO (LOG_INFO));
-			syslog(LOG_INFO, "Received SIGHUP, set log level from %d to LOG_INFO", result);
-		}else{
-			syslog(LOG_INFO, "Received SIGHUP, set log level from %d to LOG_DEBUG", result);
-		}
-	}
+		fm_get_config_paramters();
+		fmLoggingInit();
+        }
 }
 
 int main(int argc, char *argv[]) {
