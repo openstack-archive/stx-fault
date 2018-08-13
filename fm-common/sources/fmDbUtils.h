@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -73,15 +73,14 @@ bool fm_db_util_build_sql_delete_all(const char* db_table,
 bool fm_db_util_get_row_counts(CFmDBSession &sess, const char* db_table,
 		int &counts);
 
-bool fm_db_util_create_session(CFmDBSession **sess);
+bool fm_db_util_create_session(CFmDBSession **sess,
+                               std::string key=FM_SQL_CONNECTION);
 
-std::string fm_db_util_get_system_name(CFmDBSession &sess);
+std::string fm_db_util_get_system_name();
 
-std::string fm_db_util_get_region_name(CFmDBSession &sess);
+std::string fm_db_util_get_region_name();
 
 void fm_db_util_set_conf_file(const char *fn);
-
-bool fm_db_util_get_config(std::string &key, std::string &val);
 
 bool fm_db_util_get_next_log_id(CFmDBSession &sess, int &id);
 

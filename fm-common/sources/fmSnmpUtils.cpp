@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -11,6 +11,7 @@
 #include <map>
 #include <assert.h>
 #include <sstream>
+#include <vector>
 
 #include "fmDbAPI.h"
 #include "fmFile.h"
@@ -21,12 +22,18 @@
 #include "fmDbUtils.h"
 #include "fmSnmpConstants.h"
 #include "fmSnmpUtils.h"
+#include "fmConfig.h"
 
 typedef std::map<int,std::string> int_to_objtype;
 
 static int_to_objtype objtype_map;
 static pthread_mutex_t mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
+
+fm_db_result_t &getTrapDestList(){
+	static fm_db_result_t trap_dest_list;
+	return trap_dest_list;
+}
 
 static void add_to_table(int t, std::string objtype, int_to_objtype &tbl) {
 	tbl[t]=objtype;
@@ -72,14 +79,38 @@ static std::string get_trap_objtype(int type){
 	init_objtype_table();
 	return objtype_map[type];
 }
-static bool get_trap_dest_list(CFmDBSession &sess,fm_db_result_t & res){
-	std::string cmd;
 
-	fm_db_util_build_sql_query(FM_TRAPDEST_TABLE_NAME, NULL, cmd);
-	return sess.query(cmd.c_str(), res);
+static void add_to_list(std::vector<std::string> &trap_strings) {
+	std::string delimiter = " ";
+
+	std::vector<std::string>::iterator it = trap_strings.begin();
+	std::vector<std::string>::iterator end = trap_strings.end();
+	getTrapDestList().clear();
+	for (; it != end; ++it){
+		size_t pos = 0;
+		fm_db_single_result_t entry;
+		pos = (*it).find(delimiter);
+		entry[FM_TRAPDEST_IP] = (*it).substr(0, pos);
+		entry[FM_TRAPDEST_COMM] = (*it).erase(0, pos + delimiter.length());
+		getTrapDestList().push_back(entry);
+	}
 }
 
-static std::string format_trap_cmd(CFmDBSession &sess, int type, SFmAlarmDataT &data,
+void set_trap_dest_list(std::string value){
+
+	std::vector<std::string> entries;
+	std::istringstream f(value);
+	std::string s;
+	while (getline(f, s, ',')) {
+		std::cout << s << std::endl;
+		FM_INFO_LOG("Add entry: (%s)", s.c_str());
+		entries.push_back(s);
+	}
+	add_to_list(entries);
+	FM_INFO_LOG("Set trap entries: (%d)", getTrapDestList().size());
+}
+
+static std::string format_trap_cmd(int type, SFmAlarmDataT &data,
 		std::string &ip, std::string &comm){
 	std::string cmd;
 	std::string objtype;
@@ -140,28 +171,29 @@ static std::string format_trap_cmd(CFmDBSession &sess, int type, SFmAlarmDataT &
 	return cmd;
 }
 
-bool fm_snmp_util_gen_trap(CFmDBSession &sess, int type, SFmAlarmDataT &data) {
+
+bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 
 	bool rc = true;
 	fm_buff_t cmdbuff;
 	fm_db_result_t res;
 	std::string cmd, eid;
 
-	if (!get_trap_dest_list(sess,res)) return false;
+	res = getTrapDestList();
 
-    if (&data != NULL) {
-    	eid.assign(data.entity_instance_id);
-        std::string region_name = fm_db_util_get_region_name(sess);
-    	std::string sys_name = fm_db_util_get_system_name(sess);
-    	if (sys_name.length() != 0){
-    		eid = sys_name + "."+ eid;
-    	}
-        if (region_name.length() != 0){
-                eid = region_name + "."+ eid;
-        }
-    	strncpy(data.entity_instance_id, eid.c_str(),
-			sizeof(data.entity_instance_id)-1);
-    }
+	if (&data != NULL) {
+		eid.assign(data.entity_instance_id);
+		std::string region_name = fm_db_util_get_region_name();
+		std::string sys_name = fm_db_util_get_system_name();
+		if (sys_name.length() != 0){
+			eid = sys_name + "."+ eid;
+		}
+		if (region_name.length() != 0){
+			eid = region_name + "."+ eid;
+		}
+		strncpy(data.entity_instance_id, eid.c_str(),
+				sizeof(data.entity_instance_id)-1);
+	}
 
 	fm_db_result_t::iterator it = res.begin();
 	fm_db_result_t::iterator end = res.end();
@@ -169,9 +201,9 @@ bool fm_snmp_util_gen_trap(CFmDBSession &sess, int type, SFmAlarmDataT &data) {
 	for (; it != end; ++it){
 		memset(&(cmdbuff[0]), 0, cmdbuff.size());
 		cmd.clear();
-		std::string ip = (*it)[FM_TRAPDEST_IP_COLUMN];
-		std::string comm = (*it)[FM_TRAPDEST_COMM_COLUMN];
-		cmd = format_trap_cmd(sess,type, data, ip, comm);
+		std::string ip = (*it)[FM_TRAPDEST_IP];
+		std::string comm = (*it)[FM_TRAPDEST_COMM];
+		cmd = format_trap_cmd(type, data, ip, comm);
 
 		//FM_INFO_LOG("run cmd: %s\n", cmd.c_str());
 		char *pline = &(cmdbuff[0]);
@@ -190,42 +222,17 @@ bool fm_snmp_util_gen_trap(CFmDBSession &sess, int type, SFmAlarmDataT &data) {
 }
 
 static bool fm_snmp_get_db_connection(std::string &connection){
-	CfmFile f;
-	const char *fn = "/etc/fm.conf";
-	std::string sql_key = FM_SQL_CONNECTION;
-	std::string delimiter = "=";
-	std::string line, key, value;
-	size_t pos = 0;
+	const char *fn = "/etc/fm/fm.conf";
+	std::string key = FM_SQL_CONNECTION;
 
-	if (!f.open(fn, CfmFile::READ, false)){
-		FM_ERROR_LOG("Failed to open config file: %s\n", fn);
-		exit (-1);
-	}
-
-	while (true){
-		if (!f.read_line(line)) break;
-
-		if (line.size() == 0) continue;
-
-		pos = line.find(delimiter);
-		key = line.substr(0, pos);
-		if (key == sql_key){
-			value = line.erase(0, pos + delimiter.length());
-			// Don't log sql_connection, as it has a password
-			//FM_DEBUG_LOG("Found it: (%s)\n", value.c_str());
-			connection = value;
-			return true;
-		}
-	}
-
-	return false;;
+	fm_conf_set_file(fn);
+	return fm_get_config_key(key, connection);
 }
 
 
 extern "C" {
 bool fm_snmp_util_create_session(TFmAlarmSessionT *handle, const char* db_conn){
 
-	std::string key = FM_SQL_CONNECTION;
 	std::string conn;
 	CFmDBSession *sess = new CFmDBSession;
 	if (sess==NULL) return false;;

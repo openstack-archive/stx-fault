@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -53,7 +53,7 @@ public:
 	bool reconnect();
 
 	bool query(const char *db_cmd,fm_db_result_t & result);
-	bool cmd(const char *db_cmd);
+	bool cmd(const char *db_cmd, bool check_row=true);
 	bool params_cmd(fm_db_util_sql_params & sql_params);
 
 	PGconn* get_pgconn(){

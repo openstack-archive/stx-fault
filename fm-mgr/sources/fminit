@@ -20,7 +20,7 @@
 FMMGR_NAME="fmManager"
 FMMGR="/usr/local/bin/${FMMGR_NAME}"
 PIDFILE=/var/run/${FMMGR_NAME}.pid
-CONFIGFILE=/etc/fm.conf
+CONFIGFILE=/etc/fm/fm.conf
  
 
 # Linux Standard Base (LSB) Error Codes

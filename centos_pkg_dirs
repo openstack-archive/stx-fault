@@ -2,5 +2,7 @@ fm-api
 fm-common
 fm-mgr
 fm-doc
+fm-rest-api
+python-fmclient
 snmp-ext
 snmp-audittrail
