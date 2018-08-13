@@ -1,0 +1,15 @@
+[Unit]
+Description=Fault Management REST API Service
+After=nfscommon.service sw-patch.service
+After=network-online.target systemd-udev-settle.service
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+User=root
+ExecStart=/etc/rc.d/init.d/fm-api start
+ExecStop=/etc/rc.d/init.d/fm-api stop
+PIDFile=/var/run/fm-api.pid
+
+[Install]
+WantedBy=multi-user.target

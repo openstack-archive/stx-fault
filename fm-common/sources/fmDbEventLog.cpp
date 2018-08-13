@@ -12,7 +12,7 @@
 #include "fmDbAlarm.h"
 #include "fmDbEventLog.h"
 #include "fmAlarmUtils.h"
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmDbUtils.h"
 
 typedef std::map<int,std::string> itos_t;
@@ -291,7 +291,7 @@ bool CFmDbEventLogOperation::get_all_event_logs(CFmDBSession &sess, SFmAlarmData
 
 	if (!get_event_logs(sess, res)) return false;
 
-	std::string sname = fm_db_util_get_system_name(sess);
+	std::string sname = fm_db_util_get_system_name();
 
 	unsigned int found_num_logs = res.size();
 

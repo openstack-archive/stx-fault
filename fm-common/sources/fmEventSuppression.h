@@ -9,15 +9,6 @@
 #define FMEVENTSUPPRESSION_H_
 
 
-/*
-#include <string>
-#include <vector>
-#include <stddef.h>
-#include <map>
-
-#include "fmAPI.h"
-#include "fmDbConstants.h"
-*/
 #include "fmDb.h"
 
 class CFmEventSuppressionOperation {
