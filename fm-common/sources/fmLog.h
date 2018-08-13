@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -67,9 +67,6 @@ void fmLogMsg(int level, const char *data, ...);
 bool fmLogFileInit();
 
 void fmLogAddEventLog(SFmAlarmDataT * data, bool is_event_suppressed);
-
-//void fmLogAddEventLog(SFmAlarmDataT * data);
-
 
 #endif
 

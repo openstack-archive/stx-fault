@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 Wind River Systems, Inc.
+// Copyright (c) 2017-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -40,8 +40,9 @@
 #include "fmSnmpUtils.h"
 #include "fmDbUtils.h"
 #include "fmDbEventLog.h"
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmEventSuppression.h"
+#include "fmConfig.h"
 
 #define FM_UUID_LENGTH 36
 
@@ -125,7 +126,7 @@ static bool dequeue_get(sFmGetReq &req){
 	return true;
 }
 
-void create_db_log(CFmDBSession &sess, sFmJobReq &req){
+void create_db_log(sFmJobReq &req){
 	SFmAlarmDataT alarm = req.data;
 
 	if (alarm.alarm_state != FM_ALARM_STATE_MSG){
@@ -135,7 +136,7 @@ void create_db_log(CFmDBSession &sess, sFmJobReq &req){
 	}
 
 	fmLogAddEventLog(&alarm, false);
-	fm_snmp_util_gen_trap(sess, FM_ALARM_MESSAGE, alarm);
+	fm_snmp_util_gen_trap(FM_ALARM_MESSAGE, alarm);
 }
 
 void get_db_alarm(CFmDBSession &sess, sFmGetReq &req, void *context){
@@ -293,7 +294,7 @@ void fm_handle_job_request(CFmDBSession &sess, sFmJobReq &req){
 
 	//check if it is a customer log request
 	if (req.type == FM_CUSTOMER_LOG) {
-		return create_db_log(sess,req);
+		return create_db_log(req);
 	}
 
 	// check to see if there are any alarms need to be masked/unmasked
@@ -317,7 +318,7 @@ void fm_handle_job_request(CFmDBSession &sess, sFmJobReq &req){
 				req.data.alarm_id);
 	} else {
         if (!is_event_suppressed)
-		    fm_snmp_util_gen_trap(sess, req.type, req.data);
+		    fm_snmp_util_gen_trap(req.type, req.data);
 	}
 
 	fmLogAddEventLog(&req.data, is_event_suppressed);
@@ -572,13 +573,9 @@ EFmErrorT fm_server_create(const char *fn) {
         hints.ai_addr = NULL;
         hints.ai_next = NULL;
 
+        fm_conf_set_file(fn);
+
         fmLoggingInit();
-
-        if (!fmLogFileInit()){
-        	exit(-1);
-        }
-
-        fm_db_util_set_conf_file(fn);
 
         if (!fm_db_util_sync_event_suppression()){
         	exit(-1);
@@ -704,7 +701,7 @@ bool fm_handle_event_suppress_changes(CFmDBSession &sess){
     }
 
     SFmAlarmDataT *alarm = NULL;
-    fm_snmp_util_gen_trap(sess, FM_WARM_START, *alarm);
+    fm_snmp_util_gen_trap(FM_WARM_START, *alarm);
 
     return true;
 }

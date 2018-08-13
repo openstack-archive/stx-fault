@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2014 Wind River Systems, Inc.
+# Copyright (c) 2013-2018 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -11,9 +11,9 @@
 #
 
 import copy
-import subprocess
 from . import constants
 import six
+import fm_core
 
 
 class ClientException(Exception):
@@ -31,8 +31,8 @@ class ClientException(Exception):
 #              on the alarm. Optional.
 # alarm_type: see ALARM_TYPE
 # probable_cause: see ALARM_PROBABLE_CAUSE
-# proposed_repair_action:free-format string providing additional details on how to
-#                        clear the alarm. Optional.
+# proposed_repair_action:free-format string providing additional details on
+#                        how to clear the alarm. Optional.
 # service_affecting: true/false, default to false
 # suppression: true/false (allowed/not-allowed), default to false
 # uuid: unique identifier of an active alarm instance, filled by FM system
@@ -76,67 +76,59 @@ class FaultAPIs(object):
         self._check_required_attributes(data)
         self._validate_attributes(data)
         buff = self._alarm_to_str(data)
-        cmd = constants.FM_CLIENT_SET_FAULT + '"' + buff + '"'
-        resp = self._run_cmd_and_get_resp(cmd)
-        if (resp[0] == "Ok") and (len(resp) > 1):
-            return resp[1]
-        else:
+        try:
+            return fm_core.set(buff)
+        except (RuntimeError, SystemError, TypeError):
             return None
 
     def clear_fault(self, alarm_id, entity_instance_id):
         sep = constants.FM_CLIENT_STR_SEP
         buff = (sep + self._check_val(alarm_id) + sep +
                 self._check_val(entity_instance_id) + sep)
-        cmd = constants.FM_CLIENT_CLEAR_FAULT + '"' + buff + '"'
-
-        resp = self._run_cmd_and_get_resp(cmd)
-        if resp[0] == "Ok":
-            return True
-        else:
+        try:
+            return fm_core.clear(buff)
+        except (RuntimeError, SystemError, TypeError):
             return False
 
     def get_fault(self, alarm_id, entity_instance_id):
         sep = constants.FM_CLIENT_STR_SEP
         buff = (sep + self._check_val(alarm_id) + sep +
                 self._check_val(entity_instance_id) + sep)
-        cmd = constants.FM_CLIENT_GET_FAULT + '"' + buff + '"'
-        resp = self._run_cmd_and_get_resp(cmd)
-        if (resp[0] == "Ok") and (len(resp) > 1):
-            return self._str_to_alarm(resp[1])
-        else:
+        try:
+            resp = fm_core.get(buff)
+            return self._str_to_alarm(resp) if resp else None
+        except (RuntimeError, SystemError, TypeError):
             return None
 
     def clear_all(self, entity_instance_id):
-        cmd = constants.FM_CLIENT_CLEAR_ALL + '"' + entity_instance_id + '"'
-        resp = self._run_cmd_and_get_resp(cmd)
-        if resp[0] == "Ok":
-            return True
-        else:
+        try:
+            return fm_core.clear_all(entity_instance_id)
+        except (RuntimeError, SystemError, TypeError):
             return False
 
     def get_faults(self, entity_instance_id):
-        cmd = constants.FM_CLIENT_GET_FAULTS + '"' + entity_instance_id + '"'
-        resp = self._run_cmd_and_get_resp(cmd)
-        data = []
-        if resp[0] == "Ok":
-            for i in range(1, len(resp)):
-                alarm = self._str_to_alarm(resp[i])
-                data.append(alarm)
-            return data
-        else:
-            return None
+        try:
+            resp = fm_core.get_by_eid(entity_instance_id)
+            if resp is not None:
+                data = []
+                for i in resp:
+                    data.append(self._str_to_alarm(i))
+                return data
+        except (RuntimeError, SystemError, TypeError):
+            pass
+        return None
 
     def get_faults_by_id(self, alarm_id):
-        cmd = constants.FM_CLIENT_GET_FAULTS_BY_ID + '"' + alarm_id + '"'
-        resp = self._run_cmd_and_get_resp(cmd)
-        data = []
-        if resp[0] == "Ok":
-            for i in range(1, len(resp)):
-                alarm = self._str_to_alarm(resp[i])
-                data.append(alarm)
-            return data
-        else:
-            return None
+        try:
+            resp = fm_core.get_by_aid(alarm_id)
+            if resp is not None:
+                data = []
+                for i in resp:
+                    data.append(self._str_to_alarm(i))
+                return data
+        except (RuntimeError, SystemError, TypeError):
+            pass
+        return None
 
     @staticmethod
     def _check_val(data):
@@ -176,21 +168,6 @@ class FaultAPIs(object):
                          line[constants.FM_UUID_INDEX],
                          line[constants.FM_TIMESTAMP_INDEX])
             return data
-
-    @staticmethod
-    def _run_cmd_and_get_resp(cmd):
-        resp = []
-        cmd = cmd.encode('utf-8')
-        pro = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-        output = pro.communicate()[0]
-        lines = output.split('\n')
-        for line in lines:
-            if line != '':
-                resp.append(line)
-        if len(resp) == 0:
-            resp.append("Unknown")
-
-        return resp
 
     @staticmethod
     def _check_required_attributes(data):

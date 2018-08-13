@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -16,10 +16,10 @@
 #define FM_DB_TABLE_COUNT_COLUMN                 "count"
 
 /* Alarm table name */
-#define FM_ALARM_TABLE_NAME                       "i_alarm"
+#define FM_ALARM_TABLE_NAME                       "alarm"
 
 /* Event log table name */
-#define FM_EVENT_LOG_TABLE_NAME                   "i_event_log"
+#define FM_EVENT_LOG_TABLE_NAME                   "event_log"
 
 /* Event suppression table name */
 #define FM_EVENT_SUPPRESSION_TABLE_NAME           "event_suppression"
@@ -81,11 +81,6 @@
 #define FM_EVENT_SUPPRESSION_UNSUPPRESSED   "unsuppressed"
 #define FM_EVENT_SUPPRESSION_NONE           "None"
 
-/* System table name */
-#define FM_SYSTEM_TABLE_NAME         "i_system"
-
-#define FM_SYSTEM_NAME_COLUMN         "name"
-#define FM_SYSTEM_REGION_COLUMN      "region_name"
 
 #define FM_ENTITY_ROOT_KEY           "system="
 #define FM_ENTITY_REGION_KEY         "region="
@@ -93,6 +88,10 @@
 /* config keys */
 #define FM_SQL_CONNECTION            "sql_connection"
 #define FM_EVENT_LOG_MAX_SIZE        "event_log_max_size"
+#define FM_SYSTEM_NAME               "system_name"
+#define FM_REGION_NAME               "region_name"
+#define FM_DEBUG_FLAG                "debug"
+#define FM_STRING_TRUE               "True"
 
 #define CLEAR_ALL_REASON_TEXT        "System initiated hierarchical alarm clear"
 
