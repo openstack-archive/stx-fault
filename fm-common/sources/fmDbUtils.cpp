@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -25,29 +25,18 @@
 #include "fmDb.h"
 #include "fmDbUtils.h"
 #include "fmDbAPI.h"
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmAlarmUtils.h"
+#include "fmConfig.h"
 
 
-typedef std::map<std::string,std::string> configParams;
-
-static const char *conf = NULL;
 
 static pthread_mutex_t mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
-CFmMutex & getConfMutex(){
-	static CFmMutex *m = new CFmMutex;
-	return *m;
-}
-
-configParams &getConfigMap(){
-	static configParams conf;
-	return conf;
-}
 
 void FM_DB_UT_NAME_VAL(
-		std::string &result,
-		const std::string &lhs, const std::string &rhs) {
+	std::string &result,
+	const std::string &lhs, const std::string &rhs) {
 	result+= lhs;
 	result+= " = '";
 	result+=rhs;
@@ -55,8 +44,8 @@ void FM_DB_UT_NAME_VAL(
 }
 
 void FM_DB_UT_NAME_PARAM(
-		std::string &result,
-		const std::string &lhs, const std::string &rhs) {
+	std::string &result,
+	const std::string &lhs, const std::string &rhs) {
 	result+= lhs;
 	result+= "=";
 	result+=rhs;
@@ -90,40 +79,6 @@ static int get_oldest_id(CFmDBSession &sess, const char* db_table){
 	return id;
 }
 
-static void get_config_parameters(){
-	CfmFile f;
-	std::string delimiter = "=";
-	std::string line, key, value;
-	size_t pos = 0;
-
-	if  (conf == NULL){
-		FM_ERROR_LOG("The config file is not set\n");
-		exit(-1);
-	}
-
-	if (!f.open(conf, CfmFile::READ, false)){
-		FM_ERROR_LOG("Failed to open config file: %s\n", conf);
-		exit(-1);
-	}
-
-	while (true){
-		if (!f.read_line(line)) break;
-
-		if (line.size() == 0) continue;
-
-		if (line[0] == '#') continue;
-
-		pos = line.find(delimiter);
-		key = line.substr(0, pos);
-		value = line.erase(0, pos + delimiter.length());
-		getConfigMap()[key] = value;
-                if (key.compare("sql_connection") != 0){
-			// Don't log sql_connection, as it has a password
-			FM_INFO_LOG("Config key (%s), value (%s)",
-				key.c_str(), value.c_str());
-		}
-	}
-}
 
 static inline CFmDBSession & FmDbSessionFromHandle(TFmAlarmSessionT *p){
 	return *((CFmDBSession*)p);
@@ -189,7 +144,7 @@ int fm_db_util_string_to_int(std::string val){
 }
 
 void fm_db_util_make_timestamp_string(std::string &tstr, FMTimeT tm,
-		bool snmp){
+	bool snmp){
 	struct timespec ts;
 	if (tm != 0){
 		ts.tv_sec = tm / 1000000;
@@ -517,28 +472,6 @@ bool fm_db_util_build_sql_delete_all(const char* db_table, const char *id,
 	return true;
 }
 
-void fm_db_util_set_conf_file(const char *fn){
-	conf = fn;
-}
-
-bool fm_db_util_get_config(std::string &key, std::string &val){
-
-	configParams::iterator it;
-	static int loaded = false;
-	CFmMutexGuard m(getConfMutex());
-
-	if (!loaded){
-		get_config_parameters();
-		loaded = true;
-	}
-
-	it = getConfigMap().find(key);
-	if (it != getConfigMap().end()){
-		val = it->second;
-		return true;
-	}
-	return false;
-}
 
 int & fm_get_alarm_history_max_size(){
 	static int max_size = 0;
@@ -546,7 +479,7 @@ int & fm_get_alarm_history_max_size(){
 	if (max_size == 0){
 		std::string val;
 		std::string key = FM_EVENT_LOG_MAX_SIZE;
-		if (fm_db_util_get_config(key, val)){
+		if (fm_get_config_key(key, val)){
 			max_size = fm_db_util_string_to_int(val);
 		}else{
 			FM_ERROR_LOG("Fail to get config value for (%s)\n", key.c_str());
@@ -561,7 +494,7 @@ int & fm_get_log_max_size(){
 	if (max_size == 0){
 		std::string val;
 		std::string key = FM_EVENT_LOG_MAX_SIZE;
-		if (fm_db_util_get_config(key, val)){
+		if (fm_get_config_key(key, val)){
 			max_size = fm_db_util_string_to_int(val);
 		}else{
 			FM_ERROR_LOG("Fail to get config value for (%s)\n", key.c_str());
@@ -570,34 +503,21 @@ int & fm_get_log_max_size(){
 	return max_size;
 }
 
-std::string fm_db_util_get_system_name(CFmDBSession &sess){
-	fm_db_result_t res;
-	std::string cmd;
+std::string fm_db_util_get_system_info(const std::string prefix, std::string key){
+	std::string val;
 	std::string name = "";
-
-	fm_db_util_build_sql_query(FM_SYSTEM_TABLE_NAME, NULL, cmd);
-	if (sess.query(cmd.c_str(), res)){
-		if (res.size() > 0){
-			std::map<std::string,std::string>  entry = res[0];
-			name = FM_ENTITY_ROOT_KEY + entry[FM_SYSTEM_NAME_COLUMN];
-		}
+	if (fm_get_config_key(key, val)){
+		name = prefix + val;
 	}
 	return name;
 }
 
-std::string fm_db_util_get_region_name(CFmDBSession &sess){
-        fm_db_result_t res;
-        std::string cmd;
-        std::string name = "";
+std::string fm_db_util_get_system_name(){
+	return fm_db_util_get_system_info(FM_ENTITY_ROOT_KEY, FM_SYSTEM_NAME);
+}
 
-        fm_db_util_build_sql_query(FM_SYSTEM_TABLE_NAME, NULL, cmd);
-        if (sess.query(cmd.c_str(), res)){
-                if (res.size() > 0){
-                        std::map<std::string,std::string>  entry = res[0];
-                        name = FM_ENTITY_REGION_KEY + entry[FM_SYSTEM_REGION_COLUMN];
-                }
-        }
-        return name;
+std::string fm_db_util_get_region_name(){
+        return fm_db_util_get_system_info(FM_ENTITY_REGION_KEY, FM_REGION_NAME);
 }
 
 bool fm_db_util_get_row_counts(CFmDBSession &sess,
@@ -656,13 +576,12 @@ bool fm_db_util_get_next_log_id(CFmDBSession &sess, int &id){
 	return true;
 }
 
-bool fm_db_util_create_session(CFmDBSession **sess){
+bool fm_db_util_create_session(CFmDBSession **sess, std::string key){
 	TFmAlarmSessionT handle;
 	const char *db_conn = NULL;
 	std::string val;
-	std::string key = FM_SQL_CONNECTION;
 
-	if (fm_db_util_get_config(key, val) != true){
+	if (fm_get_config_key(key, val) != true){
 		FM_ERROR_LOG("Failed to get config for key: (%s)\n", key.c_str());
 		return false;
 	}
@@ -682,34 +601,34 @@ bool fm_db_util_sync_event_suppression(void){
 	std::string val;
 	std::string key = FM_SQL_CONNECTION;
 
-	if (fm_db_util_get_config(key, val) != true){
-		FM_ERROR_LOG("Failed to get config for key: (%s)\n", key.c_str());
+	if (fm_get_config_key(key, val) != true){
+		FM_ERROR_LOG("NEW Failed to get config for key: (%s)\n", key.c_str());
 		return false;
 	}
 
 	db_conn = val.c_str();
 
-    FILE* file;
-    int argc;
-    char * argv[2];
+	FILE* file;
+	int argc;
+	char * argv[2];
 
-    FM_INFO_LOG("Starting event suppression synchronization...\n");
+	FM_INFO_LOG("Starting event suppression synchronization...\n");
 
-    argc = 2;
-    argv[0] = (char*)FM_DB_SYNC_EVENT_SUPPRESSION;
-    argv[1] = (char*)db_conn;
+	argc = 2;
+	argv[0] = (char*)FM_DB_SYNC_EVENT_SUPPRESSION;
+	argv[1] = (char*)db_conn;
 
-    Py_SetProgramName(argv[0]);
-    Py_Initialize();
-    PySys_SetArgv(argc, argv);
-    file = fopen(FM_DB_SYNC_EVENT_SUPPRESSION,"r");
-    PyRun_SimpleFile(file, FM_DB_SYNC_EVENT_SUPPRESSION);
-    fclose(file);
-    Py_Finalize();
+	Py_SetProgramName(argv[0]);
+	Py_Initialize();
+	PySys_SetArgv(argc, argv);
+	file = fopen(FM_DB_SYNC_EVENT_SUPPRESSION,"r");
+	PyRun_SimpleFile(file, FM_DB_SYNC_EVENT_SUPPRESSION);
+	fclose(file);
+	Py_Finalize();
 
-    FM_INFO_LOG("Completed event suppression synchronization.\n");
+	FM_INFO_LOG("Completed event suppression synchronization.\n");
 
-    return return_value;
+	return return_value;
 }
 
 

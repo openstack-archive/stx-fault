@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -13,7 +13,7 @@
 #include <map>
 
 #include "fmAPI.h"
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmDb.h"
 
 class CFmDbAlarm {

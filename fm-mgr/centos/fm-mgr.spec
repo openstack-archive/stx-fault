@@ -5,7 +5,7 @@ Summary: CGTS Platform Fault Manager Package
 Name: fm-mgr
 Version: 1.0
 Release: %{tis_patch_ver}%{?_tis_dist}
-License: Apache-2.0
+License: windriver
 Group: base
 Packager: Wind River <info@windriver.com>
 URL: unknown
@@ -15,7 +15,7 @@ BuildRequires: systemd-devel
 BuildRequires: libuuid-devel
 
 %description
-CGTS platform Fault Manager that serves the client 
+CGTS platform Fault Manager that serves the client
 application fault management requests and raise/clear/update  
 alarms in the active alarm database.
 
@@ -43,7 +43,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE
 %{local_bindir}/fmManager
-%config(noreplace) %{_sysconfdir}/fm.conf
 %_sysconfdir/init.d/fminit
 %{_unitdir}/fminit.service
 %config(noreplace) %{_sysconfdir}/logrotate.d/fm.logrotate

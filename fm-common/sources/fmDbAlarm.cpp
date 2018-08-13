@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014 Wind River Systems, Inc.
+// Copyright (c) 2014-2018 Wind River Systems, Inc.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -11,7 +11,7 @@
 #include "fmLog.h"
 #include "fmDbAlarm.h"
 #include "fmAlarmUtils.h"
-#include "fmDbConstants.h"
+#include "fmConstants.h"
 #include "fmDbUtils.h"
 
 typedef std::map<int,std::string> itos_t;
@@ -319,7 +319,7 @@ bool CFmDbAlarmOperation::get_all_alarms(CFmDBSession &sess, SFmAlarmDataT **ala
 	if (!get_alarms(sess, NULL, res))
 		return false;
 
-	std::string sname = fm_db_util_get_system_name(sess);
+	std::string sname = fm_db_util_get_system_name();
 
 	unsigned int found_num_alarms = res.size();
 
@@ -436,7 +436,7 @@ bool CFmDbAlarmOperation::get_all_history_alarms(CFmDBSession &sess, SFmAlarmDat
 	*alarms = NULL;
 	if (!get_history(sess,res)) return false;
 
-	std::string sname = fm_db_util_get_system_name(sess);
+	std::string sname = fm_db_util_get_system_name();
 
 	unsigned int found_num_alarms = res.size();
 
