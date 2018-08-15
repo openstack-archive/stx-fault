@@ -96,7 +96,7 @@ def event_suppression_update(cc, data, suppress=False):
         patch = []
         for event_id in event_suppression_list:
             if event_id.alarm_id in alarm_id_list:
-                print "Alarm ID: {} {}.".format(event_id.alarm_id, patch_value)
+                print("Alarm ID: {} {}.".format(event_id.alarm_id, patch_value))
                 uuid = event_id.uuid
                 patch.append(dict(path='/' + 'suppression_status', value=patch_value, op='replace'))
                 cc.event_suppression.update(uuid, patch)
@@ -196,7 +196,7 @@ def do_event_unsuppress_all(cc, args):
         if suppression_status == 'suppressed':
             uuid = alarm_type.uuid
             patch.append(dict(path='/' + 'suppression_status', value='unsuppressed', op='replace'))
-            print "Alarm ID: {} unsuppressed.".format(alarm_type.alarm_id)
+            print("Alarm ID: {} unsuppressed.".format(alarm_type.alarm_id))
             cc.event_suppression.update(uuid, patch)
 
     no_paging = args.nopaging

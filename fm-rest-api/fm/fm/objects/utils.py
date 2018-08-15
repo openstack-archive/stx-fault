@@ -45,7 +45,7 @@ def datetime_or_none(dt):
 
 
 def datetime_or_str_or_none(val):
-    if isinstance(val, basestring):
+    if isinstance(val, str):
         return timeutils.parse_isotime(val)
     return datetime_or_none(val)
 
@@ -70,7 +70,7 @@ def uuid_or_none(val):
     """Attempt to dictify a value, or None."""
     if val is None:
         return None
-    elif isinstance(val, basestring):
+    elif isinstance(val, str):
         return str(uuid.UUID(val.strip()))
     raise ValueError(_('Invalid UUID value %s') % val)
 

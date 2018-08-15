@@ -246,7 +246,7 @@ class AlarmController(rest.RestController):
                               q=None, include_suppress=False):
         limit = api_utils.validate_limit(limit)
         sort_dir = api_utils.validate_sort_dir(sort_dir)
-        if isinstance(sort_key, basestring) and ',' in sort_key:
+        if isinstance(sort_key, str) and ',' in sort_key:
             sort_key = sort_key.split(',')
 
         kwargs = {}

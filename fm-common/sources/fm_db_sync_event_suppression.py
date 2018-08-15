@@ -106,8 +106,8 @@ EVENT_TYPES_FILE = get_events_yaml_filename()
 if not os.path.isfile(EVENT_TYPES_FILE):
     exit(-1)
 
-stream = file(EVENT_TYPES_FILE, 'r')
-event_types = yaml.load(stream)
+with open(EVENT_TYPES_FILE, 'r') as stream:
+    event_types = yaml.load(stream)
 
 for alarm_id in event_types:
     if isinstance(alarm_id, float):

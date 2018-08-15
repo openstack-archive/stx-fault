@@ -49,7 +49,7 @@ def save_and_reraise_exception():
         LOG.error(_('Original exception being dropped: %s'),
                   traceback.format_exception(type_, value, tb))
         raise
-    raise type_, value, tb
+    raise (type_, value, tb)
 
 
 def validate_limit(limit):

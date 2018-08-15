@@ -405,7 +405,7 @@ def wordwrap_header(field, field_label, formatter):
 
 
 def default_printer(s):
-    print (s)
+    print(s)
 
 
 def pt_builder(field_labels, fields, formatters, paging, printer=default_printer):
@@ -459,7 +459,7 @@ def pt_builder(field_labels, fields, formatters, paging, printer=default_printer
                 if self.terminal_lines_left > 0:
                     printer("\n" * (self.terminal_lines_left - 1))
 
-                s = raw_input("Press Enter to continue or 'q' to exit...")
+                s = six.moves.input("Press Enter to continue or 'q' to exit...")
                 if s == 'q':
                     self.quit = True
                     return False
@@ -540,7 +540,7 @@ def print_dict(d, dict_property="Property", wrap=0):
             v = textwrap.fill(six.text_type(v), wrap)
         # if value has a newline, add in multiple rows
         # e.g. fault with stacktrace
-        if v and isinstance(v, basestring) and r'\n' in v:
+        if v and isinstance(v, str) and r'\n' in v:
             lines = v.strip().split(r'\n')
             col1 = k
             for line in lines:
@@ -549,7 +549,7 @@ def print_dict(d, dict_property="Property", wrap=0):
         else:
             pt.add_row([k, v])
 
-    print (pt.get_string())
+    print(pt.get_string())
 
 
 def _build_row_from_object(fields, formatters, o):

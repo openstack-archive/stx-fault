@@ -783,7 +783,7 @@ def _simpleTestHarness(no_wrap):
         formatterSpec[f] = buildFormatter(f, formatterSpecX[f])
 
     logs = []
-    for i in xrange(0, 30):
+    for i in range(0, 30):
         log = {}
         for f in fields:
             if f == 'number':
@@ -799,7 +799,7 @@ def _simpleTestHarness(no_wrap):
     utils.print_list(logs, fields, field_labels, formatters=formatters, sortby=6,
                      reversesort=True, no_wrap_fields=['entity_instance_id'])
 
-    print "nowrap = {}".format(is_nowrap_set())
+    print("nowrap = {}".format(is_nowrap_set()))
 
 
 if __name__ == "__main__":
