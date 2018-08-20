@@ -43,6 +43,7 @@ static stoi_t err_to_int;
 			memset(charb,0,sizeof(charb)); \
 		} else {  \
 			strncpy((charb),str.c_str(),sizeof(charb)); \
+			charb[sizeof(charb) - 1] = '\0';            \
 		}
 
 void add_both_tables(int id, const char *str, itos_t &t1,stoi_t &t2 ) {
