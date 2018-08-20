@@ -181,19 +181,17 @@ bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 
 	res = getTrapDestList();
 
-	if (&data != NULL) {
-		eid.assign(data.entity_instance_id);
-		std::string region_name = fm_db_util_get_region_name();
-		std::string sys_name = fm_db_util_get_system_name();
-		if (sys_name.length() != 0){
-			eid = sys_name + "."+ eid;
-		}
-		if (region_name.length() != 0){
-			eid = region_name + "."+ eid;
-		}
-		strncpy(data.entity_instance_id, eid.c_str(),
-				sizeof(data.entity_instance_id)-1);
+	eid.assign(data.entity_instance_id);
+	std::string region_name = fm_db_util_get_region_name();
+	std::string sys_name = fm_db_util_get_system_name();
+	if (sys_name.length() != 0){
+		eid = sys_name + "."+ eid;
 	}
+	if (region_name.length() != 0){
+		eid = region_name + "."+ eid;
+	}
+	strncpy(data.entity_instance_id, eid.c_str(),
+			sizeof(data.entity_instance_id)-1);
 
 	fm_db_result_t::iterator it = res.begin();
 	fm_db_result_t::iterator end = res.end();

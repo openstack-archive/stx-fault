@@ -700,8 +700,8 @@ bool fm_handle_event_suppress_changes(CFmDBSession &sess){
         PQfreemem(notify);
     }
 
-    SFmAlarmDataT *alarm = NULL;
-    fm_snmp_util_gen_trap(FM_WARM_START, *alarm);
+    SFmAlarmDataT alarm;
+    fm_snmp_util_gen_trap(FM_WARM_START, alarm);
 
     return true;
 }
