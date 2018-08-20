@@ -42,7 +42,7 @@ static stoi_t err_to_int;
 			((str).length()==1 && ((str).c_str())[0]==' ')) { \
 			memset(charb,0,sizeof(charb)); \
 		} else {  \
-			strncpy((charb),str.c_str(),sizeof(charb)); \
+			snprintf(charb, sizeof(charb)-1, "%s", str.c_str());  \
 		}
 
 void add_both_tables(int id, const char *str, itos_t &t1,stoi_t &t2 ) {
