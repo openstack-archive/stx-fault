@@ -28,7 +28,7 @@ typedef std::map<int,std::string> int_to_objtype;
 
 static int_to_objtype objtype_map;
 static pthread_mutex_t mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-
+static void update_alarm_entity_instance_id(SFmAlarmDataT &data);
 
 fm_db_result_t &getTrapDestList(){
 	static fm_db_result_t trap_dest_list;
@@ -110,18 +110,35 @@ void set_trap_dest_list(std::string value){
 	FM_INFO_LOG("Set trap entries: (%d)", getTrapDestList().size());
 }
 
+static void update_alarm_entity_instance_id(SFmAlarmDataT &data) {
+	std::string eid;
+	eid.assign(data.entity_instance_id);
+	std::string region_name = fm_db_util_get_region_name();
+	std::string sys_name = fm_db_util_get_system_name();
+	if (sys_name.length() != 0){
+		eid = sys_name + "."+ eid;
+	}
+	if (region_name.length() != 0){
+		eid = region_name + "."+ eid;
+	}
+	strncpy(data.entity_instance_id, eid.c_str(),
+          sizeof(data.entity_instance_id)-1);
+}
+
 static std::string format_trap_cmd(int type, SFmAlarmDataT &data,
 		std::string &ip, std::string &comm){
 	std::string cmd;
 	std::string objtype;
 	std::string mib;
 	std::string s = "\"\" ";
-        std::string env;
+	std::string env;
 
-	if (get_trap_objtype(type) == WARM_START)
+	if (get_trap_objtype(type) == WARM_START) {
 		mib = SNMPv2_MIB;
-	else
+	} else {
 		mib = WRS_ALARM_MIB;
+		update_alarm_entity_instance_id(data);
+	}
 
 	objtype = mib + SCOPE + get_trap_objtype(type);
 
@@ -180,20 +197,6 @@ bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 	std::string cmd, eid;
 
 	res = getTrapDestList();
-
-	if (&data != NULL) {
-		eid.assign(data.entity_instance_id);
-		std::string region_name = fm_db_util_get_region_name();
-		std::string sys_name = fm_db_util_get_system_name();
-		if (sys_name.length() != 0){
-			eid = sys_name + "."+ eid;
-		}
-		if (region_name.length() != 0){
-			eid = region_name + "."+ eid;
-		}
-		strncpy(data.entity_instance_id, eid.c_str(),
-				sizeof(data.entity_instance_id)-1);
-	}
 
 	fm_db_result_t::iterator it = res.begin();
 	fm_db_result_t::iterator end = res.end();
