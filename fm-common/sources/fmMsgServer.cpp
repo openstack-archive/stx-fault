@@ -136,7 +136,7 @@ void create_db_log(sFmJobReq &req){
 	}
 
 	fmLogAddEventLog(&alarm, false);
-	fm_snmp_util_gen_trap(FM_ALARM_MESSAGE, alarm);
+	fm_snmp_util_gen_trap(FM_ALARM_MESSAGE, &alarm);
 }
 
 void get_db_alarm(CFmDBSession &sess, sFmGetReq &req, void *context){
@@ -318,7 +318,7 @@ void fm_handle_job_request(CFmDBSession &sess, sFmJobReq &req){
 				req.data.alarm_id);
 	} else {
         if (!is_event_suppressed)
-		    fm_snmp_util_gen_trap(req.type, req.data);
+		    fm_snmp_util_gen_trap(req.type, &req.data);
 	}
 
 	fmLogAddEventLog(&req.data, is_event_suppressed);
@@ -701,7 +701,7 @@ bool fm_handle_event_suppress_changes(CFmDBSession &sess){
     }
 
     SFmAlarmDataT *alarm = NULL;
-    fm_snmp_util_gen_trap(FM_WARM_START, *alarm);
+    fm_snmp_util_gen_trap(FM_WARM_START, alarm);
 
     return true;
 }

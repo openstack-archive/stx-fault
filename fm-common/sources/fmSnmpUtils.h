@@ -12,7 +12,7 @@
 #include "fmAPI.h"
 #include "fmDb.h"
 
-bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data);
+bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT * data);
 
 void set_trap_dest_list(std::string value);
 

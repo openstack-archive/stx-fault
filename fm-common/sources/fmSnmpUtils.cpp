@@ -172,7 +172,7 @@ static std::string format_trap_cmd(int type, SFmAlarmDataT &data,
 }
 
 
-bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
+bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT * data) {
 
 	bool rc = true;
 	fm_buff_t cmdbuff;
@@ -181,8 +181,8 @@ bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 
 	res = getTrapDestList();
 
-	if (&data != NULL) {
-		eid.assign(data.entity_instance_id);
+	if (data != NULL) {
+		eid.assign(data->entity_instance_id);
 		std::string region_name = fm_db_util_get_region_name();
 		std::string sys_name = fm_db_util_get_system_name();
 		if (sys_name.length() != 0){
@@ -191,8 +191,8 @@ bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 		if (region_name.length() != 0){
 			eid = region_name + "."+ eid;
 		}
-		strncpy(data.entity_instance_id, eid.c_str(),
-				sizeof(data.entity_instance_id)-1);
+		strncpy(data->entity_instance_id, eid.c_str(),
+				sizeof(data->entity_instance_id)-1);
 	}
 
 	fm_db_result_t::iterator it = res.begin();
@@ -203,7 +203,7 @@ bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 		cmd.clear();
 		std::string ip = (*it)[FM_TRAPDEST_IP];
 		std::string comm = (*it)[FM_TRAPDEST_COMM];
-		cmd = format_trap_cmd(type, data, ip, comm);
+		cmd = format_trap_cmd(type, *data, ip, comm);
 
 		//FM_INFO_LOG("run cmd: %s\n", cmd.c_str());
 		char *pline = &(cmdbuff[0]);
