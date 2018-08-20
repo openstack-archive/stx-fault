@@ -20,11 +20,13 @@ Requires:       python-six >= 1.9.0
 Requires:       python-oslo-i18n >= 2.1.0
 Requires:       python-oslo-utils >= 3.20.0
 Requires:       python-requests
+Requires:       bash-completion
 
 %description
 A python client library for Fault Management
 
 %define local_bindir /usr/bin/
+%define local_etc_bash_completiond /etc/bash_completion.d/
 %define pythonroot /usr/lib64/python2.7/site-packages
 
 %define debug_package %{nil}
@@ -56,6 +58,9 @@ export PBR_VERSION=%{version}
                              --install-data=/usr/share \
                              --single-version-externally-managed
 
+install -d -m 755 %{buildroot}%{local_etc_bash_completiond}
+install -p -D -m 664 tools/fm.bash_completion %{buildroot}%{local_etc_bash_completiond}/fm.bash_completion
+
 # prep SDK package
 mkdir -p %{buildroot}/usr/share/remote-clients
 tar zcf %{buildroot}/usr/share/remote-clients/%{name}-%{version}.tgz --exclude='.gitignore' --exclude='.gitreview' -C .. %{name}-%{version}
@@ -68,6 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE
 %{local_bindir}/*
+%{local_etc_bash_completiond}/*
 %{pythonroot}/%{pypi_name}/*
 %{pythonroot}/%{pypi_name}-%{version}*.egg-info
 
