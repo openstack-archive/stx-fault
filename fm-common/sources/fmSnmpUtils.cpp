@@ -181,7 +181,7 @@ bool fm_snmp_util_gen_trap(int type, SFmAlarmDataT &data) {
 
 	res = getTrapDestList();
 
-	if (&data != NULL) {
+	if (get_trap_objtype(type) != WARM_START) {
 		eid.assign(data.entity_instance_id);
 		std::string region_name = fm_db_util_get_region_name();
 		std::string sys_name = fm_db_util_get_system_name();
