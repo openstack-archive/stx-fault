@@ -5,7 +5,7 @@ CLI_SRCS = fm_cli.cpp
 OBJS = $(SRCS:.cpp=.o)
 CLI_OBJS = fm_cli.o
 LDLIBS = -lstdc++ -lrt -luuid -lpq -lpthread -lpython2.7
-INCLUDES = -I./
+INCLUDES = -I./ -I$(shell pg_config --includedir)
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
 
 LIBFMCOMMON_SO := libfmcommon.so
