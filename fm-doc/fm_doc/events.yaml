@@ -57,7 +57,7 @@
 #   Management_Affecting_Severity: < none | critical | major | minor | warning >
 #       // lowest alarm level of this type that will block forced upgrades & orchestration actions
 #   Degrade_Affecting_Severity: < none | critical | major | minor >
-#       // lowest alarm level of this type sets a host to 'degraded' 
+#       // lowest alarm level of this type sets a host to 'degraded'
 #
 #
 #   Other Notes:
@@ -95,7 +95,7 @@
              MAJOR    @ 90%
              MINOR    @ 80%
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action:
         critical: degrade
@@ -116,7 +116,7 @@
              MAJOR    @ 90%
              MINOR    @ 80%
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action:
         critical: degrade
@@ -137,7 +137,7 @@
              MAJOR    @ 80%
              MINOR    @ 70%
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support; may require additional memory on Host."
     Maintenance_Action:
         critical: degrade
@@ -165,7 +165,7 @@
         host=<hostname>.filesystem=<mount-dir>
         OR
         host=<hostname>.volumegroup=<volumegroup-name>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action:
         critical: degrade
@@ -205,7 +205,7 @@
         OR
         'OAM' Interface failed.
     Entity_Instance_ID: host=<hostname>.interface=<if-name>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: Check cabling and far-end port configuration and status on adjacent equipment.
     Maintenance_Action:
         critical: degrade
@@ -240,7 +240,7 @@
         OR
         'MGMT' Interface failed.
     Entity_Instance_ID: host=<hostname>.interface=<if-name>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: Check cabling and far-end port configuration and status on adjacent equipment.
     Maintenance_Action:
         critical: degrade
@@ -275,7 +275,7 @@
         OR
         'INFRA' Interface failed.
     Entity_Instance_ID: host=<hostname>.interface=<if-name>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: Check cabling and far-end port configuration and status on adjacent equipment.
     Maintenance_Action:
         critical: degrade
@@ -310,7 +310,7 @@
         OR
         'DATA-VRS' Interface down.
     Entity_Instance_ID: host=<hostname>.interface=<if-name>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: Check cabling and far-end port configuration and status on adjacent equipment.
     Maintenance_Action:
         major: degrade
@@ -330,7 +330,7 @@
     Entity_Instance_ID:
         major: host=<hostname>.ntp
         minor: host=<hostname>.ntp=<IP address>
-    Severity: [ major, minor ]
+    Severity: [major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action: none
     Inhibit_Alarms:
@@ -345,7 +345,7 @@
     Type: Alarm
     Description: "VSwitch Memory Usage, processor <processor> threshold exceeded; threshold x%, actual y% ."
     Entity_Instance_ID: host=<hostname>.processor=<processor>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action:
         critical: degrade
@@ -362,7 +362,7 @@
     Type: Alarm
     Description: "Cinder LVM Thinpool Usage threshold exceeded; threshold x%, actual y% ."
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action:
         critical: degrade
@@ -379,7 +379,7 @@
     Type: Alarm
     Description: "Nova LVM Thinpool Usage threshold exceeded; threshold x%, actual y% ."
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
     Maintenance_Action:
         critical: degrade
@@ -394,7 +394,7 @@
 
 100.118:
     Type: Alarm
-    Description:  Controller cannot establish connection with remote logging server.
+    Description: Controller cannot establish connection with remote logging server.
     Entity_Instance_ID: host=<hostname>
     Severity: minor
     Proposed_Repair_Action: "Ensure Remote Log Server IP is reachable from Controller through OAM interface; otherwise contact next level of support."
@@ -513,7 +513,7 @@
         Failure:
         <hostname> is experiencing a persistent critical 'Management Network' communication failure."
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: "Check 'Management Network' connectivity and support for multicast messaging. If problem consistently occurs after that and Host is reset, then contact next level of support or lock and replace failing host."
     Maintenance_Action: auto recover
     Inhibit_Alarms: False
@@ -533,7 +533,7 @@
         Failure:
         <hostname> is experiencing a persistent critical 'Infrastructure Network' communication failure."
     Entity_Instance_ID: host=<hostname>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: "Check 'Infrastructure Network' connectivity and support for multicast messaging. If problem consistently occurs after that and Host is reset, then contact next level of support or lock and replace failing host."
     Maintenance_Action: auto recover
     Inhibit_Alarms: False
@@ -559,7 +559,7 @@
                       OR
                       <hostname> '<processname>' process has failed. Manual recovery is required.
     Entity_Instance_ID: host=<hostname>.process=<processname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: |-
         If this alarm does not automatically clear after some time and continues to be asserted after Host is locked and unlocked then contact next level of support for root cause analysis and recovery.
 
@@ -604,10 +604,10 @@
     Type: Alarm
     Description:
         critical: "Host is degraded due to a 'critical' out-of-tolerance reading from  the '<sensorname>' sensor"
-        major:    "Host is degraded due to a 'major' out-of-tolerance reading from  the '<sensorname>' sensor"
-        minor:    "Host is reporting a 'minor' out-of-tolerance reading from the '<sensorname>' sensor"
+        major: "Host is degraded due to a 'major' out-of-tolerance reading from  the '<sensorname>' sensor"
+        minor: "Host is reporting a 'minor' out-of-tolerance reading from the '<sensorname>' sensor"
     Entity_Instance_ID: host=<hostname>.sensor=<sensorname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: "If problem consistently occurs after Host is power cycled and or reset, contact next level of support or lock and replace failing host."
     Maintenance_Action:
         critical: degrade
@@ -657,14 +657,14 @@
 
 200.020:
     Type: Log
-    Description: [ "<hostname> has been 'discovered' on the network",
-                   "<hostname> has been 'added' to the system",
-                   "<hostname> has 'entered' multi-node failure avoidance",
-                   "<hostname> has 'exited' multi-node failure avoidance"    ]
-    Entity_Instance_ID: [ host=<hostname>.event=discovered,
-                          host=<hostname>.event=add,
-                          host=<hostname>.event=mnfa_enter,
-                          host=<hostname>.event=mnfa_exit   ]
+    Description: ["<hostname> has been 'discovered' on the network",
+                  "<hostname> has been 'added' to the system",
+                  "<hostname> has 'entered' multi-node failure avoidance",
+                  "<hostname> has 'exited' multi-node failure avoidance"]
+    Entity_Instance_ID: [host=<hostname>.event=discovered,
+                         host=<hostname>.event=add,
+                         host=<hostname>.event=mnfa_enter,
+                         host=<hostname>.event=mnfa_exit]
     Severity: warning
     Alarm_Type: other
     Probable_Cause: unspecified-reason
@@ -673,30 +673,30 @@
 
 200.021:
     Type: Log
-    Description: [ "<hostname> board management controller has been 'provisioned'",
-                   "<hostname> board management controller has been 're-provisioned'",
-                   "<hostname> board management controller has been 'de-provisioned'",
-                   "<hostname> manual 'unlock' request",
-                   "<hostname> manual 'reboot' request",
-                   "<hostname> manual 'reset' request",
-                   "<hostname> manual 'power-off' request",
-                   "<hostname> manual 'power-on' request",
-                   "<hostname> manual 'reinstall' request",
-                   "<hostname> manual 'force-lock' request",
-                   "<hostname> manual 'delete' request",
-                   "<hostname> manual 'controller switchover' request"                     ]
-    Entity_Instance_ID: [ host=<hostname>.command=provision,
-                          host=<hostname>.command=reprovision,
-                          host=<hostname>.command=deprovision,
-                          host=<hostname>.command=unlock,
-                          host=<hostname>.command=reboot,
-                          host=<hostname>.command=reset,
-                          host=<hostname>.command=power-off,
-                          host=<hostname>.command=power-on,
-                          host=<hostname>.command=reinstall,
-                          host=<hostname>.command=force-lock,
-                          host=<hostname>.command=delete,
-                          host=<hostname>.command=swact         ]
+    Description: ["<hostname> board management controller has been 'provisioned'",
+                  "<hostname> board management controller has been 're-provisioned'",
+                  "<hostname> board management controller has been 'de-provisioned'",
+                  "<hostname> manual 'unlock' request",
+                  "<hostname> manual 'reboot' request",
+                  "<hostname> manual 'reset' request",
+                  "<hostname> manual 'power-off' request",
+                  "<hostname> manual 'power-on' request",
+                  "<hostname> manual 'reinstall' request",
+                  "<hostname> manual 'force-lock' request",
+                  "<hostname> manual 'delete' request",
+                  "<hostname> manual 'controller switchover' request"]
+    Entity_Instance_ID: [host=<hostname>.command=provision,
+                         host=<hostname>.command=reprovision,
+                         host=<hostname>.command=deprovision,
+                         host=<hostname>.command=unlock,
+                         host=<hostname>.command=reboot,
+                         host=<hostname>.command=reset,
+                         host=<hostname>.command=power-off,
+                         host=<hostname>.command=power-on,
+                         host=<hostname>.command=reinstall,
+                         host=<hostname>.command=force-lock,
+                         host=<hostname>.command=delete,
+                         host=<hostname>.command=swact]
     Severity: warning
     Alarm_Type: other
     Probable_Cause: unspecified-reason
@@ -705,20 +705,20 @@
 
 200.022:
     Type: Log
-    Description: [ "<hostname> is now 'disabled'",
-                   "<hostname> is now 'enabled'",
-                   "<hostname> is now 'online'",
-                   "<hostname> is now 'offline'",
-                   "<hostname> is 'disabled-failed' to the system",
-                   "<hostname> reinstall failed",
-                   "<hostname> reinstall completed successfully"]
-    Entity_Instance_ID: [ host=<hostname>.state=disabled,
-                          host=<hostname>.state=enabled,
-                          host=<hostname>.status=online,
-                          host=<hostname>.status=offline,
-                          host=<hostname>.status=failed,
-                          host=<hostname>.status=reinstall-failed,
-                          host=<hostname>.status=reinstall-complete ]
+    Description: ["<hostname> is now 'disabled'",
+                  "<hostname> is now 'enabled'",
+                  "<hostname> is now 'online'",
+                  "<hostname> is now 'offline'",
+                  "<hostname> is 'disabled-failed' to the system",
+                  "<hostname> reinstall failed",
+                  "<hostname> reinstall completed successfully"]
+    Entity_Instance_ID: [host=<hostname>.state=disabled,
+                         host=<hostname>.state=enabled,
+                         host=<hostname>.status=online,
+                         host=<hostname>.status=offline,
+                         host=<hostname>.status=failed,
+                         host=<hostname>.status=reinstall-failed,
+                         host=<hostname>.status=reinstall-complete]
     Severity: warning
     Alarm_Type: other
     Probable_Cause: unspecified-reason
@@ -857,7 +857,7 @@
 
 280.002:
     Type: Alarm
-    Description:  <subcloud> <resource> sync_status is out-of-sync
+    Description: <subcloud> <resource> sync_status is out-of-sync
     Entity_Instance_ID: [subcloud=<subcloud>.resource=<compute | network | platform | volumev2>]
     Severity: major
     Proposed_Repair_Action: If problem persists contact next level of support
@@ -898,7 +898,7 @@
         OR
         'Data' Interface failed.
     Entity_Instance_ID: host=<hostname>.interface=<if-uuid>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: Check cabling and far-end port configuration and status on adjacent equipment.
     Maintenance_Action:
     Inhibit_Alarms:
@@ -1007,7 +1007,7 @@
         OR
         One or more Openflow controller connections in disconnected state for this network.
     Entity_Instance_ID: host=<hostname>.openflow-network=<name>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: Check cabling and far-end port configuration and status on adjacent equipment.
     Maintenance_Action:
     Inhibit_Alarms:
@@ -1079,7 +1079,7 @@
         OR
         Service group warning; <list of affected services>.
     Entity_Instance_ID: service_domain=<domain_name>.service_group=<group_name>.host=<hostname>
-    Severity: [ critical, major, minor ]
+    Severity: [critical, major, minor]
     Proposed_Repair_Action: Contact next level of support.
     Maintenance_Action:
     Inhibit_Alarms: False
@@ -1279,7 +1279,6 @@
     Alarm_Type: integrity-violation
     Probable_Cause: information-modification-detected
     Service_Affecting: False
-
 
 
 #---------------------------------------------------------------------------
@@ -2610,7 +2609,7 @@
         Storage Alarm Condition:
         1 mons down, quorum 1,2 controller-1,storage-0
     Entity_Instance_ID: cluster=<dist-fs-uuid>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: "If problem persists, contact next level of support."
     Maintenance_Action:
     Inhibit_Alarms:
@@ -2628,7 +2627,7 @@
     Description: |-
         Potential data loss. No available OSDs in storage replication group.
     Entity_Instance_ID: cluster=<dist-fs-uuid>.peergroup=<group-x>
-    Severity: [ critical ]
+    Severity: [critical]
     Proposed_Repair_Action: "Ensure storage hosts from replication group are unlocked and available.
                              Check if OSDs of each storage host are up and running.
                              If problem persists contact next level of support."
@@ -2647,7 +2646,7 @@
     Description: |-
         Loss of replication in peergroup.
     Entity_Instance_ID: cluster=<dist-fs-uuid>.peergroup=<group-x>
-    Severity: [ major ]
+    Severity: [major]
     Proposed_Repair_Action: "Ensure storage hosts from replication group are unlocked and available.
                              Check if OSDs of each storage host are up and running.
                              If problem persists contact next level of support."
@@ -2663,39 +2662,39 @@
 
 800.002:
     Type: Alarm
-    Description: [ "Image storage media is full: There is not enough disk space on the image storage media.",
-                   "Instance <instance name> snapshot failed: There is not enough disk space on the image storage media.",
-                   "Supplied <attrs> (<supplied>) and <attrs> generated from uploaded image (<actual>) did not match. Setting image status to 'killed'.",
-                   "Error in store configuration. Adding images to store is disabled.",
-                   "Forbidden upload attempt: <exception>",
-                   "Insufficient permissions on image storage media: <exception>",
-                   "Denying attempt to upload image larger than <size> bytes.",
-                   "Denying attempt to upload image because it exceeds the quota: <exception>",
-                   "Received HTTP error while uploading image <image_id>",
-                   "Client disconnected before sending all data to backend",
-                   "Failed to upload image <image_id>"                               ]
-    Entity_Instance_ID: [ "image=<image-uuid>, instance=<instance-uuid>",
-                          "tenant=<tenant-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>",
-                          "image=<image-uuid>, instance=<instance-uuid>"            ]
-    Alarm_Type: [ physical-violation,
-                  physical-violation,
-                  integrity-violation,
-                  integrity-violation,
-                  security-service-or-mechanism-violation,
-                  security-service-or-mechanism-violation,
-                  security-service-or-mechanism-violation,
-                  security-service-or-mechanism-violation,
-                  communication,
-                  communication,
-                  operational-violation                       ]
+    Description: ["Image storage media is full: There is not enough disk space on the image storage media.",
+                  "Instance <instance name> snapshot failed: There is not enough disk space on the image storage media.",
+                  "Supplied <attrs> (<supplied>) and <attrs> generated from uploaded image (<actual>) did not match. Setting image status to 'killed'.",
+                  "Error in store configuration. Adding images to store is disabled.",
+                  "Forbidden upload attempt: <exception>",
+                  "Insufficient permissions on image storage media: <exception>",
+                  "Denying attempt to upload image larger than <size> bytes.",
+                  "Denying attempt to upload image because it exceeds the quota: <exception>",
+                  "Received HTTP error while uploading image <image_id>",
+                  "Client disconnected before sending all data to backend",
+                  "Failed to upload image <image_id>"]
+    Entity_Instance_ID: ["image=<image-uuid>, instance=<instance-uuid>",
+                         "tenant=<tenant-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>",
+                         "image=<image-uuid>, instance=<instance-uuid>"]
+    Alarm_Type: [physical-violation,
+                 physical-violation,
+                 integrity-violation,
+                 integrity-violation,
+                 security-service-or-mechanism-violation,
+                 security-service-or-mechanism-violation,
+                 security-service-or-mechanism-violation,
+                 security-service-or-mechanism-violation,
+                 communication,
+                 communication,
+                 operational-violation]
     Severity: warning
     Proposed_Repair_Action:
     Maintenance_Action:
@@ -2768,7 +2767,7 @@
         Storage Alarm Condition:
         PV configuration <error/failed to apply> on <hostname>. Reason: <detailed reason>.
     Entity_Instance_ID: pv=<pv_uuid>
-    Severity: [ critical, major ]
+    Severity: [critical, major]
     Proposed_Repair_Action: "Remove failed PV and associated Storage Device then recreate them."
     Maintenance_Action:
     Inhibit_Alarms:
@@ -2776,7 +2775,7 @@
     Probable_Cause: configuration-or-customization-error
     Service_Affecting: True
     Suppression: False
-    Management_Affecting_Severity: major 
+    Management_Affecting_Severity: major
     Degrade_Affecting_Severity: none
 
 800.103:
@@ -2796,7 +2795,7 @@
     Probable_Cause: threshold-crossed
     Service_Affecting: False
     Suppression: False
-    Management_Affecting_Severity: major 
+    Management_Affecting_Severity: major
     Degrade_Affecting_Severity: none
 
 800.104:
@@ -2817,7 +2816,6 @@
     Suppression: False
     Management_Affecting_Severity: major
     Degrade_Affecting_Severity: none
-
 
 
 #---------------------------------------------------------------------------
