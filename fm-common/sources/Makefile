@@ -5,7 +5,7 @@ CLI_SRCS = fm_cli.cpp
 OBJS = $(SRCS:.cpp=.o)
 CLI_OBJS = fm_cli.o
 LDLIBS = -lstdc++ -lrt -luuid -lpq -lpthread -lpython2.7
-INCLUDES = -I./
+INCLUDES = -I./ -I$(shell pg_config --includedir)
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
 
 LIBFMCOMMON_SO := libfmcommon.so
@@ -35,6 +35,5 @@ install_non_bb:
 	install -m 644 fmThread.h $(DEST_DIR)$(INC_DIR)
 	install -m 644 fmAlarm.h $(DEST_DIR)$(INC_DIR)
 	install -m 755 $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)
-	ln -s $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)/$(LIBFMCOMMON_SO).$(MAJOR)
-	ln -s $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)/$(LIBFMCOMMON_SO)
-
+	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)/$(LIBFMCOMMON_SO).$(MAJOR)
+	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)/$(LIBFMCOMMON_SO)
