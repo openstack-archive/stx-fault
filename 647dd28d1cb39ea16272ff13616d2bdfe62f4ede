@@ -1,0 +1,10 @@
+Code-Review+2: Dean Troyer <dtroyer@gmail.com>
+Code-Review+2: Tao Liu <tao.liu@windriver.com>
+Code-Review+2: Al Bailey <al.bailey@windriver.com>
+Workflow+1: Al Bailey <al.bailey@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 24 Aug 2018 16:07:39 +0000
+Reviewed-on: https://review.openstack.org/595860
+Project: openstack/stx-fault
+Branch: refs/heads/master
