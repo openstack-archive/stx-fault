@@ -1,0 +1,230 @@
+#!/bin/bash
+#
+# lib/stx-fault
+# Functions to control the configuration and operation of the **fault** service
+
+# Dependencies:
+#
+# - ``functions`` file
+# - ``DEST``, ``DATA_DIR``, ``STACK_USER`` must be defined
+# - ``SERVICE_{TENANT_NAME|PASSWORD}`` must be defined
+# - ``SERVICE_HOST``
+# - ``KEYSTONE_TOKEN_FORMAT`` must be defined
+
+# ``stack.sh`` calls the entry points in this order:
+#
+# - install_fault
+# - configure_fault
+# - init_fault
+# - start_fault
+# - stop_fault
+# - cleanup_fault
+
+_XTRACE_STX_FAULT=$(set +o | grep xtrace)
+set -o xtrace
+
+
+# Defaults
+# --------
+
+PYTHON_BIN_DIR=$(get_python_exec_prefix)
+PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
+# Functions
+# ---------
+
+function cleanup_fault {
+    stop_fault
+
+    if is_service_enabled fm-mgr; then
+        cleanup_fm_mgr
+    fi
+    if is_service_enabled fm-common; then
+        cleanup_fm_common
+    fi
+}
+
+function cleanup_fm_common {
+    local x version
+
+    # get fm-common version
+    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-common/PKG-INFO)
+    local major=${version%%.*}
+    local minor=${version##*.}
+    local prefix=${PYTHON_BIN_DIR%/*}
+
+    sudo rm /etc/ld.so.conf.d/stx-fault.conf
+
+    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-common/sources
+
+    sudo make \
+        DEST_DIR=$prefix \
+        BIN_DIR=/bin \
+        LIB_DIR=/lib \
+        INC_DIR=/include \
+        MAJOR=$major \
+        MINOR=$minor \
+        clean
+
+    sudo rm $prefix/bin/fm_db_sync_event_suppression.py \
+        $prefix/include/fmConfig.h \
+        $prefix/include/fmLog.h
+
+    popd
+}
+
+function cleanup_fm_mgr {
+    local x version
+
+    # get fm-mgr version
+    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/PKG-INFO)
+    local major=${version%%.*}
+    local minor=${version##*.}
+
+    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/sources
+
+    sudo make \
+        BIN_DIR=/bin \
+        LIB_DIR=/lib \
+        INC_DIR=/include \
+        MAJOR=$major \
+        MINOR=$minor \
+        clean
+
+    popd
+}
+
+function configure_fault {
+    :
+}
+
+function create_fault_accounts {
+    :
+}
+
+function create_fault_cache_dir {
+    :
+}
+
+function create_fault_user_group {
+    :
+}
+
+function init_fault {
+    :
+}
+
+function install_fault {
+    if is_service_enabled fm-common; then
+        install_fm_common
+    fi
+    if is_service_enabled fm-api; then
+        install_fm_api
+    fi
+    if is_service_enabled fm-rest-api; then
+        install_fm_api
+    fi
+    if is_service_enabled fm-mgr; then
+        install_fm_mgr
+    fi
+}
+
+function install_fm_api {
+    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-api
+    sudo python setup.py install \
+        --root=/ \
+        --install-lib=$PYTHON_SITE_DIR \
+        --prefix=/usr \
+        --install-data=/usr/share \
+        --single-version-externally-managed
+    popd
+}
+
+function install_fm_common {
+    local x version
+
+    # get fm-common version
+    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-common/PKG-INFO)
+    local major=${version%%.*}
+    local minor=${version##*.}
+
+    # Set up the destinations
+    # Making an assumption here about PYTHON_BIN_DIR having ../include be valid
+    local prefix=${PYTHON_BIN_DIR%/*}
+
+    # build
+    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-common/sources
+    make MAJOR=$major MINOR=$minor
+    sudo python setup.py build
+
+    # install
+    sudo make \
+        DEST_DIR=$prefix \
+        BIN_DIR=/bin \
+        LIB_DIR=/lib \
+        INC_DIR=/include \
+        MAJOR=$major \
+        MINOR=$minor \
+        install_non_bb
+
+    sudo python setup.py install \
+        --root=/ \
+        --install-lib=$PYTHON_SITE_DIR \
+        --prefix=/usr \
+        --install-data=/usr/share \
+
+    # This _is_ nasty, clean it up
+    sudo install -m 755 fm_db_sync_event_suppression.py \
+        $prefix/bin/fm_db_sync_event_suppression.py
+
+    # install the headers that used by fm-mgr package
+    sudo install -m 644 -p -D fmConfig.h $prefix/include/fmConfig.h
+    sudo install -m 644 -p -D fmLog.h $prefix/include/fmLog.h
+
+    # Make sure we can find it later
+    # TODO: this should be managed better
+    echo /usr/local/lib | sudo tee /etc/ld.so.conf.d/stx-fault.conf
+    popd
+}
+
+function install_fm_mgr {
+    local x version
+
+    # get fm-mgr version
+    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/PKG-INFO)
+    local major=${version%%.*}
+    local minor=${version##*.}
+
+    # build
+    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/sources
+    make MAJOR=$major MINOR=$minor
+
+    # install
+    sudo make \
+        BIN_DIR=/bin \
+        LIB_DIR=/lib \
+        INC_DIR=/include \
+        MAJOR=$major \
+        MINOR=$minor \
+        install_non_bb
+
+    popd
+}
+
+function install_fm_rest_api {
+    :
+}
+
+function start_fault {
+    :
+}
+
+function stop_fault {
+    :
+}
+
+function stop_fault_api {
+    :
+}
+
+$_XTRACE_STX_FAULT
