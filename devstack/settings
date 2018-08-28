@@ -1,0 +1,10 @@
+#!/bin/bash
+# Devstack settings
+
+# Defaults
+# --------
+
+
+######### Plugin Specific ##########
+enable_service fault fm-common fm-api fm-rest-api fm-mgr
+define_plugin fault
