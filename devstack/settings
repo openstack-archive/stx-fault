@@ -1,0 +1,11 @@
+#!/bin/bash
+# Devstack settings
+
+# Defaults
+# --------
+
+STX_FAULT_NAME=stx-fault
+
+######### Plugin Specific ##########
+enable_service $STX_FAULT_NAME fm-common fm-api fm-rest-api fm-mgr
+#define_plugin $STX_FAULT_NAME
