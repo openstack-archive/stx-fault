@@ -1,0 +1,10 @@
+Code-Review+2: Tao Liu <tao.liu@windriver.com>
+Code-Review+1: Bin Qian <bin.qian@windriver.com>
+Code-Review+2: Dean Troyer <dtroyer@gmail.com>
+Workflow+1: Erich Cordoba <erich.cordoba.malibran@intel.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Wed, 29 Aug 2018 17:44:52 +0000
+Reviewed-on: https://review.openstack.org/593696
+Project: openstack/stx-fault
+Branch: refs/heads/master
