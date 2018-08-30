@@ -4,6 +4,8 @@
       - build-openstack-docs-pti
     check:
       jobs:
+        - stx-devstack-fault:
+            voting: false
         - build-openstack-api-ref
         - build-openstack-releasenotes
         - openstack-tox-linters
@@ -19,3 +21,67 @@
         - publish-stx-api-ref
         - publish-stx-tox
         - publish-stx-releasenotes
+
+# This job is to begin testing a DevStack run here
+- job:
+    name: stx-devstack-base
+    parent: devstack
+    description: |
+      Base job for StarlingX DevStack tests
+    roles:
+      - zuul: openstack-infra/devstack
+    timeout: 9000
+    required-projects:
+      - name: git.openstack.org/openstack-dev/devstack
+        override-branch: stable/pike
+      - name: git.openstack.org/openstack/cinder
+        override-branch: stable/pike
+      - name: git.openstack.org/openstack/glance
+        override-branch: stable/pike
+      - name: git.openstack.org/openstack/keystone
+        override-branch: stable/pike
+      - name: git.openstack.org/openstack/neutron
+        override-branch: stable/pike
+      - name: git.openstack.org/openstack/nova
+        override-branch: stable/pike
+      - name: git.openstack.org/openstack/requirements
+        override-branch: stable/pike
+    vars:
+      devstack_services:
+        ceilometer-acentral: false
+        ceilometer-acompute: false
+        ceilometer-alarm-evaluator: false
+        ceilometer-alarm-notifier: false
+        ceilometer-anotification: false
+        ceilometer-api: false
+        ceilometer-collector: false
+        horizon: false
+        # Swift services
+        s-account: false
+        s-container: false
+        s-object: false
+        s-proxy: false
+        tempest: false
+    irrelevant-files:
+      - ^.*\.rst$
+      - ^api-ref/.*$
+      - ^doc/.*$
+      - ^releasenotes/.*$
+
+- job:
+    name: stx-devstack-fault
+    parent: stx-devstack-base
+    timeout: 7800
+    required-projects:
+      - name: openstack/stx-update
+    vars:
+      tox_envlist: functional
+      devstack_services:
+        fm-common: true
+        fm-api: true
+        fm-rest-api: true
+        fm-mgr: true
+#        tsconfig: true
+      devstack_plugins:
+        stx-update: git://git.starlingx.io/stx-update
+        stx-fault: git://git.starlingx.io/stx-fault
