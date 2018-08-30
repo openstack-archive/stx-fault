@@ -7,9 +7,8 @@
 #
 # - ``functions`` file
 # - ``DEST``, ``DATA_DIR``, ``STACK_USER`` must be defined
-# - ``SERVICE_{TENANT_NAME|PASSWORD}`` must be defined
-# - ``SERVICE_HOST``
-# - ``KEYSTONE_TOKEN_FORMAT`` must be defined
+
+# - The stx-update plugin must be enabled
 
 # ``stack.sh`` calls the entry points in this order:
 #
@@ -44,7 +43,7 @@ FM_RESTAPI_SERVICE_HOST=${FM_RESTAPI_SERVICE_HOST:-$SERVICE_HOST}
 FM_RESTAPI_SERVICE_PORT=${FM_RESTAPI_SERVICE_PORT:-18002}
 FM_RESTAPI_WORKERS=${FM_RESTAPI_WORKERS:-4}
 
-PYTHON_BIN_DIR=$(get_python_exec_prefix)
+STX_BIN_DIR=$(get_python_exec_prefix)
 PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 # Functions
@@ -71,7 +70,7 @@ function cleanup_fm_common {
     read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-common/PKG-INFO)
     local major=${version%%.*}
     local minor=${version##*.}
-    local prefix=${PYTHON_BIN_DIR%/*}
+    local prefix=${STX_BIN_DIR%/*}
 
     sudo rm /etc/ld.so.conf.d/stx-fault.conf
 
@@ -234,8 +233,8 @@ function install_fm_common {
     local minor=${version##*.}
 
     # Set up the destinations
-    # Making an assumption here about PYTHON_BIN_DIR having ../include be valid
-    local prefix=${PYTHON_BIN_DIR%/*}
+    # Making an assumption here about STX_BIN_DIR having ../include be valid
+    local prefix=${STX_BIN_DIR%/*}
 
     # build
     pushd ${GITDIR[$STX_FAULT_NAME]}/fm-common/sources
@@ -303,7 +302,7 @@ function install_fm_rest_api {
 
 function start_fault {
     if is_service_enabled fm-api; then
-        run_process fm-api "$PYTHON_BIN_DIR/fm-api --config-file $FM_RESTAPI_CONF"
+        run_process fm-api "$STX_BIN_DIR/fm-api --config-file $FM_RESTAPI_CONF"
     fi
 }
 
