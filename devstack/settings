@@ -7,5 +7,13 @@
 STX_FAULT_NAME=stx-fault
 
 ######### Plugin Specific ##########
-enable_service $STX_FAULT_NAME fm-common fm-api fm-rest-api fm-mgr
+enable_service $STX_FAULT_NAME
 #define_plugin $STX_FAULT_NAME
+
+# Handle STX pre-reqs
+if is_service_enabled fm-rest-api; then
+    enable_service tsconfig
+fi
+
+# Initial source of lib script
+source $(dirname "$0")/lib/stx-fault
