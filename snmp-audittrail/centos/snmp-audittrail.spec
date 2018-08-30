@@ -11,6 +11,7 @@ BuildRequires: net-snmp-devel
 BuildRequires: fm-common-dev
 BuildRequires: uuid-devel
 BuildRequires: uuid
+BuildRequires: libuuid-devel
 Requires: net-snmp
 Requires: uuid
 
