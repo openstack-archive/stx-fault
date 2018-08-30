@@ -27,6 +27,23 @@ set -o xtrace
 # Defaults
 # --------
 
+FAULT_DIR=${GITDIR[$STX_FAULT_NAME]}
+FAULT_CONF_DIR=/etc/fm
+FM_RESTAPI_CONF=$FAULT_CONF_DIR/fm.conf
+FM_RESTAPI_PASTE_INI=$FAULT_CONF_DIR/api-paste.ini
+FM_RESTAPI_AUTH_CACHE_DIR=${FM_RESTAPI_AUTH_CACHE_DIR:-/var/cache/fault}
+
+FM_RESTAPI_DIR=${GITDIR[$STX_FAULT_NAME]}/fm-rest-api/fm
+
+
+if is_service_enabled tls-proxy; then
+    FM_RESTAPI_SERVICE_PROTOCOL="https"
+fi
+FM_RESTAPI_SERVICE_PROTOCOL=${FM_RESTAPI_SERVICE_PROTOCOL:-$SERVICE_PROTOCOL}
+FM_RESTAPI_SERVICE_HOST=${FM_RESTAPI_SERVICE_HOST:-$SERVICE_HOST}
+FM_RESTAPI_SERVICE_PORT=${FM_RESTAPI_SERVICE_PORT:-18002}
+FM_RESTAPI_WORKERS=${FM_RESTAPI_WORKERS:-4}
+
 PYTHON_BIN_DIR=$(get_python_exec_prefix)
 PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
@@ -41,6 +58,9 @@ function cleanup_fault {
     fi
     if is_service_enabled fm-common; then
         cleanup_fm_common
+    fi
+    if is_service_enabled fm-restapi; then
+        cleanup_fm_restapi
     fi
 }
 
@@ -94,16 +114,67 @@ function cleanup_fm_mgr {
     popd
 }
 
+function cleanup_fm_rest_api {
+    sudo rm -rf $FM_RESTAPI_AUTH_CACHE_DIR $FM_RESTAPI_CONF
+}
+
 function configure_fault {
-    :
+    if is_service_enabled fm-rest-api; then
+        configure_fm_rest_api
+    fi
+}
+
+function configure_fm_rest_api {
+    sudo install -d -o $STACK_USER -m 755 $FAULT_CONF_DIR
+
+    cp -p $FAULT_DIR/devstack/files/api-paste.ini $FM_RESTAPI_PASTE_INI
+
+    configure_auth_token_middleware $FM_RESTAPI_CONF fm $FM_RESTAPI_AUTH_CACHE_DIR
+
+    iniset $FM_RESTAPI_CONF database connection $(database_connection_url fm)
+    iniset $FM_RESTAPI_CONF api api_paste_config $FM_RESTAPI_PASTE_INI
+    iniset $FM_RESTAPI_CONF api api_workers $FM_RESTAPI_WORKERS
+    iniset $FM_RESTAPI_CONF api bind_host $FM_RESTAPI_SERVICE_HOST
+    iniset $FM_RESTAPI_CONF api bind_port $FM_RESTAPI_SERVICE_PORT
+
+    iniset $FM_RESTAPI_CONF oslo_middleware enable_proxy_headers_parsing True
+
+    if [ "$SYSLOG" != "False" ]; then
+        iniset $FM_RESTAPI_CONF DEFAULT use_syslog True
+        # stx specific?
+        iniset $FM_RESTAPI_CONF DEFAULT syslog_log_facility local2
+    fi
+
+    # Additional things set in stx config
+    iniset $FM_RESTAPI_CONF DEFAULT region_name RegionOne
+    iniset $FM_RESTAPI_CONF DEFAULT event_log_max_size 4000
+    # what does this uuid represent?
+    iniset $FM_RESTAPI_CONF DEFAULT system_name 2764e937-4fe3-4cff-8178-b099b4d79992
+    iniset $FM_RESTAPI_CONF database idle_timeout 60
+    iniset $FM_RESTAPI_CONF database max_pool_size 1
+    iniset $FM_RESTAPI_CONF database max_overflow 20
+    iniset $FM_RESTAPI_CONF keystone_authtoken region_name RegionOne
+
+    # sysinv settings to move there...
+    iniset $FM_RESTAPI_CONF sysinv catalog_info platform:sysinv:internalURL
+    iniset $FM_RESTAPI_CONF sysinv os_region_name RegionOne
 }
 
 function create_fault_accounts {
-    :
+    if [[ "$ENABLED_SERVICES" =~ "fm-rest-api" ]]; then
+        create_service_user "fm"
+        get_or_create_service "fm" "faultmanagement" "Fault Management Service"
+        get_or_create_endpoint \
+            "faultmanagement" \
+            "$REGION_NAME" \
+            "$FM_RESTAPI_SERVICE_PROTOCOL://$FM_RESTAPI_SERVICE_HOST:$FM_RESTAPI_SERVICE_PORT/v1"
+    fi
 }
 
 function create_fault_cache_dir {
-    :
+    # Create cache dir
+    sudo install -d -o $STACK_USER $FM_RESTAPI_AUTH_CACHE_DIR
+    rm -f $FM_RESTAPI_AUTH_CACHE_DIR/*
 }
 
 function create_fault_user_group {
@@ -111,7 +182,7 @@ function create_fault_user_group {
 }
 
 function init_fault {
-    :
+    create_fault_cache_dir
 }
 
 function install_fault {
@@ -121,11 +192,14 @@ function install_fault {
     if is_service_enabled fm-api; then
         install_fm_api
     fi
-    if is_service_enabled fm-rest-api; then
+    if is_service_enabled fm-api; then
         install_fm_api
     fi
     if is_service_enabled fm-mgr; then
         install_fm_mgr
+    fi
+    if is_service_enabled fm-rest-api; then
+        install_fm_rest_api
     fi
 }
 
@@ -213,19 +287,19 @@ function install_fm_mgr {
 }
 
 function install_fm_rest_api {
-    :
+    setup_develop $FM_RESTAPI_DIR
 }
 
 function start_fault {
-    :
+    if is_service_enabled fm-api; then
+        run_process fm-api "$PYTHON_BIN_DIR/fm-api --config-file $FM_RESTAPI_CONF"
+    fi
 }
 
 function stop_fault {
-    :
-}
-
-function stop_fault_api {
-    :
+    if is_service_enabled fm-api; then
+        stop_process fm_api
+    fi
 }
 
 $_XTRACE_STX_FAULT
