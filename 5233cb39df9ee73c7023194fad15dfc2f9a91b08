@@ -1,0 +1,9 @@
+Code-Review+2: Saul Wold <sgw@linux.intel.com>
+Code-Review+2: Scott Little <scott.little@windriver.com>
+Workflow+1: Scott Little <scott.little@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Tue, 04 Sep 2018 15:30:37 +0000
+Reviewed-on: https://review.openstack.org/598321
+Project: openstack/stx-fault
+Branch: refs/heads/master
