@@ -4,7 +4,7 @@ Summary: A python client library for Fault Management
 Name: python-fmclient
 Version: 1.0
 Release: %{tis_patch_ver}%{?_tis_dist}
-License: windriver
+License: Apache-2.0
 Group: base
 Packager: Wind River <info@windriver.com>
 URL: unknown

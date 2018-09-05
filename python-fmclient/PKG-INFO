@@ -5,7 +5,7 @@ Summary: A python client library for Fault Management
 Home-page: 
 Author: Windriver
 Author-email: info@windriver.com
-License: windriver
+License: Apache-2.0
 
 A python client library for Fault Management
 
