@@ -1,0 +1,8 @@
+Code-Review+2: Tao Liu <tao.liu@windriver.com>
+Workflow+1: Dariush Eslimi <Dariush.Eslimi@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Thu, 06 Sep 2018 18:06:43 +0000
+Reviewed-on: https://review.openstack.org/593695
+Project: openstack/stx-fault
+Branch: refs/heads/master
