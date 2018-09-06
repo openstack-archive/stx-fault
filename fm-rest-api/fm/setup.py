@@ -25,7 +25,7 @@ setup(
     name='fm',
     description='Titanium Cloud Fault Management',
     version='1.0.0',
-    license='windriver',
+    license='Apache-2.0',
     platforms=['any'],
     provides=['fm'],
     packages=find_packages(),
