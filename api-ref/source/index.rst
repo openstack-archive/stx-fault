@@ -6,3 +6,5 @@ StarlingX Fault Management
 
 .. toctree::
    :maxdepth: 2
+
+   api-ref-fm-v1-fault
