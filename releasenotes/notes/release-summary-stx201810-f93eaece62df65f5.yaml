@@ -1,0 +1,30 @@
+---
+prelude: >
+    The StarlingX Fault project is a new repository that provides Alarm and
+    Log Reporting Services for other StarlingX Components.
+features:
+  - |
+    Framework for infrastructure services via a client API to:
+
+    - Set, clear and query customer alarms.
+    - Generate customer logs for significant events.
+  - |
+    Framework maintains an Active Alarm List.
+  - |
+    Active Alarm Counts Banner on Horizon GUI.
+  - |
+    Framework provides REST API to query alarms & events and also publish
+    through SNMPv2c Traps.
+  - |
+    Support for Alarm suppression.
+  - |
+    Operator Alarms:
+
+    -  On Platform Nodes & Resources.
+    -  On Hosted Virtual Resources ( i.e. VMs, Volumes, Networks).
+  - |
+    Operator Logs - Event List:
+
+    - Logging of Set/Clears of Alarms.
+    - Related to Platform Nodes & Resources.
+    - Related to Hosted Virtual Resources ( i.e. VMs, Volumes, Networks).
