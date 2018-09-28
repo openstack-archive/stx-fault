@@ -1,0 +1,10 @@
+Code-Review+1: Abraham Arce <abraham.arce.moreno@intel.com>
+Code-Review+1: Greg Waines <greg.waines@windriver.com>
+Code-Review+2: Al Bailey <al.bailey@windriver.com>
+Workflow+1: Al Bailey <al.bailey@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 28 Sep 2018 15:27:46 +0000
+Reviewed-on: https://review.openstack.org/605259
+Project: openstack/stx-fault
+Branch: refs/heads/master
