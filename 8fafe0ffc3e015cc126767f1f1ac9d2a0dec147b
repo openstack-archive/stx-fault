@@ -1,0 +1,8 @@
+Code-Review+2: Dean Troyer <dtroyer@gmail.com>
+Workflow+1: Dean Troyer <dtroyer@gmail.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 28 Sep 2018 04:04:26 +0000
+Reviewed-on: https://review.openstack.org/605887
+Project: openstack/stx-fault
+Branch: refs/heads/master
