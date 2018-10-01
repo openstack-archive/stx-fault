@@ -1,0 +1,9 @@
+Code-Review+2: Saul Wold <sgw@linux.intel.com>
+Code-Review+2: Don Penney <don.penney@windriver.com>
+Workflow+1: Don Penney <don.penney@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Mon, 01 Oct 2018 15:20:43 +0000
+Reviewed-on: https://review.openstack.org/606168
+Project: openstack/stx-fault
+Branch: refs/heads/r/2018.10
