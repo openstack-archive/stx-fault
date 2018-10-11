@@ -8,3 +8,5 @@ StarlingX Fault Management
    :maxdepth: 2
 
    api-ref-fm-v1-fault
+
+:ref:`search`

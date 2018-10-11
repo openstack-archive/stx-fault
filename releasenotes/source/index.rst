@@ -5,3 +5,5 @@ stx-fault Release Notes
    :maxdepth: 2
 
    unreleased
+
+:ref:`search`
