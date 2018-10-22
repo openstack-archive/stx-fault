@@ -44,6 +44,15 @@ static const char * field_map[] = {
 	FM_ALARM_COLUMN_MASKED //18
 };
 
+#define RETRUN_FALSE return false
+#define CONTINUE continue
+#define SNPRINTF(buffer, source, return_action) \
+do{ \
+	if (snprintf(buffer, sizeof(buffer), "%s", source) < 0) { \
+		FM_WARNING_LOG("SNPRINTF fail because of decode error."); \
+		return_action; \
+	} \
+}while(0)
 
 void add_both_tables(const char *str, int id, itos_t &t1,stoi_t &t2 ) {
 	t1[id]=str;
@@ -293,14 +302,12 @@ bool CFmDbAlarmOperation::get_alarms(CFmDBSession &sess,const char *id, fm_db_re
 
 bool CFmDbAlarmOperation::get_alarms_by_id(CFmDBSession &sess,const char *id, fm_db_result_t & alarms) {
 
-	fm_alarm_id alm_id;
+	fm_alarm_id alm_id = {0};
 	char query[FM_MAX_SQL_STATEMENT_MAX];
 	std::string sql;
-
-	memset(alm_id, 0 , sizeof(alm_id));
-	strncpy(alm_id, id ,sizeof(alm_id)-1);
-
-	snprintf(query, sizeof(query),"%s = '%s'", FM_ALARM_COLUMN_ALARM_ID, id);
+		SNPRINTF(alm_id, id, RETRUN_FALSE);
+	if(snprintf(query, sizeof(query),"%s = '%s'", FM_ALARM_COLUMN_ALARM_ID, id) < 0)
+            return false;
 
 	fm_db_util_build_sql_query((const char*)FM_ALARM_TABLE_NAME, query, sql);
 	FM_DEBUG_LOG("CMD:(%s)\n", sql.c_str());
@@ -333,13 +340,12 @@ bool CFmDbAlarmOperation::get_all_alarms(CFmDBSession &sess, SFmAlarmDataT **ala
 		return false;
 
 	size_t ix = 0;
-	for ( ; ix < found_num_alarms; ++ix ){
+	for ( ; ix < found_num_alarms; ++ix ) {
 		CFmDbAlarm dbAlm;
 		CFmDbAlarm::convert_to(res[ix],p+ix);
 		std::string eid = (p+ix)->entity_instance_id;
 		eid = sname + "." + eid;
-		strncpy((p+ix)->entity_instance_id, eid.c_str(),
-				sizeof((p+ix)->entity_instance_id));
+		SNPRINTF((p+ix)->entity_instance_id, eid.c_str(), CONTINUE);
 	}
 	(*alarms) = p;
 	*len = found_num_alarms;
@@ -443,19 +449,17 @@ bool CFmDbAlarmOperation::get_all_history_alarms(CFmDBSession &sess, SFmAlarmDat
 	if (found_num_alarms < 1) return false;
 
 	SFmAlarmDataT *p =
-			(SFmAlarmDataT*)malloc(found_num_alarms*sizeof(SFmAlarmDataT));
+		(SFmAlarmDataT*)malloc(found_num_alarms*sizeof(SFmAlarmDataT));
 
-	if (p==NULL){
-		return false;
-	}
+	if (p==NULL) return false;
+
 	size_t ix = 0;
-	for ( ; ix < found_num_alarms; ++ix ){
+	for ( ; ix < found_num_alarms; ++ix ) {
 		CFmDbAlarm dbAlm;
 		CFmDbAlarm::convert_to(res[ix],p+ix);
 		std::string eid = (p+ix)->entity_instance_id;
 		eid = sname + "." + eid;
-		strncpy((p+ix)->entity_instance_id, eid.c_str(),
-				sizeof((p+ix)->entity_instance_id));
+		SNPRINTF((p+ix)->entity_instance_id, eid.c_str(), CONTINUE);
 	}
 	(*alarms) = p;
 	*len = found_num_alarms;
