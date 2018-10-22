@@ -36,14 +36,21 @@ static stoi_t cause_to_int;
 static stoi_t bool_to_int;
 static stoi_t err_to_int;
 
-
-#define STRCP_TO(charb,str)\
-		if (((str).length()==0) ||	\
-			((str).length()==1 && ((str).c_str())[0]==' ')) { \
-			memset(charb,0,sizeof(charb)); \
-		} else {  \
-			snprintf(charb, sizeof(charb)-1, "%s", str.c_str());  \
-		}
+#define RETURN_FALSE return false
+#define RETURN return
+#define STRCP_TO(charb, str, return_action) \
+do{ \
+    if (((str).length()==0) || \
+        ((str).length()==1 && ((str).c_str())[0]==' ')) { \
+        memset(charb,0,sizeof(charb)); \
+    } else {  \
+        int ret = snprintf(charb, sizeof(charb), "%s", str.c_str());  \
+        if (ret < 0) { \
+            FM_WARNING_LOG("STRCP_TO fail because of decode error."); \
+            return_action; \
+        } \
+    } \
+}while(0)
 
 void add_both_tables(int id, const char *str, itos_t &t1,stoi_t &t2 ) {
 	t1[id]=str;
@@ -210,12 +217,12 @@ static void str_to_vector(const std::string &s, std::vector<std::string> &alarm)
 
 static void fm_set_uuid(SFmAlarmDataT *a, std::string &s, bool is_get) {
 	if(is_get) s = chkstr(a->uuid);
-	else STRCP_TO(a->uuid,s);
+	else STRCP_TO(a->uuid,s, RETURN);
 }
 
 static void fm_tr_alarm_id(SFmAlarmDataT *a, std::string &s, bool is_get) {
 	if(is_get) s = chkstr(a->alarm_id);
-	else STRCP_TO(a->alarm_id,s);
+	else STRCP_TO(a->alarm_id,s, RETURN);
 }
 
 static void fm_alarm_state(SFmAlarmDataT *a, std::string &s, bool is_get) {
@@ -225,12 +232,12 @@ static void fm_alarm_state(SFmAlarmDataT *a, std::string &s, bool is_get) {
 
 static void fm_entity_id(SFmAlarmDataT *a, std::string &s, bool is_get) {
 	if(is_get) s = chkstr(a->entity_type_id);
-	else STRCP_TO(a->entity_type_id,s);
+	else STRCP_TO(a->entity_type_id,s, RETURN);
 }
 
 static void fm_instance_id(SFmAlarmDataT *a, std::string &s, bool is_get) {
 	if(is_get) s = chkstr(a->entity_instance_id);
-	else STRCP_TO(a->entity_instance_id,s);
+	else STRCP_TO(a->entity_instance_id,s, RETURN);
 }
 
 static void fm_timestamp(SFmAlarmDataT *a, std::string &s, bool is_get) {
@@ -248,7 +255,7 @@ static void fm_alarm_severity(SFmAlarmDataT *a, std::string &s, bool is_get) {
 
 static void fm_reason_text(SFmAlarmDataT *a, std::string &s, bool is_get) {
 	if(is_get) s = chkstr(a->reason_text);
-	else STRCP_TO(a->reason_text,s);
+	else STRCP_TO(a->reason_text,s, RETURN);
 }
 
 static void fm_alarm_type(SFmAlarmDataT *a, std::string &s, bool is_get) {
@@ -263,7 +270,7 @@ static void fm_prop_cause(SFmAlarmDataT *a, std::string &s, bool is_get) {
 
 static void fm_repair(SFmAlarmDataT *a, std::string &s, bool is_get) {
 	if(is_get) s = chkstr(a->proposed_repair_action);
-	else STRCP_TO(a->proposed_repair_action,s);
+	else STRCP_TO(a->proposed_repair_action,s, RETURN);
 }
 
 static void fm_service_affect(SFmAlarmDataT *a, std::string &s, bool is_get) {
@@ -461,8 +468,8 @@ bool fm_alarm_filter_from_string(const std::string &str, AlarmFilter *filter) {
 	}
 	init_tables();
 
-	STRCP_TO(filter->alarm_id,s[0]);
-	STRCP_TO(filter->entity_instance_id,s[1]);
+	STRCP_TO(filter->alarm_id,s[0], RETURN_FALSE);
+	STRCP_TO(filter->entity_instance_id,s[1], RETURN_FALSE);
 	return true;
 }
 
