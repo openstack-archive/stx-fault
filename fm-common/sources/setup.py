@@ -1,5 +1,6 @@
 
-from distutils.core import setup, Extension
+from setuptools import setup
+from distutils.core import Extension
 
 setup(name="fm_core", version="1.0",
       ext_modules=[Extension("fm_core", [

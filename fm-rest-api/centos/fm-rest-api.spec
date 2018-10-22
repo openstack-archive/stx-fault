@@ -10,6 +10,8 @@ Source0: %{name}-%{version}.tar.gz
 
 
 BuildRequires: python-setuptools
+BuildRequires: python2-pip
+BuildRequires: python2-wheel
 BuildRequires: python-oslo-config
 BuildRequires: python-oslo-db
 BuildRequires: python-oslo-log
@@ -42,6 +44,7 @@ echo "Start build"
 
 export PBR_VERSION=%{version}
 %{__python} setup.py build
+%py2_build_wheel
 PYTHONPATH=. oslo-config-generator --config-file=fm/config-generator.conf
 
 %install
@@ -52,6 +55,8 @@ export PBR_VERSION=%{version}
                              --prefix=/usr \
                              --install-data=/usr/share \
                              --single-version-externally-managed
+mkdir -p $RPM_BUILD_ROOT/wheels
+install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
 
 install -p -D -m 644 scripts/fm-api.service %{buildroot}%{_unitdir}/fm-api.service
 install -d -m 755 %{buildroot}%{local_initddir}
@@ -94,3 +99,11 @@ rm -rf $RPM_BUILD_ROOT
 # pmond config file
 %{local_etc_pmond}/fm-api.conf
 
+%package wheels
+Summary: %{name} wheels
+
+%description wheels
+Contains python wheels for %{name}
+
+%files wheels
+/wheels/*

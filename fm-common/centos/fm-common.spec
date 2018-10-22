@@ -17,6 +17,8 @@ BuildRequires: postgresql-devel
 BuildRequires: libuuid-devel
 BuildRequires: python-devel
 BuildRequires: python-setuptools
+BuildRequires: python2-pip
+BuildRequires: python2-wheel
 
 %package -n fm-common-dev
 Summary: CGTS Platform Fault Management Common Package - Development files
@@ -50,6 +52,7 @@ MAJOR=`echo $VER | awk -F . '{print $1}'`
 MINOR=`echo $VER | awk -F . '{print $2}'`
 make  MAJOR=$MAJOR MINOR=$MINOR %{?_smp_mflags}
 %{__python} setup.py build
+%py2_build_wheel
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -62,6 +65,8 @@ make DEST_DIR=$RPM_BUILD_ROOT BIN_DIR=%{local_bindir} LIB_DIR=%{_libdir} INC_DIR
                              --install-lib=%{pythonroot} \
                              --prefix=/usr \
                              --install-data=/usr/share
+mkdir -p $RPM_BUILD_ROOT/wheels
+install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
 
 install -d $RPM_BUILD_ROOT/usr/bin
 install -m 755 fm_db_sync_event_suppression.py $RPM_BUILD_ROOT/usr/bin/fm_db_sync_event_suppression.py
@@ -98,3 +103,12 @@ rm -rf $RPM_BUILD_ROOT
 %files -n fm-common-doc
 %defattr(-,root,root,-)
 %{cgcs_doc_deploy_dir}/*
+
+%package wheels
+Summary: %{name} wheels
+
+%description wheels
+Contains python wheels for %{name}
+
+%files wheels
+/wheels/*
