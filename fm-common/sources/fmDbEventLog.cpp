@@ -309,8 +309,10 @@ bool CFmDbEventLogOperation::get_all_event_logs(CFmDBSession &sess, SFmAlarmData
 		CFmDbEventLog::convert_to(res[ix],p+ix);
 		std::string eid = (p+ix)->entity_instance_id;
 		eid = sname + "." + eid;
-		strncpy((p+ix)->entity_instance_id, eid.c_str(),
-				sizeof((p+ix)->entity_instance_id));
+        if(snprintf((p+ix)->entity_instance_id, sizeof((p+ix)->entity_instance_id), "%s", eid.c_str()) < 0) {
+            FM_WARNING_LOG("fail to snprintf eid %s to entity_instance_id for encoding error.", eid.c_str());
+            continue;
+        }
 	}
 	(*logs) = p;
 	*len = found_num_logs;
