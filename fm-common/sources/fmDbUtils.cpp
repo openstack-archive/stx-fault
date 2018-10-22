@@ -157,26 +157,29 @@ void fm_db_util_make_timestamp_string(std::string &tstr, FMTimeT tm,
 }
 
 bool fm_db_util_get_timestamp(const char *str, FMTimeT &ft){
-	struct timespec ts;
-	memset(&ts, 0, sizeof(ts));
-	// only check if the year is present
-	if (strlen(str) < 10){
-		//get the current time
-		clock_gettime(CLOCK_REALTIME, &ts);
-	}else{
-		struct tm t;
-		memset(&t, 0, sizeof(t));
-		strptime(str, "%F %T", &t);
-		ts.tv_sec = mktime(&t);
-		//now get the nanoseconds
-		char *tstr = strdup(str);
-		strsep(&tstr, ".");
-		if (tstr != NULL){
-			ts.tv_nsec = atol(tstr)*1000;
-		}
-	}
-	ft = ts.tv_sec*1000000 + ts.tv_nsec/1000;
-	return true;
+    struct timespec ts;
+    memset(&ts, 0, sizeof(ts));
+    // only check if the year is present
+    if (strlen(str) < 10){
+        //get the current time
+        clock_gettime(CLOCK_REALTIME, &ts);
+    }else{
+        struct tm t;
+        memset(&t, 0, sizeof(t));
+        strptime(str, "%F %T", &t);
+        ts.tv_sec = mktime(&t);
+        //now get the nanoseconds
+        char *tstr, *tobe_free = strdup(str);
+        tstr = tobe_free;
+
+        strsep(&tstr, ".");
+        if (tstr != NULL){
+            ts.tv_nsec = atol(tstr)*1000;
+        }
+        free(tobe_free);
+    }
+    ft = ts.tv_sec*1000000 + ts.tv_nsec/1000;
+    return true;
 }
 
 bool fm_db_util_build_sql_query(const char* db_table,
@@ -352,7 +355,7 @@ bool fm_db_util_event_log_build_sql_insert(std::map<std::string,std::string> &ma
 		param.assign(str);
 		cmd_params += param;
 	}
-        
+
 	cmd_params.resize(cmd_params.size()-1);
 	params.db_cmd = "INSERT INTO ";
 	params.db_cmd += FM_EVENT_LOG_TABLE_NAME;
