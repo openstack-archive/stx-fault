@@ -174,6 +174,7 @@ bool fm_db_util_get_timestamp(const char *str, FMTimeT &ft){
 		if (tstr != NULL){
 			ts.tv_nsec = atol(tstr)*1000;
 		}
+                free(tstr);
 	}
 	ft = ts.tv_sec*1000000 + ts.tv_nsec/1000;
 	return true;
@@ -352,7 +353,7 @@ bool fm_db_util_event_log_build_sql_insert(std::map<std::string,std::string> &ma
 		param.assign(str);
 		cmd_params += param;
 	}
-        
+
 	cmd_params.resize(cmd_params.size()-1);
 	params.db_cmd = "INSERT INTO ";
 	params.db_cmd += FM_EVENT_LOG_TABLE_NAME;
