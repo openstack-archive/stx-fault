@@ -12,6 +12,8 @@ Source1: LICENSE
 %define debug_package %{nil}
 
 BuildRequires: python-setuptools
+BuildRequires: python2-pip
+BuildRequires: python2-wheel
 
 %description
 CGTS platform Fault Management Client Library that provides APIs
@@ -34,6 +36,7 @@ the Alarms & Logs Doc Yaml file
 
 %build
 %{__python} setup.py build
+%py2_build_wheel
 
 %install
 %{__python} setup.py install --root=$RPM_BUILD_ROOT \
@@ -41,6 +44,8 @@ the Alarms & Logs Doc Yaml file
                              --prefix=/usr \
                              --install-data=/usr/share \
                              --single-version-externally-managed
+mkdir -p $RPM_BUILD_ROOT/wheels
+install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
 
 CGCS_DOC_DEPLOY=$RPM_BUILD_ROOT/%{cgcs_doc_deploy_dir}
 install -d $CGCS_DOC_DEPLOY
@@ -64,3 +69,12 @@ rm -rf $RPM_BUILD_ROOT
 %files -n fm-api-doc
 %defattr(-,root,root,-)
 %{cgcs_doc_deploy_dir}/*
+
+%package wheels
+Summary: %{name} wheels
+
+%description wheels
+Contains python wheels for %{name}
+
+%files wheels
+/wheels/*

@@ -13,6 +13,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRequires:  git
 BuildRequires:  python-pbr >= 2.0.0
 BuildRequires:  python-setuptools
+BuildRequires:  python2-pip
+BuildRequires:  python2-wheel
 
 Requires:       python-keystoneauth1 >= 3.1.0
 Requires:       python-pbr >= 2.0.0
@@ -48,6 +50,7 @@ echo "Start build"
 
 export PBR_VERSION=%{version}
 %{__python} setup.py build
+%py2_build_wheel
 
 %install
 echo "Start install"
@@ -57,6 +60,8 @@ export PBR_VERSION=%{version}
                              --prefix=/usr \
                              --install-data=/usr/share \
                              --single-version-externally-managed
+mkdir -p $RPM_BUILD_ROOT/wheels
+install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
 
 install -d -m 755 %{buildroot}%{local_etc_bash_completiond}
 install -p -D -m 664 tools/fm.bash_completion %{buildroot}%{local_etc_bash_completiond}/fm.bash_completion
@@ -80,3 +85,11 @@ rm -rf $RPM_BUILD_ROOT
 %files sdk
 /usr/share/remote-clients/%{name}-%{version}.tgz
 
+%package wheels
+Summary: %{name} wheels
+
+%description wheels
+Contains python wheels for %{name}
+
+%files wheels
+/wheels/*
