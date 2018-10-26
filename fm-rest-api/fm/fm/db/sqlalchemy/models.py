@@ -22,7 +22,7 @@
 
 
 import json
-import urlparse
+from six.moves.urllib.parse import urlparse
 
 from oslo_config import cfg
 
@@ -35,7 +35,7 @@ from oslo_db.sqlalchemy import models
 
 
 def table_args():
-    engine_name = urlparse.urlparse(cfg.CONF.database_connection).scheme
+    engine_name = urlparse(cfg.CONF.database_connection).scheme
     if engine_name == 'mysql':
         return {'mysql_engine': 'InnoDB',
                 'mysql_charset': "utf8"}
