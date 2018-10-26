@@ -22,7 +22,10 @@
 
 
 import json
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 from oslo_config import cfg
 
