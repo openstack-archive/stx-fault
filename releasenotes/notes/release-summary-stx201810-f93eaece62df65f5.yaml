@@ -4,27 +4,29 @@ prelude: >
     Log Reporting Services for other StarlingX Components.
 features:
   - |
-    Framework for infrastructure services via a client API to:
+    Framework for infrastructure services through a client API to do
+    the following:
 
-    - Set, clear and query customer alarms.
+    - Set, clear, and query customer alarms.
     - Generate customer logs for significant events.
   - |
-    Framework maintains an Active Alarm List.
+    Framework to maintain an Active Alarm List.
   - |
     Active Alarm Counts Banner on Horizon GUI.
   - |
-    Framework provides REST API to query alarms & events and also publish
-    through SNMPv2c Traps.
+    Framework to provide REST API to query alarms and events and also
+    publishes through SNMPv2c Traps.
   - |
     Support for Alarm suppression.
   - |
-    Operator Alarms:
+    Operator Alarms on the following:
 
-    -  On Platform Nodes & Resources.
-    -  On Hosted Virtual Resources ( i.e. VMs, Volumes, Networks).
+    -  Platform Nodes and Resources.
+    -  Hosted Virtual Resources (i.e. VMs, Volumes, and Networks).
   - |
     Operator Logs - Event List:
 
     - Logging of Set/Clears of Alarms.
-    - Related to Platform Nodes & Resources.
-    - Related to Hosted Virtual Resources ( i.e. VMs, Volumes, Networks).
+    - Related to Platform Nodes and Resources.
+    - Related to Hosted Virtual Resources (i.e. VMs, Volumes, and
+      Networks).
