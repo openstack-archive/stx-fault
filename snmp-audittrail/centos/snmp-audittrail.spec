@@ -1,4 +1,4 @@
-Summary: Titanium Cloud Platform SNMP Audit Trail
+Summary: StarlingX SNMP Audit Trail
 Name: snmp-audittrail
 Version: 1.0
 Release: %{tis_patch_ver}%{?_tis_dist}
@@ -16,18 +16,18 @@ Requires: net-snmp
 Requires: uuid
 
 %description
-Titanium Cloud platform SNMP Audit Trail provides audit trail support for incoming
+StarlingX SNMP Audit Trail provides audit trail support for incoming
 SNMP requests.
 
 %package -n snmp-audittrail-devel
-Summary: Titanium Cloud Platform SNMP Audit Trail Package - Development files
+Summary: StarlingX SNMP Audit Trail Package - Development files
 Group: devel
 Requires: snmp-audittrail = %{version}-%{release}
 
 %description -n snmp-audittrail-devel
-Titanium Cloud platform SNMP Audit Trail provides audit trail support for incoming
-SNMP requests.  This package contains symbolic links, header files, and related
-items necessary for software development.
+StarlingX SNMP Audit Trail provides audit trail support for incoming SNMP requests.
+This package contains symbolic links, header files, and related items necessary
+for software development.
 
 %prep
 %setup
@@ -36,16 +36,16 @@ items necessary for software development.
 VER=%{version}
 MAJOR=`echo $VER | awk -F . '{print $1}'`
 MINOR=`echo $VER | awk -F . '{print $2}'`
-PATCHVER=` echo %{release} | awk -F r '{print $2}' | awk -F . '{print $1}'`
-make  MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCHVER %{?_smp_mflags}
+PATCHVER=`echo %{release} | awk -F . '{print $1}'`
+make MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCHVER %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 VER=%{version}
 MAJOR=`echo $VER | awk -F . '{print $1}'`
 MINOR=`echo $VER | awk -F . '{print $2}'`
-PATCHVER=` echo %{release} | awk -F r '{print $2}' | awk -F . '{print $1}'`
-make DEST_DIR=$RPM_BUILD_ROOT LIB_DIR=%{_libdir} MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCHVER install_non_bb
+PATCHVER=`echo %{release} | awk -F . '{print $1}'`
+make install DESTDIR=$RPM_BUILD_ROOT LIB_DIR=%{_libdir} MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCHVER
 
 %files
 %defattr(-,root,root,-)

@@ -5,6 +5,11 @@ LDLIBS = -lfmcommon -lnetsnmp -lnetsnmpagent -luuid
 INCLUDES += -I./
 CCFLAGS = -fPIC -g -O2 -Wall -Werror
 LIBCGTSAGENT_SO := libsnmpAuditPlugin.so
+MAJOR ?= 1
+MINOR ?= 0
+PATCH ?= 0
+DESTDIR ?= /usr/lib64
+
 build: lib
 
 .c.o:
@@ -18,8 +23,8 @@ lib: $(OBJS)
 clean:
 	@rm -f $(OBJ) *.o *.so.*
 
-install_non_bb:
-	install -m 755 -d $(DEST_DIR)$(LIB_DIR)
-	install -m 755 $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(DEST_DIR)$(LIB_DIR)
-	ln -s $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(DEST_DIR)$(LIB_DIR)/$(LIBCGTSAGENT_SO).$(MAJOR)
-	ln -s $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(DEST_DIR)$(LIB_DIR)/$(LIBCGTSAGENT_SO)
+install:
+	install -m 755 -d $(DESTDIR)$(LIB_DIR)
+	install -m 755 $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(DESTDIR)$(LIB_DIR)
+	ln -s $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(DESTDIR)$(LIB_DIR)/$(LIBCGTSAGENT_SO).$(MAJOR)
+	ln -s $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(DESTDIR)$(LIB_DIR)/$(LIBCGTSAGENT_SO)
