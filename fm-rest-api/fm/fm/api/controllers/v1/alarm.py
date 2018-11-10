@@ -91,7 +91,7 @@ class Alarm(base.APIBase):
     "Whether the alarm prevents software management actions"
 
     degrade_affecting = wtypes.text
-    "Wheter the alarm prevents filesystem resize actions"
+    "Whether the alarm prevents filesystem resize actions"
 
     links = [link.Link]
     "A list containing a self link and associated alarm links"
