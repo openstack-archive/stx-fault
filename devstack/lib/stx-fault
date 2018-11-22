@@ -58,7 +58,7 @@ function cleanup_fault {
     if is_service_enabled fm-common; then
         cleanup_fm_common
     fi
-    if is_service_enabled fm-rest_api; then
+    if is_service_enabled fm-rest-api; then
         cleanup_fm_rest_api
     fi
 }
