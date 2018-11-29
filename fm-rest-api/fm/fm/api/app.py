@@ -23,6 +23,7 @@ from oslo_log import log
 import pecan
 
 from fm.api import config
+from fm.api import middleware
 from fm.common import policy
 from fm.common.i18n import _
 
@@ -53,6 +54,7 @@ def setup_app(config=None):
         debug=CONF.debug,
         logging=getattr(config, 'logging', {}),
         force_canonical=getattr(config.app, 'force_canonical', True),
+        wrap_app=middleware.ParsableErrorMiddleware,
         guess_content_type_from_ext=False,
         **app_conf
     )
