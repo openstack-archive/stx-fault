@@ -25,7 +25,7 @@
 #define FM_EVENT_SUPPRESSION_TABLE_NAME           "event_suppression"
 
 /* Event suppression table sync script */
-#define FM_DB_SYNC_EVENT_SUPPRESSION              "/usr/bin/fm_db_sync_event_suppression.py"
+#define FM_DB_SYNC_EVENT_SUPPRESSION              "/usr/local/bin/fm_db_sync_event_suppression.py"
 
 /* Alarm Table Columns */
 #define FM_ALARM_COLUMN_CREATED_AT                "created_at"
