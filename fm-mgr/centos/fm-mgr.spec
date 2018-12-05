@@ -16,7 +16,7 @@ BuildRequires: libuuid-devel
 
 %description
 CGTS platform Fault Manager that serves the client
-application fault management requests and raise/clear/update  
+application fault management requests and raise/clear/update
 alarms in the active alarm database.
 
 %prep
@@ -29,14 +29,19 @@ MINOR=`echo $VER | awk -F . '{print $2}'`
 make  MAJOR=$MAJOR MINOR=$MINOR %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 VER=%{version}
 MAJOR=`echo $VER | awk -F . '{print $1}'`
 MINOR=`echo $VER | awk -F . '{print $2}'`
-make DEST_DIR=$RPM_BUILD_ROOT BIN_DIR=%{local_bindir} LIB_DIR=%{_libdir} INC_DIR=%{_includedir} MAJOR=$MAJOR MINOR=$MINOR install_non_bb
+make DESTDIR=%{buildroot} \
+     BINDIR=%{local_bindir} \
+     SYSCONFDIR=%{_sysconfdir} \
+     UNITDIR=%{_unitdir} \
+     MAJOR=$MAJOR MINOR=$MINOR \
+     install
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 
 %files
@@ -46,4 +51,3 @@ rm -rf $RPM_BUILD_ROOT
 %_sysconfdir/init.d/fminit
 %{_unitdir}/fminit.service
 %config(noreplace) %{_sysconfdir}/logrotate.d/fm.logrotate
-
