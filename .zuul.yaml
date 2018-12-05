@@ -32,7 +32,7 @@
       - zuul: openstack-infra/devstack
     timeout: 9000
     required-projects:
-      - name: git.openstack.org/openstack-dev/devstack
+      - name: git.openstack.org/openstack-discuss/devstack
         override-branch: stable/pike
       - name: git.openstack.org/openstack/cinder
         override-branch: stable/pike
