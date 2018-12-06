@@ -3,7 +3,7 @@
 # devstack/plugin.sh
 # Triggers stx-fault specific functions to install and configure Fault Management
 
-echo_summary "fault devstack plugin.sh called: $1/$2"
+echo_summary "stx-fault devstack plugin.sh called: $1/$2"
 
 # check for service enabled
 if is_service_enabled stx-fault; then
