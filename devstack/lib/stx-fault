@@ -5,9 +5,6 @@
 
 # Dependencies:
 #
-# - ``functions`` file
-# - ``DEST``, ``DATA_DIR``, ``STACK_USER`` must be defined
-
 # - The stx-update plugin must be enabled
 
 # ``stack.sh`` calls the entry points in this order:
@@ -26,13 +23,13 @@ set -o xtrace
 # Defaults
 # --------
 
-FAULT_DIR=${GITDIR[$STX_FAULT_NAME]}
-FAULT_CONF_DIR=/etc/fm
-FM_RESTAPI_CONF=$FAULT_CONF_DIR/fm.conf
-FM_RESTAPI_PASTE_INI=$FAULT_CONF_DIR/api-paste.ini
+STX_FAULT_DIR=${GITDIR[$STX_FAULT_NAME]}
+STX_FAULT_CONF_DIR=/etc/fm
+FM_RESTAPI_CONF=$STX_FAULT_CONF_DIR/fm.conf
+FM_RESTAPI_PASTE_INI=$STX_FAULT_CONF_DIR/api-paste.ini
 FM_RESTAPI_AUTH_CACHE_DIR=${FM_RESTAPI_AUTH_CACHE_DIR:-/var/cache/fault}
 
-FM_RESTAPI_DIR=${GITDIR[$STX_FAULT_NAME]}/fm-rest-api/fm
+FM_RESTAPI_DIR=$STX_FAULT_DIR/fm-rest-api/fm
 
 
 if is_service_enabled tls-proxy; then
@@ -48,6 +45,51 @@ PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; pri
 
 # Functions
 # ---------
+
+function build_fm_common {
+    pushd $STX_FAULT_DIR/fm-common/sources
+
+    local major minor version x
+
+    if [[ -z $1 || -z $2 ]]; then
+        # get fm-common version
+        read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-common/PKG-INFO)
+        major=${version%%.*}
+        minor=${version##*.}
+    else
+        major=$1
+        minor=$2
+    fi
+
+    # build
+    make MAJOR=$major MINOR=$minor
+    python setup.py build
+
+    popd
+}
+
+function build_fm_mgr {
+    pushd $STX_FAULT_DIR/fm-mgr/sources
+
+    local x version
+
+    local major minor version x
+
+    if [[ -z $1 || -z $2 ]]; then
+        # get fm-mgr version
+        read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-mgr/PKG-INFO)
+        local major=${version%%.*}
+        local minor=${version##*.}
+    else
+        major=$1
+        minor=$2
+    fi
+
+    # build
+    make MAJOR=$major MINOR=$minor
+
+    popd
+}
 
 function cleanup_fault {
     stop_fault
@@ -67,14 +109,14 @@ function cleanup_fm_common {
     local x version
 
     # get fm-common version
-    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-common/PKG-INFO)
+    read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-common/PKG-INFO)
     local major=${version%%.*}
     local minor=${version##*.}
     local prefix=${STX_BIN_DIR%/*}
 
     sudo rm /etc/ld.so.conf.d/stx-fault.conf
 
-    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-common/sources
+    pushd $STX_FAULT_DIR/fm-common/sources
 
     sudo make \
         DEST_DIR=$prefix \
@@ -96,11 +138,11 @@ function cleanup_fm_mgr {
     local x version
 
     # get fm-mgr version
-    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/PKG-INFO)
+    read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-mgr/PKG-INFO)
     local major=${version%%.*}
     local minor=${version##*.}
 
-    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/sources
+    pushd $STX_FAULT_DIR/fm-mgr/sources
 
     sudo make \
         BIN_DIR=/bin \
@@ -120,13 +162,15 @@ function cleanup_fm_rest_api {
 function configure_fault {
     if is_service_enabled fm-rest-api; then
         configure_fm_rest_api
+        create_fault_user_group
+        create_fault_accounts
     fi
 }
 
 function configure_fm_rest_api {
-    sudo install -d -o $STACK_USER -m 755 $FAULT_CONF_DIR
+    sudo install -d -o $STACK_USER -m 755 $STX_FAULT_CONF_DIR
 
-    cp -p $FAULT_DIR/devstack/files/api-paste.ini $FM_RESTAPI_PASTE_INI
+    cp -p $STX_FAULT_DIR/devstack/files/api-paste.ini $FM_RESTAPI_PASTE_INI
 
     configure_auth_token_middleware $FM_RESTAPI_CONF fm $FM_RESTAPI_AUTH_CACHE_DIR
 
@@ -159,14 +203,12 @@ function configure_fm_rest_api {
 }
 
 function create_fault_accounts {
-    if [[ "$ENABLED_SERVICES" =~ "fm-rest-api" ]]; then
-        create_service_user "fm"
-        get_or_create_service "fm" "faultmanagement" "Fault Management Service"
-        get_or_create_endpoint \
-            "faultmanagement" \
-            "$REGION_NAME" \
-            "$FM_RESTAPI_SERVICE_PROTOCOL://$FM_RESTAPI_SERVICE_HOST:$FM_RESTAPI_SERVICE_PORT/v1"
-    fi
+    create_service_user "fm"
+    get_or_create_service "fm" "faultmanagement" "Fault Management Service"
+    get_or_create_endpoint \
+        "faultmanagement" \
+        "$REGION_NAME" \
+        "$FM_RESTAPI_SERVICE_PROTOCOL://$FM_RESTAPI_SERVICE_HOST:$FM_RESTAPI_SERVICE_PORT/v1"
 }
 
 function create_fault_cache_dir {
@@ -186,10 +228,9 @@ function init_fault {
 function install_fault {
     if is_service_enabled fm-common; then
         install_fm_common
-        install_fm_client
     fi
-    if is_service_enabled fm-api; then
-        install_fm_api
+    if is_service_enabled fm-client || is_service_enabled fm-common; then
+        install_fm_client
     fi
     if is_service_enabled fm-api; then
         install_fm_api
@@ -203,7 +244,7 @@ function install_fault {
 }
 
 function install_fm_api {
-    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-api
+    pushd $STX_FAULT_DIR/fm-api
     sudo python setup.py install \
         --root=/ \
         --install-lib=$PYTHON_SITE_DIR \
@@ -214,7 +255,7 @@ function install_fm_api {
 }
 
 function install_fm_client {
-    pushd ${GITDIR[$STX_FAULT_NAME]}/python-fmclient/fmclient
+    pushd $STX_FAULT_DIR/python-fmclient/fmclient
     sudo python setup.py install \
         --root=/ \
         --install-lib=$PYTHON_SITE_DIR \
@@ -225,21 +266,20 @@ function install_fm_client {
 }
 
 function install_fm_common {
-    local x version
+    pushd $STX_FAULT_DIR/fm-common/sources
+
+    local major minor version x
 
     # get fm-common version
-    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-common/PKG-INFO)
-    local major=${version%%.*}
-    local minor=${version##*.}
+    read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-common/PKG-INFO)
+    major=${version%%.*}
+    minor=${version##*.}
+
+    build_fm_common $major $minor
 
     # Set up the destinations
     # Making an assumption here about STX_BIN_DIR having ../include be valid
     local prefix=${STX_BIN_DIR%/*}
-
-    # build
-    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-common/sources
-    make MAJOR=$major MINOR=$minor
-    sudo python setup.py build
 
     # install
     sudo make \
@@ -273,25 +313,19 @@ function install_fm_common {
 }
 
 function install_fm_mgr {
-    local x version
+    pushd $STX_FAULT_DIR/fm-mgr/sources
+
+    local major minor version x
 
     # get fm-mgr version
-    read x version <<< $(grep '^Version: ' ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/PKG-INFO)
-    local major=${version%%.*}
-    local minor=${version##*.}
+    read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-mgr/PKG-INFO)
+    major=${version%%.*}
+    minor=${version##*.}
 
-    # build
-    pushd ${GITDIR[$STX_FAULT_NAME]}/fm-mgr/sources
-    make MAJOR=$major MINOR=$minor
+    build_fm_mgr $major $minor
 
     # install
-    sudo make \
-        BIN_DIR=/bin \
-        LIB_DIR=/lib \
-        INC_DIR=/include \
-        MAJOR=$major \
-        MINOR=$minor \
-        install_non_bb
+    sudo make install_non_bb
 
     popd
 }

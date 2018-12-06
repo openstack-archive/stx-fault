@@ -1,6 +1,14 @@
 #!/bin/bash
 # Devstack settings
 
+# Services
+# stx-fault - Overall enable for this plugin
+# fm-client
+# fm-common
+# fm-api
+# fm-rest-api
+# fm-mgr
+
 # Defaults
 # --------
 
@@ -8,9 +16,7 @@ STX_FAULT_NAME=stx-fault
 
 ######### Plugin Specific ##########
 enable_service $STX_FAULT_NAME
-#define_plugin $STX_FAULT_NAME
 
-# Handle STX pre-reqs
 if is_service_enabled fm-rest-api; then
     enable_service tsconfig
 fi
