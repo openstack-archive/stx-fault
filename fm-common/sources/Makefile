@@ -7,6 +7,9 @@ CLI_OBJS = fm_cli.o
 LDLIBS = -lstdc++ -lrt -luuid -lpq -lpthread -lpython2.7
 INCLUDES = -I./ -I$(shell pg_config --includedir)
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
+EXTRACCFLAGS= -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
+EXTRAARFLAGS= -Wl,-z,noexecstack,-z,relro,-z,now
+LDFLAGS= -Wl,-z,noexecstack,-z,relro,-z,now
 
 LIBFMCOMMON_SO := libfmcommon.so
 build: lib fmClientCli
@@ -20,7 +23,7 @@ lib: $(OBJS)
 	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(LIBFMCOMMON_SO)
 
 fmClientCli: $(CLI_OBJS) lib
-	$(CXX) -o $@ $(CLI_OBJS) -L./ -lfmcommon 
+	$(CXX) -o $@ $(CLI_OBJS) -L./ -lfmcommon $(LDFLAGS)
 	
 clean:
 	@rm -f $(OBJ) *.o *.so fmClientCli  

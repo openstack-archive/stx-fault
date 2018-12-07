@@ -3,7 +3,8 @@ SRCS = cgtsActiveAlarms.c cgtsAgentPlugin.c cgtsEventLogs.c
 OBJS = $(SRCS:.c=.o)
 LDLIBS = -lfmcommon -lnetsnmp -lnetsnmpagent -luuid
 INCLUDES += -I./
-CCFLAGS = -fPIC -g -O2 -Wall -Werror
+CCFLAGS = -fPIC -g -O2 -Wall -Werror -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
+LDFLAGS = -Wl,-z,noexecstack,-z,relro,-z,now
 LIBCGTSAGENT_SO := libcgtsAgentPlugin.so
 build: lib 
 
@@ -11,7 +12,7 @@ build: lib
 	$(CXX) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 
 lib: $(OBJS)
-	$(CXX) $(OBJS) $(LDLIBS) -o $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) -shared
+	$(CXX) $(OBJS) $(LDLIBS) -o $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) -shared $(LDFLAGS)
 	ln -sf $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(LIBCGTSAGENT_SO).$(MAJOR)
 	ln -sf $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(LIBCGTSAGENT_SO)
 

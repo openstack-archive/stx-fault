@@ -4,6 +4,8 @@ OBJS = fm_main.o
 OBJS = $(SRCS:.cpp=.o)
 INCLUDES = -I.
 CCFLAGS = -g -O2 -Wall -Werror
+EXTRACCFLAGS = -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security
+LDFLAGS = -Wl,-z,noexecstack,-z,relro,-z,now
 
 build: fmManager
 
