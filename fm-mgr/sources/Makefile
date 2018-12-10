@@ -1,9 +1,18 @@
-SRCS = fm_main.cpp 
-OBJS = fm_main.o 
+SRCS = fm_main.cpp
+OBJS = fm_main.o
 
 OBJS = $(SRCS:.cpp=.o)
 INCLUDES = -I.
 CCFLAGS = -g -O2 -Wall -Werror
+
+MAJOR ?= 1
+MINOR ?= 0
+
+DESTDIR ?= /
+BINDIR ?= /usr/local/bin
+SYSCONFDIR ?= /etc
+UNITDIR ?= /usr/lib/systemd/system
+
 
 build: fmManager
 
@@ -16,14 +25,13 @@ fmManager: $(OBJS)
 clean:
 	 @rm -f $(OBJS)
 
-install_non_bb:
-	mkdir -p $(DEST_DIR)/usr/lib/systemd/system
-	install -m 755 -d $(DEST_DIR)/etc
-	install -m 755 -d $(DEST_DIR)/etc/init.d
-	install -m 755 -d $(DEST_DIR)/etc/logrotate.d
-	install -m 755 -d $(DEST_DIR)/usr/local
-	install -m 755 -d $(DEST_DIR)/usr/local/bin
-	install -m 755 fminit $(DEST_DIR)/etc/init.d/fminit
-	install -m 755 fmManager $(DEST_DIR)/usr/local/bin/fmManager
-	install -m 644 fm.logrotate $(DEST_DIR)/etc/logrotate.d/fm.logrotate
-	install -m 644 fminit.service $(DEST_DIR)/usr/lib/systemd/system/fminit.service
+install:
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system
+	install -m 755 -d $(DESTDIR)$(SYSCONFDIR)
+	install -m 755 -d $(DESTDIR)$(SYSCONFDIR)/init.d
+	install -m 755 -d $(DESTDIR)$(SYSCONFDIR)/logrotate.d
+	install -m 755 -d $(DESTDIR)$(BINDIR)
+	install -m 755 fminit $(DESTDIR)$(SYSCONFDIR)/init.d/fminit
+	install -m 755 fmManager $(DESTDIR)$(BINDIR)/fmManager
+	install -m 644 fm.logrotate $(DESTDIR)$(SYSCONFDIR)/logrotate.d/fm.logrotate
+	install -m 644 fminit.service $(DESTDIR)$(UNITDIR)/fminit.service
