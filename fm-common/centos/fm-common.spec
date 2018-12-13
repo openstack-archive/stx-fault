@@ -55,34 +55,26 @@ make  MAJOR=$MAJOR MINOR=$MINOR %{?_smp_mflags}
 %py2_build_wheel
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 VER=%{version}
 MAJOR=`echo $VER | awk -F . '{print $1}'`
 MINOR=`echo $VER | awk -F . '{print $2}'`
-make DEST_DIR=$RPM_BUILD_ROOT BIN_DIR=%{local_bindir} LIB_DIR=%{_libdir} INC_DIR=%{_includedir} MAJOR=$MAJOR MINOR=$MINOR install_non_bb
+make DESTDIR=%{buildroot} \
+     BINDIR=%{local_bindir} \
+     LIBDIR=%{_libdir} \
+     INCDIR=%{_includedir} \
+     CGCS_DOC_DEPLOY=%{cgcs_doc_deploy_dir} \
+     MAJOR=$MAJOR MINOR=$MINOR install
 
 %{__python} setup.py install --root=%{buildroot} \
                              --install-lib=%{pythonroot} \
                              --prefix=/usr \
                              --install-data=/usr/share
-mkdir -p $RPM_BUILD_ROOT/wheels
-install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
-
-install -d $RPM_BUILD_ROOT/usr/bin
-install -m 755 fm_db_sync_event_suppression.py $RPM_BUILD_ROOT/usr/bin/fm_db_sync_event_suppression.py
-
-# install the headers that used by fm-mgr package
-install -m 644 -p -D fmConfig.h %{buildroot}%{_includedir}/fmConfig.h
-install -m 644 -p -D fmLog.h %{buildroot}%{_includedir}/fmLog.h
-
-CGCS_DOC_DEPLOY=$RPM_BUILD_ROOT/%{cgcs_doc_deploy_dir}
-install -d $CGCS_DOC_DEPLOY
-# install fmAlarm.h in CGCS_DOC_DEPLOY_DIR
-# used by fm-doc package to validate the Alarms & Logs Doc Yaml file
-install -m 644 fmAlarm.h $CGCS_DOC_DEPLOY
+mkdir -p %{buildroot}/wheels
+install -m 644 dist/*.whl %{buildroot}/wheels/
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 
 %files
@@ -90,7 +82,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE
 %{local_bindir}/*
 %{_libdir}/*.so.*
-/usr/bin/fm_db_sync_event_suppression.py
 
 %{pythonroot}/fm_core.so
 %{pythonroot}/fm_core-*.egg-info

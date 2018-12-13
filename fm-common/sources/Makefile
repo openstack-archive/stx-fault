@@ -8,6 +8,15 @@ LDLIBS = -lstdc++ -lrt -luuid -lpq -lpthread -lpython2.7
 INCLUDES = -I./ -I$(shell pg_config --includedir)
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
 
+MAJOR ?= 1
+MINOR ?= 0
+
+DESTDIR ?= /
+BINDIR ?= /usr/local/bin
+LIBDIR ?= /usr/local/lib64
+INCDIR ?= /usr/local/include
+CGCS_DOC_DEPLOY ?= /opt/deploy/cgcs_doc
+
 LIBFMCOMMON_SO := libfmcommon.so
 build: lib fmClientCli
 
@@ -20,20 +29,25 @@ lib: $(OBJS)
 	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(LIBFMCOMMON_SO)
 
 fmClientCli: $(CLI_OBJS) lib
-	$(CXX) -o $@ $(CLI_OBJS) -L./ -lfmcommon 
-	
-clean:
-	@rm -f $(OBJ) *.o *.so fmClientCli  
+	$(CXX) -o $@ $(CLI_OBJS) -L./ -lfmcommon
 
-install_non_bb:
-	install -m 755 -d $(DEST_DIR)$(BIN_DIR)
-	install -m 755 -d $(DEST_DIR)$(LIB_DIR)
-	install -m 755 -d $(DEST_DIR)$(INC_DIR)
-	install -m 755 fmClientCli $(DEST_DIR)$(BIN_DIR)
-	install -m 644 fmDbAPI.h $(DEST_DIR)$(INC_DIR)
-	install -m 644 fmAPI.h $(DEST_DIR)$(INC_DIR)
-	install -m 644 fmThread.h $(DEST_DIR)$(INC_DIR)
-	install -m 644 fmAlarm.h $(DEST_DIR)$(INC_DIR)
-	install -m 755 $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)
-	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)/$(LIBFMCOMMON_SO).$(MAJOR)
-	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DEST_DIR)$(LIB_DIR)/$(LIBFMCOMMON_SO)
+clean:
+	@rm -f $(OBJ) *.o *.so fmClientCli
+
+install:
+	install -m 755 -d $(DESTDIR)$(BINDIR)
+	install -m 755 -d $(DESTDIR)$(LIBDIR)
+	install -m 755 -d $(DESTDIR)$(INCDIR)
+	install -m 755 -d $(DESTDIR)$(CGCS_DOC_DEPLOY)
+	install -m 755 fmClientCli $(DESTDIR)$(BINDIR)
+	install -m 755 fm_db_sync_event_suppression.py $(DESTDIR)$(BINDIR)
+	install -m 644 fmDbAPI.h $(DESTDIR)$(INCDIR)
+	install -m 644 fmAPI.h $(DESTDIR)$(INCDIR)
+	install -m 644 fmThread.h $(DESTDIR)$(INCDIR)
+	install -m 644 fmAlarm.h $(DESTDIR)$(INCDIR)
+	install -m 644 fmConfig.h $(DESTDIR)$(INCDIR)
+	install -m 644 fmLog.h $(DESTDIR)$(INCDIR)
+	install -m 644 fmAlarm.h $(DESTDIR)$(CGCS_DOC_DEPLOY)
+	install -m 755 $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DESTDIR)$(LIBDIR)
+	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DESTDIR)$(LIBDIR)/$(LIBFMCOMMON_SO).$(MAJOR)
+	ln -sf $(LIBFMCOMMON_SO).$(MAJOR).$(MINOR) $(DESTDIR)$(LIBDIR)/$(LIBFMCOMMON_SO)
