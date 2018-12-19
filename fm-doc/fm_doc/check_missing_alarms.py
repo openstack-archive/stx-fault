@@ -16,7 +16,7 @@ FM_ALARM_H = "fmAlarm.h"
 
 
 def get_events_alarm_list(events):
-    for alarm_id in events:
+    for alarm_id in list(events):
         if isinstance(alarm_id, float):
             formatted_alarm_id = "{:.3f}".format(alarm_id)   # force 3 digits after the point, to include trailing zero's (ex.: 200.010)
             events[formatted_alarm_id] = events.pop(alarm_id)
