@@ -16,17 +16,21 @@ FM_ALARM_H = "fmAlarm.h"
 
 
 def get_events_alarm_list(events):
+    unsorted_events = {}
     for alarm_id in events:
         if isinstance(alarm_id, float):
             formatted_alarm_id = "{:.3f}".format(alarm_id)   # force 3 digits after the point, to include trailing zero's (ex.: 200.010)
-            events[formatted_alarm_id] = events.pop(alarm_id)
+        else:
+            formatted_alarm_id = str(alarm_id)
 
-    events = collections.OrderedDict(sorted(events.items()))
+    unsorted_events[formatted_alarm_id] = events.get(alarm_id)
+
+    sorted_events = collections.OrderedDict(sorted(unsorted_events.items()))
 
     events_alarm_list = []
 
-    for alarm_id in events:
-        if events.get(alarm_id).get('Type') == "Alarm":
+    for alarm_id in sorted_events:
+        if sorted_events.get(alarm_id).get('Type') == "Alarm":
             events_alarm_list.append(str(alarm_id))
 
     return events_alarm_list
