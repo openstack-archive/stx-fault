@@ -4,6 +4,7 @@ OBJS = fm_main.o
 OBJS = $(SRCS:.cpp=.o)
 INCLUDES = -I.
 CCFLAGS = -g -O2 -Wall -Werror
+EXTRACCFLAGS = -Wformat -Wformat-security
 
 MAJOR ?= 1
 MINOR ?= 0
