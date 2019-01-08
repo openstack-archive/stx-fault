@@ -3,9 +3,9 @@ SRCS = cgtsActiveAlarms.c cgtsAgentPlugin.c cgtsEventLogs.c
 OBJS = $(SRCS:.c=.o)
 LDLIBS = -lfmcommon -lnetsnmp -lnetsnmpagent -luuid
 INCLUDES += -I./
-CCFLAGS = -fPIC -g -O2 -Wall -Werror
+CCFLAGS = -fPIC -g -O2 -Wall -Werror -Wformat -Wformat-security
 LIBCGTSAGENT_SO := libcgtsAgentPlugin.so
-build: lib 
+build: lib
 
 .c.o:
 	$(CXX) $(CCFLAGS) $(INCLUDES) -c $< -o $@
@@ -16,7 +16,7 @@ lib: $(OBJS)
 	ln -sf $(LIBCGTSAGENT_SO).$(MAJOR).$(MINOR).$(PATCH) $(LIBCGTSAGENT_SO)
 
 clean:
-	@rm -f $(OBJ) *.o *.so.* 
+	@rm -f $(OBJ) *.o *.so.*
 
 install_non_bb:
 	install -m 755 -d $(DEST_DIR)$(LIB_DIR)

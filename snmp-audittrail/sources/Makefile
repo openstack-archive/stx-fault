@@ -3,7 +3,7 @@ SRCS = snmpAuditPlugin.c
 OBJS = $(SRCS:.c=.o)
 LDLIBS = -lfmcommon -lnetsnmp -lnetsnmpagent -luuid
 INCLUDES += -I./
-CCFLAGS = -fPIC -g -O2 -Wall -Werror
+CCFLAGS = -fPIC -g -O2 -Wall -Werror -Wformat -Wformat-security
 LIBCGTSAGENT_SO := libsnmpAuditPlugin.so
 MAJOR ?= 1
 MINOR ?= 0

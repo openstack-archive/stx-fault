@@ -7,6 +7,7 @@ CLI_OBJS = fm_cli.o
 LDLIBS = -lstdc++ -lrt -luuid -lpq -lpthread -lpython2.7
 INCLUDES = -I./ -I$(shell pg_config --includedir)
 CCFLAGS = -g -O2 -Wall -Werror -fPIC
+EXTRACCFLAGS= -Wformat -Wformat-security
 
 MAJOR ?= 1
 MINOR ?= 0
