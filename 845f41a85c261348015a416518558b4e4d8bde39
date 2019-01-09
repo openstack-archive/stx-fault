@@ -1,0 +1,10 @@
+Code-Review+1: Bruce Jones <bruce.e.jones@intel.com>
+Code-Review+2: Al Bailey <al.bailey@windriver.com>
+Code-Review+2: Tao Liu <tao.liu@windriver.com>
+Workflow+1: Tao Liu <tao.liu@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Wed, 09 Jan 2019 14:49:17 +0000
+Reviewed-on: https://review.openstack.org/629329
+Project: openstack/stx-fault
+Branch: refs/heads/master
