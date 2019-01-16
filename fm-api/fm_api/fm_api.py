@@ -64,7 +64,7 @@ class Fault(object):
 
     @staticmethod
     def _unicode(value):
-        if isinstance(value, str):
+        if six.PY2 and isinstance(value, str):
             return six.text_type(value.decode('utf-8'))
         else:
             return value
