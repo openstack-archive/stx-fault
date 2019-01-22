@@ -249,7 +249,7 @@ function install_fm_common {
         INC_DIR=/include \
         MAJOR=$major \
         MINOR=$minor \
-        install_non_bb
+        install
 
     sudo python setup.py install \
         --root=/ \
@@ -291,7 +291,7 @@ function install_fm_mgr {
         INC_DIR=/include \
         MAJOR=$major \
         MINOR=$minor \
-        install_non_bb
+        install
 
     popd
 }
