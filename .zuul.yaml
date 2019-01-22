@@ -1,4 +1,5 @@
 ---
+
 - project:
     templates:
       - build-openstack-docs-pti
@@ -67,7 +68,9 @@
         postgresql: true
       devstack_localrc:
         LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
+        FORCE: yes
 
+      nodeset: ubuntu-xenial-arm64
 - job:
     name: stx-devstack-fault
     parent: stx-devstack-base
