@@ -1,4 +1,5 @@
 ---
+
 - project:
     templates:
       - build-openstack-docs-pti
@@ -25,6 +26,7 @@
 # This job is to begin testing a DevStack run here
 - job:
     name: stx-devstack-base
+    nodeset: openstack-single-node-xenial
     parent: devstack
     description: |
       Base job for StarlingX DevStack tests
@@ -67,6 +69,7 @@
         postgresql: true
       devstack_localrc:
         LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
+        FORCE: yes
 
 - job:
     name: stx-devstack-fault
