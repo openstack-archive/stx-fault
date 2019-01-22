@@ -67,6 +67,7 @@
         postgresql: true
       devstack_localrc:
         LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
+        FORCE:yes
 
 - job:
     name: stx-devstack-fault
