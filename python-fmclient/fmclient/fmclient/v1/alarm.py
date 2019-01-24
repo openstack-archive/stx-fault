@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Wind River Systems, Inc.
+# Copyright (c) 2018-2019 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -21,11 +21,13 @@ class AlarmManager(base.Manager):
         return '/v1/alarms/%s' % id if id else '/v1/alarms'
 
     def list(self, q=None, limit=None, marker=None, sort_key=None,
-             sort_dir=None, include_suppress=False):
+             sort_dir=None, include_suppress=False, expand=False):
         params = []
 
         if include_suppress:
             params.append('include_suppress=True')
+        if expand:
+            params.append('expand=True')
         if limit:
             params.append('limit=%s' % str(limit))
         if marker:

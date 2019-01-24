@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Wind River Systems, Inc.
+# Copyright (c) 2018-2019 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -276,9 +276,9 @@ class AlarmController(rest.RestController):
                                                   sort_dir=sort_dir)
 
     @wsme_pecan.wsexpose(AlarmCollection, [Query],
-                         types.uuid, int, wtypes.text, wtypes.text, bool)
+                         types.uuid, int, wtypes.text, wtypes.text, bool, bool)
     def get_all(self, q=[], marker=None, limit=None, sort_key='id',
-                sort_dir='asc', include_suppress=False):
+                sort_dir='asc', include_suppress=False, expand=False):
         """Retrieve a list of alarm.
 
         :param marker: pagination marker for large data sets.
@@ -286,9 +286,11 @@ class AlarmController(rest.RestController):
         :param sort_key: column to sort results by. Default: id.
         :param sort_dir: direction to sort. "asc" or "desc". Default: asc.
         :param include_suppress: filter on suppressed alarms. Default: False
+        :param expand: filter for getting all the data of the alarm.
+               Default: False
         """
         return self._get_alarm_collection(marker, limit, sort_key,
-                                          sort_dir, q=q,
+                                          sort_dir, expand=expand, q=q,
                                           include_suppress=include_suppress)
 
     @wsme_pecan.wsexpose(AlarmCollection, types.uuid, int,

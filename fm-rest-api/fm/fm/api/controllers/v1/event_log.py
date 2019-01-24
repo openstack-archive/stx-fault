@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 Wind River Systems, Inc.
+# Copyright (c) 2018-2019 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -237,10 +237,10 @@ class EventLogController(rest.RestController):
 
     @wsme_pecan.wsexpose(EventLogCollection, [Query],
                          types.uuid, int, wtypes.text, wtypes.text,
-                         bool, bool, bool)
+                         bool, bool, bool, bool)
     def get_all(self, q=[], marker=None, limit=None, sort_key='timestamp',
                 sort_dir='desc', alarms=False, logs=False,
-                include_suppress=False):
+                include_suppress=False, expand=False):
         """Retrieve a list of event_log.
 
         :param marker: pagination marker for large data sets.
@@ -250,10 +250,12 @@ class EventLogController(rest.RestController):
         :param alarms: filter on alarms. Default: False
         :param logs: filter on logs. Default: False
         :param include_suppress: filter on suppressed alarms. Default: False
+        :param expand: filter for getting all the data of the event.
+               Default: False
         """
         return self._get_eventlog_collection(marker, limit, sort_key,
-                                             sort_dir, q=q, alarms=alarms,
-                                             logs=logs,
+                                             sort_dir, expand=expand, q=q,
+                                             alarms=alarms, logs=logs,
                                              include_suppress=include_suppress)
 
     @wsme_pecan.wsexpose(EventLogCollection, types.uuid, int,
