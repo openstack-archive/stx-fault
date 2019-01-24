@@ -160,6 +160,7 @@ itemNotFound (404)
    :widths: 20, 20, 20, 60
 
    "include_suppress (Optional)", "query", "xsd:boolean", "This optional parameter when set to true (include_suppress=true) specifies to include suppressed alarms in output."
+   "expand (Optional)", "query", "xsd:boolean", "This optional parameter when set to true (expand=true) specifies that the response should contains the same response parameters as when querying for a specific alarm."
 
 **Response parameters**
 
@@ -386,6 +387,7 @@ itemNotFound (404)
    "alarms (Optional)", "query", "xsd:boolean", "This optional parameter when set to true (alarms=true) specifies that only alarm event log records should be returned."
    "logs (Optional)", "query", "xsd:boolean", "This optional parameter when set to true (logs=true) specifies that only customer log records should be returned."
    "include_suppress (Optional)", "query", "xsd:boolean", "This optional parameter when set to true (include_suppress=true) specifies to include suppressed alarms in output."
+   "expand (Optional)", "query", "xsd:boolean", "This optional parameter when set to true (expand=true) specifies that the response should contains the same response parameters as when querying for a specific event log."
 
 **Response parameters**
 
