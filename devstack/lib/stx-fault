@@ -267,7 +267,7 @@ function install_fm_common {
 
     # Make sure we can find it later
     # TODO: this should be managed better
-    echo /usr/local/lib | sudo tee /etc/ld.so.conf.d/stx-fault.conf
+    echo /usr/local/lib64 | sudo tee /etc/ld.so.conf.d/stx-fault.conf
     sudo ldconfig
     popd
 }
