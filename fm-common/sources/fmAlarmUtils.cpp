@@ -205,6 +205,8 @@ static std::string chkstr(const std::string &s) {
 static void str_to_vector(const std::string &s, std::vector<std::string> &alarm) {
 	size_t offset = 0;
 	alarm.clear();
+	if (s.length() <= 3)
+		return ;
 	while (true) {
 		size_t beg = (offset==0) ? 0 : s.find("###",offset);
 		if (beg==std::string::npos) break;
