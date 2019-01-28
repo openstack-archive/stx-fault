@@ -51,8 +51,8 @@ itemNotFound (404)
             ]
          }
       ],
-      "description":"StarlingX Fault API allows for the management of physical servers.  This includes inventory collection and configuration of hosts, ports, interfaces, CPUs, disk, memory, and system configuration.  The API also supports the configuration of the cloud's SNMP interface. ",
-      "name":"stx-fault API"
+      "description":"Fault Management is an OpenStack project which provides REST API services for alarms and logs.",
+      "name":"Fault Management API"
    }
 
 This operation does not accept a request body.
@@ -88,7 +88,7 @@ itemNotFound (404)
                "rel": "self"
            },
            {
-               "href": "http://www.windriver.com/developer/fm/dev/api-spec-v1.html",
+               "href": "https://docs.starlingx.io/api-ref/stx-fault/index.html",
                "type": "text/html",
                "rel": "describedby"
            }
@@ -211,7 +211,7 @@ itemNotFound (404)
 Shows information about a specific alarm
 ******************************************
 
-.. rest_method:: GET /v1/alarms/​{alarm_uuid}​
+.. rest_method:: GET /v1/alarms/{alarm_uuid}
 
 **Normal response codes**
 
@@ -282,7 +282,7 @@ This operation does not accept a request body.
 Deletes a specific alarm
 **************************
 
-.. rest_method:: DELETE /v1/alarms/​{alarm_uuid}​
+.. rest_method:: DELETE /v1/alarms/{alarm_uuid}
 
 NOTE Typically this command should NOT be used. I.e typically alarms
 will be and should be cleared by the system when the alarm condition
@@ -438,7 +438,7 @@ itemNotFound (404)
 Shows information about a specific event log
 **********************************************
 
-.. rest_method:: GET /v1/event_log/​{log_uuid}​
+.. rest_method:: GET /v1/event_log/{log_uuid}
 
 **Normal response codes**
 
@@ -602,7 +602,7 @@ This operation does not accept a request body.
 Modifies the value of an event suppression
 ********************************************
 
-.. rest_method:: PATCH /v1/event_suppression/​{event_suppression_uuid}​
+.. rest_method:: PATCH /v1/event_suppression/{event_suppression_uuid}
 
 **Normal response codes**
 
