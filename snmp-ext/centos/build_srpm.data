@@ -1,3 +1,2 @@
 SRC_DIR="sources"
-COPY_LIST="mibs/*"
 TIS_PATCH_VER=1

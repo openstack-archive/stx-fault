@@ -13,9 +13,6 @@ BuildRequires: libuuid-devel
 Requires: fm-common
 Requires: net-snmp
 
-Source1: wrsAlarmMib.mib.txt
-Source2: wrsEnterpriseReg.mib.txt
-
 %define mib_ver 2.0
 %define cgcs_sdk_deploy_dir /opt/deploy/cgcs_sdk
 
@@ -45,28 +42,20 @@ Group: devel
 %setup
 
 %build
-VER=%{version}
-MAJOR=`echo $VER | awk -F . '{print $1}'`
-MINOR=`echo $VER | awk -F . '{print $2}'`
-PATCHVER=` echo %{release} | awk -F r '{print $2}' | awk -F . '{print $1}'`
-make  MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCHVER %{?_smp_mflags}
+MAJOR=`echo %{version} | awk -F . '{print $1}'`
+MINOR=`echo %{version} | awk -F . '{print $2}'`
+make MAJOR=$MAJOR MINOR=$MINOR PATCH=%{tis_patch_ver} %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-VER=%{version}
-MAJOR=`echo $VER | awk -F . '{print $1}'`
-MINOR=`echo $VER | awk -F . '{print $2}'`
-
-PATCHVER=` echo %{release} | awk -F r '{print $2}' | awk -F . '{print $1}'`
-make DEST_DIR=$RPM_BUILD_ROOT LIB_DIR=%{_libdir} MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCHVER install_non_bb
-
-MIBDIR=wrs-snmp-mib-${MAJOR}.%{mib_ver}
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/snmp/mibs
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/snmp/mibs
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/snmp/mibs
-tar -zc --transform=s/^mibs/${MIBDIR}/ -f wrs-snmp-mib-${MAJOR}.%{mib_ver}.tgz -C $RPM_BUILD_ROOT%{_datadir}/snmp mibs
-mkdir -p $RPM_BUILD_ROOT%{cgcs_sdk_deploy_dir}
-install -m 644 wrs-snmp-mib-${MAJOR}.%{mib_ver}.tgz $RPM_BUILD_ROOT%{cgcs_sdk_deploy_dir}
+MAJOR=`echo %{version} | awk -F . '{print $1}'`
+MINOR=`echo %{version} | awk -F . '{print $2}'`
+make DEST_DIR=%{buildroot} \
+     LIB_DIR=%{_libdir} \
+     MAJOR=$MAJOR \
+     MINOR=$MINOR \
+     SDK_DEPLOY_DIR=%{buildroot}%{cgcs_sdk_deploy_dir} \
+     MIBVER=%{mib_ver} \
+     PATCH=%{tis_patch_ver} install
 
 %files
 %defattr(-,root,root,-)
