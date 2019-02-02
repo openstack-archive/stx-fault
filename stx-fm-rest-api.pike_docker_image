@@ -1,0 +1,18 @@
+BUILDER=loci
+LABEL=stx-fm-rest-api
+# Set PROJECT=infra and PROJECT_REPO=nil because we are not cloning a repo
+PROJECT=infra
+PROJECT_REPO=nil
+
+PIP_PACKAGES="
+        fm \
+        fm_api \
+        httplib2 \
+        keystone \
+        keystonemiddleware \
+        sphinxcontrib_pecanwsme \
+        oslo.db \
+        oslo.log \
+        oslo.middleware \
+        oslo.policy \
+        oslo.versionedobjects"
