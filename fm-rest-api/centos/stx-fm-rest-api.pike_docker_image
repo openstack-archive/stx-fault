@@ -1,0 +1,24 @@
+BUILDER=loci
+LABEL=stx-fm-rest-api
+# Set PROJECT=infra and PROJECT_REPO=nil because we are not cloning a repo
+PROJECT=infra
+PROJECT_REPO=nil
+DIST_PACKAGES="postgresql-devel fm-common"
+
+PIP_PACKAGES="
+        cgtsclient \
+        fm \
+        fm_api \
+        fm_core \
+        httplib2 \
+        keystone \
+        keystonemiddleware \
+        oslo.db \
+        oslo.log \
+        oslo.middleware \
+        oslo.policy \
+        oslo.versionedobjects
+        python_neutronclient \
+        pecan \
+        tsconfig \
+        wsme"
