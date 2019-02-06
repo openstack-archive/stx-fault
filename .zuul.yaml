@@ -5,23 +5,36 @@
       - build-openstack-docs-pti
     check:
       jobs:
-        - stx-devstack-fault:
-            voting: false
         - build-openstack-api-ref
         - build-openstack-releasenotes
         - openstack-tox-linters
         - openstack-tox-pep8
+        - stx-fault-build
+        - stx-fault-devstack
     gate:
       jobs:
         - build-openstack-api-ref
         - build-openstack-releasenotes
         - openstack-tox-linters
         - openstack-tox-pep8
+        - stx-fault-devstack
     post:
       jobs:
         - publish-stx-api-ref
         - publish-stx-tox
         - publish-stx-releasenotes
+
+# Perform just a build
+- job:
+    name: stx-fault-build
+    parent: tox
+    description: Run build for fault
+    irrelevant-files:
+      - api-ref/*
+      - docs/*
+      - releasenotes/*
+    vars:
+      tox_envlist: build
 
 # This job is to begin testing a DevStack run here
 - job:
@@ -72,7 +85,7 @@
         FORCE: yes
 
 - job:
-    name: stx-devstack-fault
+    name: stx-fault-devstack
     parent: stx-devstack-base
     timeout: 7800
     required-projects:
