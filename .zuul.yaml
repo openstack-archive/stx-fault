@@ -39,7 +39,7 @@
 # This job is to begin testing a DevStack run here
 - job:
     name: stx-devstack-base
-    nodeset: openstack-single-node-xenial
+    nodeset: openstack-single-node-bionic
     parent: devstack
     description: |
       Base job for StarlingX DevStack tests
@@ -48,19 +48,12 @@
     timeout: 9000
     required-projects:
       - name: git.openstack.org/openstack-dev/devstack
-        override-branch: stable/pike
-      - name: git.openstack.org/openstack/cinder
-        override-branch: stable/pike
-      - name: git.openstack.org/openstack/glance
-        override-branch: stable/pike
+#      - name: git.openstack.org/openstack/cinder
+#      - name: git.openstack.org/openstack/glance
       - name: git.openstack.org/openstack/keystone
-        override-branch: stable/pike
-      - name: git.openstack.org/openstack/neutron
-        override-branch: stable/pike
-      - name: git.openstack.org/openstack/nova
-        override-branch: stable/pike
+#      - name: git.openstack.org/openstack/neutron
+#      - name: git.openstack.org/openstack/nova
       - name: git.openstack.org/openstack/requirements
-        override-branch: stable/pike
     vars:
       devstack_services:
         ceilometer-acentral: false
@@ -81,7 +74,8 @@
         mysql: false
         postgresql: true
       devstack_localrc:
-        LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
+        # LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
+        LIBS_FROM_GIT: keystone
         FORCE: yes
 
 - job:
