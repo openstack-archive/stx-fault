@@ -4,6 +4,7 @@
 # Run DevStack plugin builds
 
 set -o xtrace
+set -o errexit
 
 unset LANG
 unset LANGUAGE
@@ -31,5 +32,5 @@ function is_service_enabled {
 source $PLUGIN_DIR/devstack/lib/stx-fault
 
 # Call builds
-build_fm_common
+install_fm_common
 build_fm_mgr

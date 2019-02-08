@@ -238,7 +238,7 @@ function install_fault {
     if is_service_enabled fm-mgr; then
         install_fm_mgr
     fi
-    if is_service_enabled fm-rest-api; then
+    if is_service_enabled fm-rest-api && is_service_enabled stx-config; then
         install_fm_rest_api
     fi
 }
