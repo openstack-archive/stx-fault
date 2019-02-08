@@ -17,6 +17,13 @@ STX_FAULT_NAME=stx-fault
 ######### Plugin Specific ##########
 enable_service $STX_FAULT_NAME
 
+# Circular dependencies are fun!
+# fm-rest-api has an undeclared dependency on cgtsclient from stx-config
+# so if that is not present we can't intall it
+if ! is_service_enabled stx-config; then
+	disable_service fm-rest-api
+fi
+# but fm-rest-api has its own (declared!) external dependencies too
 if is_service_enabled fm-rest-api; then
     enable_service tsconfig
 fi

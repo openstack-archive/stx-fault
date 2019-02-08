@@ -238,7 +238,7 @@ function install_fault {
     if is_service_enabled fm-mgr; then
         install_fm_mgr
     fi
-    if is_service_enabled fm-rest-api; then
+    if is_service_enabled fm-rest-api && is_service_enabled stx-config; then
         install_fm_rest_api
     fi
 }
@@ -341,13 +341,13 @@ function install_fm_rest_api {
 }
 
 function start_fault {
-    if is_service_enabled fm-api; then
+    if is_service_enabled fm-rest-api; then
         run_process fm-api "$STX_BIN_DIR/fm-api --config-file $FM_RESTAPI_CONF"
     fi
 }
 
 function stop_fault {
-    if is_service_enabled fm-api; then
+    if is_service_enabled fm-rest-api; then
         stop_process fm_api
     fi
 }
