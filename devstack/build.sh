@@ -4,6 +4,7 @@
 # Run DevStack plugin builds
 
 set -o xtrace
+set -o errexit
 
 unset LANG
 unset LANGUAGE
