@@ -40,7 +40,9 @@ FM_RESTAPI_SERVICE_HOST=${FM_RESTAPI_SERVICE_HOST:-$SERVICE_HOST}
 FM_RESTAPI_SERVICE_PORT=${FM_RESTAPI_SERVICE_PORT:-18002}
 FM_RESTAPI_WORKERS=${FM_RESTAPI_WORKERS:-4}
 
-STX_BIN_DIR=$(get_python_exec_prefix)
+# STX_INST_DIR should be a non-root-writable place to install build artifacts
+STX_INST_DIR=${STX_INST_DIR:-$DEST/usr}
+STX_BIN_DIR=${STX_BIN_DIR:-$STX_INST_DIR}
 PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 # Functions
@@ -112,24 +114,23 @@ function cleanup_fm_common {
     read x version <<< $(grep '^Version: ' $STX_FAULT_DIR/fm-common/PKG-INFO)
     local major=${version%%.*}
     local minor=${version##*.}
-    local prefix=${STX_BIN_DIR%/*}
 
     sudo rm /etc/ld.so.conf.d/stx-fault.conf
 
     pushd $STX_FAULT_DIR/fm-common/sources
 
-    sudo make \
-        DEST_DIR=$prefix \
-        BIN_DIR=/bin \
-        LIB_DIR=/lib \
-        INC_DIR=/include \
+    make \
+        DESTDIR=$STX_INST_DIR \
+        BINDIR=/bin \
+        LIBDIR=/lib \
+        INCDIR=/include \
         MAJOR=$major \
         MINOR=$minor \
         clean
 
-    sudo rm $prefix/bin/fm_db_sync_event_suppression.py \
-        $prefix/include/fmConfig.h \
-        $prefix/include/fmLog.h
+    rm $STX_BIN_DIR/fm_db_sync_event_suppression.py \
+        $STX_INST_DIR/include/fmConfig.h \
+        $STX_INST_DIR/include/fmLog.h
 
     popd
 }
@@ -144,10 +145,9 @@ function cleanup_fm_mgr {
 
     pushd $STX_FAULT_DIR/fm-mgr/sources
 
-    sudo make \
-        BIN_DIR=/bin \
-        LIB_DIR=/lib \
-        INC_DIR=/include \
+    make \
+        DESTDIR=$STX_INST_DIR \
+        BINDIR=/bin \
         MAJOR=$major \
         MINOR=$minor \
         clean
@@ -277,16 +277,13 @@ function install_fm_common {
 
     build_fm_common $major $minor
 
-    # Set up the destinations
-    # Making an assumption here about STX_BIN_DIR having ../include be valid
-    local prefix=${STX_BIN_DIR%/*}
-
-    # install
-    sudo make \
-        DEST_DIR=$prefix \
-        BIN_DIR=/bin \
-        LIB_DIR=/lib \
-        INC_DIR=/include \
+    # install to STX_INST_DIR
+    # Note that DESTDIR prefixes the other locations in the Makefile
+    make \
+        DESTDIR=$STX_INST_DIR \
+        BINDIR=/bin \
+        LIBDIR=/lib \
+        INCDIR=/include \
         MAJOR=$major \
         MINOR=$minor \
         install
@@ -297,17 +294,17 @@ function install_fm_common {
         --prefix=/usr \
         --install-data=/usr/share \
 
-    # This _is_ nasty, clean it up
-    sudo install -m 755 fm_db_sync_event_suppression.py \
-        $prefix/bin/fm_db_sync_event_suppression.py
+    # This _is_ still a little nasty, clean it up
+    install -m 755 fm_db_sync_event_suppression.py \
+        $STX_BIN_DIR/fm_db_sync_event_suppression.py
 
     # install the headers that used by fm-mgr package
-    sudo install -m 644 -p -D fmConfig.h $prefix/include/fmConfig.h
-    sudo install -m 644 -p -D fmLog.h $prefix/include/fmLog.h
+    install -m 644 -p -D fmConfig.h $STX_INST_DIR/include/fmConfig.h
+    install -m 644 -p -D fmLog.h $STX_INST_DIR/include/fmLog.h
 
     # Make sure we can find it later
     # TODO: this should be managed better
-    echo /usr/local/lib64 | sudo tee /etc/ld.so.conf.d/stx-fault.conf
+    echo $STX_INST_DIR/lib | sudo tee /etc/ld.so.conf.d/stx-fault.conf
     sudo ldconfig
     popd
 }
@@ -324,11 +321,11 @@ function install_fm_mgr {
 
     build_fm_mgr $major $minor
 
-    # install
-    sudo make \
-        BIN_DIR=/bin \
-        LIB_DIR=/lib \
-        INC_DIR=/include \
+    # install to STX_INST_DIR
+    # Note that DESTDIR prefixes the other locations in the Makefile
+    make \
+        DESTDIR=$STX_INST_DIR \
+        BINDIR=/bin \
         MAJOR=$major \
         MINOR=$minor \
         install
