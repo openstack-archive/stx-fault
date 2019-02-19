@@ -70,66 +70,7 @@ class Fault(object):
             return value
 
 
-class FaultAPIs(object):
-
-    def set_fault(self, data):
-        self._check_required_attributes(data)
-        self._validate_attributes(data)
-        buff = self._alarm_to_str(data)
-        try:
-            return fm_core.set(buff)
-        except (RuntimeError, SystemError, TypeError):
-            return None
-
-    def clear_fault(self, alarm_id, entity_instance_id):
-        sep = constants.FM_CLIENT_STR_SEP
-        buff = (sep + self._check_val(alarm_id) + sep +
-                self._check_val(entity_instance_id) + sep)
-        try:
-            return fm_core.clear(buff)
-        except (RuntimeError, SystemError, TypeError):
-            return False
-
-    def get_fault(self, alarm_id, entity_instance_id):
-        sep = constants.FM_CLIENT_STR_SEP
-        buff = (sep + self._check_val(alarm_id) + sep +
-                self._check_val(entity_instance_id) + sep)
-        try:
-            resp = fm_core.get(buff)
-            return self._str_to_alarm(resp) if resp else None
-        except (RuntimeError, SystemError, TypeError):
-            return None
-
-    def clear_all(self, entity_instance_id):
-        try:
-            return fm_core.clear_all(entity_instance_id)
-        except (RuntimeError, SystemError, TypeError):
-            return False
-
-    def get_faults(self, entity_instance_id):
-        try:
-            resp = fm_core.get_by_eid(entity_instance_id)
-            if resp is not None:
-                data = []
-                for i in resp:
-                    data.append(self._str_to_alarm(i))
-                return data
-        except (RuntimeError, SystemError, TypeError):
-            pass
-        return None
-
-    def get_faults_by_id(self, alarm_id):
-        try:
-            resp = fm_core.get_by_aid(alarm_id)
-            if resp is not None:
-                data = []
-                for i in resp:
-                    data.append(self._str_to_alarm(i))
-                return data
-        except (RuntimeError, SystemError, TypeError):
-            pass
-        return None
-
+class FaultAPIsBase(object):
     @staticmethod
     def _check_val(data):
         if data is None:
@@ -222,3 +163,125 @@ class FaultAPIs(object):
         if given < threshold:
             return True
         return False
+
+
+class FaultAPIs(FaultAPIsBase):
+
+    def set_fault(self, data):
+        self._check_required_attributes(data)
+        self._validate_attributes(data)
+        buff = self._alarm_to_str(data)
+        try:
+            return fm_core.set(buff)
+        except (RuntimeError, SystemError, TypeError):
+            return None
+
+    def clear_fault(self, alarm_id, entity_instance_id):
+        sep = constants.FM_CLIENT_STR_SEP
+        buff = (sep + self._check_val(alarm_id) + sep +
+                self._check_val(entity_instance_id) + sep)
+        try:
+            return fm_core.clear(buff)
+        except (RuntimeError, SystemError, TypeError):
+            return False
+
+    def get_fault(self, alarm_id, entity_instance_id):
+        sep = constants.FM_CLIENT_STR_SEP
+        buff = (sep + self._check_val(alarm_id) + sep +
+                self._check_val(entity_instance_id) + sep)
+        try:
+            resp = fm_core.get(buff)
+            if resp:
+                return self._str_to_alarm(resp)
+        except (RuntimeError, SystemError, TypeError):
+            pass
+        return None
+
+    def clear_all(self, entity_instance_id):
+        try:
+            return fm_core.clear_all(entity_instance_id)
+        except (RuntimeError, SystemError, TypeError):
+            return False
+
+    def get_faults(self, entity_instance_id):
+        try:
+            resp = fm_core.get_by_eid(entity_instance_id)
+            if resp:
+                data = []
+                for i in resp:
+                    data.append(self._str_to_alarm(i))
+                return data
+        except (RuntimeError, SystemError, TypeError):
+            pass
+        return None
+
+    def get_faults_by_id(self, alarm_id):
+        try:
+            resp = fm_core.get_by_aid(alarm_id)
+            if resp:
+                data = []
+                for i in resp:
+                    data.append(self._str_to_alarm(i))
+                return data
+        except (RuntimeError, SystemError, TypeError):
+            pass
+        return None
+
+
+class FaultAPIsV2(FaultAPIsBase):
+
+    def set_fault(self, data):
+        self._check_required_attributes(data)
+        self._validate_attributes(data)
+        buff = self._alarm_to_str(data)
+        uuid = fm_core.set(buff)
+        if uuid is None:
+            raise Exception("Failed to execute set_fault.")
+        return uuid
+
+    def clear_fault(self, alarm_id, entity_instance_id):
+        sep = constants.FM_CLIENT_STR_SEP
+        buff = (sep + self._check_val(alarm_id) + sep +
+                self._check_val(entity_instance_id) + sep)
+        resp = fm_core.clear(buff)
+        if resp is False:
+            raise Exception("Failed to execute clear_fault.")
+
+    def get_fault(self, alarm_id, entity_instance_id):
+        sep = constants.FM_CLIENT_STR_SEP
+        buff = (sep + self._check_val(alarm_id) + sep +
+                self._check_val(entity_instance_id) + sep)
+        resp = fm_core.get(buff)
+        if resp is False:
+            raise Exception("Failed to execute get_fault.")
+        else:
+            return self._str_to_alarm(resp) if resp else None
+
+    def clear_all(self, entity_instance_id):
+        resp = fm_core.clear_all(entity_instance_id)
+        if resp is False:
+            raise Exception("Failed to execute clear_all.")
+
+    def get_faults(self, entity_instance_id):
+        resp = fm_core.get_by_eid(entity_instance_id)
+        if resp is False:
+            raise Exception("Failed to execute get_faults.")
+        elif resp:
+            data = []
+            for i in resp:
+                data.append(self._str_to_alarm(i))
+            return data
+        else:
+            return None
+
+    def get_faults_by_id(self, alarm_id):
+        resp = fm_core.get_by_aid(alarm_id)
+        if resp is False:
+            raise Exception("Failed to execute get_faults_by_id.")
+        elif resp:
+            data = []
+            for i in resp:
+                data.append(self._str_to_alarm(i))
+            return data
+        else:
+            return None
