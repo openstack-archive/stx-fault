@@ -96,9 +96,12 @@ class FaultAPIs(object):
                 self._check_val(entity_instance_id) + sep)
         try:
             resp = fm_core.get(buff)
-            return self._str_to_alarm(resp) if resp else None
+            if resp is False:
+                return (False, None)
+            else:
+                return (True, self._str_to_alarm(resp) if resp else None)
         except (RuntimeError, SystemError, TypeError):
-            return None
+            return (False, None)
 
     def clear_all(self, entity_instance_id):
         try:
