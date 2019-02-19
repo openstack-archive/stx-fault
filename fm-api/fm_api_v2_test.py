@@ -20,7 +20,8 @@ import sys
 from fm_api import fm_api
 from fm_api import constants
 
-ser = fm_api.FaultAPIs()
+
+ser = fm_api.FaultAPIsV2()
 
 def print_alarm(alarm):
     alarm_str = "alarm_id: " + alarm.alarm_id + ", "
@@ -47,49 +48,61 @@ def create():
                   proposed_repair_action=None,
                   service_affecting=False,
                   suppression=False)
-    uuid = ser.set_fault(fault)
-    print(uuid)
-
+    try:
+        uuid = ser.set_fault(fault)
+        print(uuid)
+    except:
+        print("Fail to create fault")
 
 def delete(alarm_id, instance_id):
-    ret = ser.clear_fault(alarm_id, instance_id)
-    print("Delete fault return %s" % str(ret))
-
+    try:
+        ser.clear_fault(alarm_id, instance_id)
+        print("Delete fault success")
+    except:
+        print("Fail to delete fault")
 
 def del_all(instance_id):
-    ret = ser.clear_all(instance_id)
-    print("Delete faults return: %s" % str(ret))
-
+    try:
+        ser.clear_all(instance_id)
+        print("Delete faults success")
+    except:
+        print("Fail to delete faults")
 
 def get(alarm_id, instance_id):
-    a = ser.get_fault(alarm_id, instance_id)
-    if a is not None:
-        print_alarm(a)
-    else:
-        print("Alarm not found")
-
+    try:
+        a = ser.get_fault(alarm_id, instance_id)
+        if a is not None:
+            print_alarm(a)
+        else:
+            print("Alarm not found")
+    except:
+        print("Fail to get alarm")
 
 def get_all(instance_id):
-    ll = ser.get_faults(instance_id)
-    if ll is not None:
-        print("Total alarm returned: %d\n"
-              % len(ll))
-        for i in ll:
-            print_alarm(i)
-    else:
-        print("No alarm returned")
-
+    try:
+        ll = ser.get_faults(instance_id)
+        if ll is not None:
+            print("Total alarm returned: %d\n"
+                  % len(ll))
+            for i in ll:
+                print_alarm(i)
+        else:
+            print("No alarm returned")
+    except:
+        print("Fail to get alarm")
 
 def get_list(alarm_id):
-    ll = ser.get_faults_by_id(alarm_id)
-    if ll is not None:
-        print("Total alarm returned: %d\n"
-              % len(ll))
-        for i in ll:
-            print_alarm(i)
-    else:
-        print("No alarm returned")
-
+    try:
+        ll = ser.get_faults_by_id(alarm_id)
+        if ll is not None:
+            print("Total alarm returned: %d\n"
+                  % len(ll))
+            for i in ll:
+                print_alarm(i)
+        else:
+            print("No alarm returned")
+    except:
+        print("Fail to get alarm")
 
 if __name__ == "__main__":
     if sys.argv[1] == "create":
