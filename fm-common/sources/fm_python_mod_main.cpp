@@ -108,13 +108,13 @@ static PyObject * _fm_get(PyObject * self, PyObject *args) {
 
 	if (!PyArg_ParseTuple(args, "s", &filter)) {
 		ERROR_LOG("Failed to parse args");
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 
 	filter_str.assign(filter);
 	if (!fm_alarm_filter_from_string(filter_str, &af)) {
 		ERROR_LOG("Invalid alarm filter: (%s)", filter_str.c_str());
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 
 	rc = fm_get_fault(&af,&ad);
@@ -126,13 +126,14 @@ static PyObject * _fm_get(PyObject * self, PyObject *args) {
 	if (rc == FM_ERR_ENTITY_NOT_FOUND) {
 		DEBUG_LOG("Alarm id (%s), Entity id:(%s) not found",
 				af.alarm_id, af.entity_instance_id);
+		Py_RETURN_NONE;
 	} else if (rc == FM_ERR_NOCONNECT) {
 		WARNING_LOG("Failed to connect to FM manager");
 	} else {
 		ERROR_LOG("Failed to get alarm by filter: (%s) (%s), error code: (%d)",
 				af.alarm_id, af.entity_instance_id, rc);
 	}
-	Py_RETURN_NONE;
+	Py_RETURN_FALSE;
 }
 
 
@@ -145,7 +146,7 @@ static PyObject * _fm_get_by_aid(PyObject * self, PyObject *args, PyObject* kwar
 	memset(alm_id, 0 , sizeof(alm_id));
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|i", keywords, &aid, &max)) {
 		ERROR_LOG("Failed to parse args");
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 	strncpy(alm_id, aid, sizeof(alm_id)-1);
 
@@ -154,7 +155,7 @@ static PyObject * _fm_get_by_aid(PyObject * self, PyObject *args, PyObject* kwar
 		lst.resize(max);
 	} catch(...) {
 		ERROR_LOG("Failed to allocate memory");
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 	unsigned int max_alarms_to_get = max;
 	EFmErrorT rc = fm_get_faults_by_id(&alm_id, &(lst[0]), &max_alarms_to_get);
@@ -176,12 +177,13 @@ static PyObject * _fm_get_by_aid(PyObject * self, PyObject *args, PyObject* kwar
 
 	if (rc == FM_ERR_ENTITY_NOT_FOUND) {
 		DEBUG_LOG("No alarm found for alarm id (%s)", alm_id);
+		Py_RETURN_NONE;
 	} else if (rc == FM_ERR_NOCONNECT) {
 		WARNING_LOG("Failed to connect to FM manager");
 	} else {
 		ERROR_LOG("Failed to get alarm list for alarm id (%s), error code: (%d)", alm_id, rc);
 	}
-	Py_RETURN_NONE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject * _fm_get_by_eid(PyObject * self, PyObject *args, PyObject* kwargs) {
@@ -194,7 +196,7 @@ static PyObject * _fm_get_by_eid(PyObject * self, PyObject *args, PyObject* kwar
 	memset(inst_id, 0 , sizeof(inst_id));
 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|i", keywords, &eid, &max)) {
 		ERROR_LOG("Failed to parse args");
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 	strncpy(inst_id, eid ,sizeof(inst_id)-1);
 
@@ -202,7 +204,7 @@ static PyObject * _fm_get_by_eid(PyObject * self, PyObject *args, PyObject* kwar
 		lst.resize(max);
 	} catch(...) {
 		ERROR_LOG("Failed to allocate memory");
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 	unsigned int max_alarms_to_get = max;
 	EFmErrorT rc = fm_get_faults(&inst_id, &(lst[0]), &max_alarms_to_get);
@@ -224,12 +226,13 @@ static PyObject * _fm_get_by_eid(PyObject * self, PyObject *args, PyObject* kwar
 
 	if (rc == FM_ERR_ENTITY_NOT_FOUND) {
 		DEBUG_LOG("No alarm found for entity id (%s)", inst_id);
+		Py_RETURN_NONE;
 	} else if (rc == FM_ERR_NOCONNECT) {
 		WARNING_LOG("Failed to connect to FM manager");
 	} else {
 		ERROR_LOG("Failed to get alarm list for entity id (%s), error code: (%d)", inst_id, rc);
 	}
-	Py_RETURN_NONE;
+	Py_RETURN_FALSE;
 }
 
 static PyObject * _fm_clear(PyObject * self, PyObject *args) {
