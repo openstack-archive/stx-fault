@@ -108,13 +108,13 @@ static PyObject * _fm_get(PyObject * self, PyObject *args) {
 
 	if (!PyArg_ParseTuple(args, "s", &filter)) {
 		ERROR_LOG("Failed to parse args");
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 
 	filter_str.assign(filter);
 	if (!fm_alarm_filter_from_string(filter_str, &af)) {
 		ERROR_LOG("Invalid alarm filter: (%s)", filter_str.c_str());
-		Py_RETURN_NONE;
+		Py_RETURN_FALSE;
 	}
 
 	rc = fm_get_fault(&af,&ad);
@@ -126,13 +126,14 @@ static PyObject * _fm_get(PyObject * self, PyObject *args) {
 	if (rc == FM_ERR_ENTITY_NOT_FOUND) {
 		DEBUG_LOG("Alarm id (%s), Entity id:(%s) not found",
 				af.alarm_id, af.entity_instance_id);
+		Py_RETURN_NONE;
 	} else if (rc == FM_ERR_NOCONNECT) {
 		WARNING_LOG("Failed to connect to FM manager");
 	} else {
 		ERROR_LOG("Failed to get alarm by filter: (%s) (%s), error code: (%d)",
 				af.alarm_id, af.entity_instance_id, rc);
 	}
-	Py_RETURN_NONE;
+	Py_RETURN_FALSE;
 }
 
 

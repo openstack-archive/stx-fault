@@ -65,7 +65,7 @@ def del_all(instance_id):
 
 def get(alarm_id, instance_id):
     ser = FaultAPIs()
-    a = ser.get_fault(alarm_id, instance_id)
+    resp, a = ser.get_fault(alarm_id, instance_id)
     if a is not None:
         print_alarm(a)
     else:
