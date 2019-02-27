@@ -73,6 +73,7 @@
         # Database
         mysql: false
         postgresql: true
+        tls-proxy: false
       devstack_localrc:
         # LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
         LIBS_FROM_GIT: keystone
@@ -84,6 +85,7 @@
     timeout: 7800
     required-projects:
       - name: openstack/stx-update
+      - name: openstack/stx-integ
     vars:
       tox_envlist: functional
       devstack_services:
@@ -94,7 +96,8 @@
       devstack_plugins:
         stx-update: git://git.starlingx.io/stx-update
         stx-fault: git://git.starlingx.io/stx-fault
+        stx-integ: git://git.starlingx.io/stx-integ
       devstack_localrc:
-        LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
+        LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova,horizon
     files:
       - ^devstack/.*
