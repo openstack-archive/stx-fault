@@ -27,6 +27,7 @@ STX_FAULT_DIR=${GITDIR[$STX_FAULT_NAME]}
 STX_FAULT_CONF_DIR=/etc/fm
 FM_RESTAPI_CONF=$STX_FAULT_CONF_DIR/fm.conf
 FM_RESTAPI_PASTE_INI=$STX_FAULT_CONF_DIR/api-paste.ini
+FM_EVENT_YAML=$STX_FAULT_CONF_DIR/events.yaml
 FM_RESTAPI_AUTH_CACHE_DIR=${FM_RESTAPI_AUTH_CACHE_DIR:-/var/cache/fault}
 
 FM_RESTAPI_DIR=$STX_FAULT_DIR/fm-rest-api/fm
@@ -44,6 +45,8 @@ FM_RESTAPI_WORKERS=${FM_RESTAPI_WORKERS:-4}
 STX_INST_DIR=${STX_INST_DIR:-$DEST/usr}
 STX_BIN_DIR=$STX_INST_DIR/bin
 PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
+STX_USR_BIN=/usr/local/bin
 
 # Functions
 # ---------
@@ -98,15 +101,29 @@ function build_fm_mgr {
 function cleanup_fault {
     stop_fault
 
-    if is_service_enabled fm-mgr; then
-        cleanup_fm_mgr
-    fi
     if is_service_enabled fm-common; then
         cleanup_fm_common
+    fi
+    if is_service_enabled fm-client || is_service_enabled fm-common; then
+        cleanup_fm_client
+    fi
+    if is_service_enabled fm-api; then
+        cleanup_fm_api
+    fi
+    if is_service_enabled fm-mgr; then
+        cleanup_fm_mgr
     fi
     if is_service_enabled fm-rest-api; then
         cleanup_fm_rest_api
     fi
+}
+
+function cleanup_fm_api {
+    sudo pip uninstall -y fm_api
+}
+
+function cleanup_fm_client {
+    sudo pip uninstall -y fmclient
 }
 
 function cleanup_fm_common {
@@ -118,21 +135,23 @@ function cleanup_fm_common {
     local minor=${version##*.}
 
     sudo rm /etc/ld.so.conf.d/stx-fault.conf
+    sudo pip uninstall -y fm-core
 
     pushd $STX_FAULT_DIR/fm-common/sources
 
     make \
-        DESTDIR=$STX_INST_DIR \
-        BINDIR=/bin \
-        LIBDIR=/lib \
-        INCDIR=/include \
-        MAJOR=$major \
-        MINOR=$minor \
-        clean
+    DESTDIR=$STX_INST_DIR \
+    BINDIR=/bin \
+    LIBDIR=/lib \
+    INCDIR=/include \
+    MAJOR=$major \
+    MINOR=$minor \
+    clean
 
-    rm $STX_BIN_DIR/fm_db_sync_event_suppression.py \
-        $STX_INST_DIR/include/fmConfig.h \
-        $STX_INST_DIR/include/fmLog.h
+    sudo rm $STX_USR_BIN/fm_db_sync_event_suppression.py
+
+    # eliminate added line in install_fm_common
+    sudo sed -i '/127.0.0.1 controller/d' /etc/hosts
 
     popd
 }
@@ -158,7 +177,10 @@ function cleanup_fm_mgr {
 }
 
 function cleanup_fm_rest_api {
-    sudo rm -rf $FM_RESTAPI_AUTH_CACHE_DIR $FM_RESTAPI_CONF
+    sudo pip uninstall -y fm
+
+    sudo rm -rf $FM_RESTAPI_AUTH_CACHE_DIR $FM_RESTAPI_CONF $FM_RESTAPI_PASTE_INI $FM_EVENT_YAML
+    dropdb -h 127.0.0.1 -Uroot fm
 }
 
 function configure_fault {
@@ -173,6 +195,7 @@ function configure_fm_rest_api {
     sudo install -d -o $STACK_USER -m 755 $STX_FAULT_CONF_DIR
 
     cp -p $STX_FAULT_DIR/devstack/files/api-paste.ini $FM_RESTAPI_PASTE_INI
+    cp -p $STX_FAULT_DIR/fm-doc/fm_doc/events.yaml $FM_EVENT_YAML
 
     configure_auth_token_middleware $FM_RESTAPI_CONF fm $FM_RESTAPI_AUTH_CACHE_DIR
 
@@ -194,6 +217,7 @@ function configure_fm_rest_api {
     iniset $FM_RESTAPI_CONF DEFAULT region_name RegionOne
     iniset $FM_RESTAPI_CONF DEFAULT event_log_max_size 4000
     iniset $FM_RESTAPI_CONF DEFAULT system_name $(hostname)
+    iniset $FM_RESTAPI_CONF DEFAULT sql_connection $(database_connection_url fm)
     iniset $FM_RESTAPI_CONF database idle_timeout 60
     iniset $FM_RESTAPI_CONF database max_pool_size 1
     iniset $FM_RESTAPI_CONF database max_overflow 20
@@ -202,6 +226,9 @@ function configure_fm_rest_api {
     # sysinv settings to move there...
     iniset $FM_RESTAPI_CONF sysinv catalog_info platform:sysinv:internalURL
     iniset $FM_RESTAPI_CONF sysinv os_region_name RegionOne
+
+    # fmManger request to elminate blank bewteen =
+    sed -i '/\(.*\) = \(.*\)/s/\(.*\) = \(.*\)/\1=\2/' $FM_RESTAPI_CONF
 }
 
 function create_fault_accounts {
@@ -225,6 +252,16 @@ function create_fault_user_group {
 
 function init_fault {
     create_fault_cache_dir
+
+    if is_service_enabled fm-rest-api && is_service_enabled stx-config; then
+        init_rest_api
+    fi
+}
+
+function init_rest_api {
+    # create db for fm
+    createdb -h 127.0.0.1 -Uroot -l C -T template0 -E utf8 fm
+    fm-dbsync --config-file $FM_RESTAPI_CONF
 }
 
 function install_fault {
@@ -297,17 +334,24 @@ function install_fm_common {
         --install-data=/usr/share \
 
     # This _is_ still a little nasty, clean it up
-    install -m 755 fm_db_sync_event_suppression.py \
-        $STX_INST_DIR/bin/fm_db_sync_event_suppression.py
-
-    # install the headers that used by fm-mgr package
-    install -m 644 -p -D fmConfig.h $STX_INST_DIR/include/fmConfig.h
-    install -m 644 -p -D fmLog.h $STX_INST_DIR/include/fmLog.h
+    # hardcode in fm-common/sources/fmConstants.h, fmManager request
+    # fixed path bin file/usr/local/bin/fm_db_sync_event_suppression.py
+    sudo install -m 755 fm_db_sync_event_suppression.py \
+        $STX_USR_BIN/fm_db_sync_event_suppression.py
 
     # Make sure we can find it later
     # TODO: this should be managed better
     echo $STX_INST_DIR/lib | sudo tee /etc/ld.so.conf.d/stx-fault.conf
     sudo ldconfig
+
+    # in fm-common/sources/fmMsgServer.cpp，requst get "getaddrinfo(host.c_str(),"
+    # hostname "controller" ip, so change hosname to controller
+    grep "127.0.0.1 controller" /etc/hosts > /dev/null
+    if [ $? -ne 0 ]
+    then
+       sudo sed -i '$a127.0.0.1 controller' /etc/hosts
+    fi
+
     popd
 }
 
@@ -325,7 +369,7 @@ function install_fm_mgr {
 
     # install to STX_INST_DIR
     # Note that DESTDIR prefixes the other locations in the Makefile
-    make \
+    sudo make \
         DESTDIR=$STX_INST_DIR \
         BINDIR=/bin \
         MAJOR=$major \
@@ -341,13 +385,15 @@ function install_fm_rest_api {
 
 function start_fault {
     if is_service_enabled fm-rest-api; then
-        run_process fm-api "$STX_BIN_DIR/fm-api --config-file $FM_RESTAPI_CONF"
+        run_process fm-api "$STX_USR_BIN/fm-api --config-file $FM_RESTAPI_CONF"
+        run_process fm-mgr "$STX_BIN_DIR/fmManager start -c $FM_RESTAPI_CONF"
     fi
 }
 
 function stop_fault {
     if is_service_enabled fm-rest-api; then
-        stop_process fm_api
+        stop_process fm-api
+        stop_process fm-mgr
     fi
 }
 
