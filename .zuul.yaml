@@ -70,9 +70,12 @@
         s-object: false
         s-proxy: false
         tempest: false
+        placement-api: true
+        placement-client: true
         # Database
         mysql: false
         postgresql: true
+        tls-proxy: false
       devstack_localrc:
         # LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
         LIBS_FROM_GIT: keystone
