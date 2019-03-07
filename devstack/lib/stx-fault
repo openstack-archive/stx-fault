@@ -41,8 +41,14 @@ FM_RESTAPI_SERVICE_PORT=${FM_RESTAPI_SERVICE_PORT:-18002}
 FM_RESTAPI_WORKERS=${FM_RESTAPI_WORKERS:-4}
 
 # STX_INST_DIR should be a non-root-writable place to install build artifacts
-STX_INST_DIR=${STX_INST_DIR:-$DEST/usr}
-STX_BIN_DIR=$STX_INST_DIR/bin
+STX_INST_DIR=${STX_INST_DIR:-/usr/local}
+STX_BIN_DIR=${STX_BIN_DIR:-$STX_INST_DIR/bin}
+STX_SBIN_DIR=${STX_SBIN_DIR:-$STX_INST_DIR/sbin}
+
+# Set up so we don't use sudo for installs when not necessary
+STX_SUDO="sudo"
+[[ -w $STX_INST_DIR ]] && STX_SUDO="env"
+
 PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 # Functions
@@ -121,7 +127,7 @@ function cleanup_fm_common {
 
     pushd $STX_FAULT_DIR/fm-common/sources
 
-    make \
+    $STX_SUDO make \
         DESTDIR=$STX_INST_DIR \
         BINDIR=/bin \
         LIBDIR=/lib \
@@ -130,7 +136,7 @@ function cleanup_fm_common {
         MINOR=$minor \
         clean
 
-    rm $STX_BIN_DIR/fm_db_sync_event_suppression.py \
+    $STX_SUDO rm $STX_BIN_DIR/fm_db_sync_event_suppression.py \
         $STX_INST_DIR/include/fmConfig.h \
         $STX_INST_DIR/include/fmLog.h
 
@@ -147,7 +153,7 @@ function cleanup_fm_mgr {
 
     pushd $STX_FAULT_DIR/fm-mgr/sources
 
-    make \
+    $STX_SUDO make \
         DESTDIR=$STX_INST_DIR \
         BINDIR=/bin \
         MAJOR=$major \
@@ -281,7 +287,7 @@ function install_fm_common {
 
     # install to STX_INST_DIR
     # Note that DESTDIR prefixes the other locations in the Makefile
-    make \
+    $STX_SUDO make \
         DESTDIR=$STX_INST_DIR \
         BINDIR=/bin \
         LIBDIR=/lib \
@@ -297,12 +303,12 @@ function install_fm_common {
         --install-data=/usr/share \
 
     # This _is_ still a little nasty, clean it up
-    install -m 755 fm_db_sync_event_suppression.py \
-        $STX_INST_DIR/bin/fm_db_sync_event_suppression.py
+    $STX_SUDO install -m 755 fm_db_sync_event_suppression.py \
+        $STX_BIN_DIR/fm_db_sync_event_suppression.py
 
     # install the headers that used by fm-mgr package
-    install -m 644 -p -D fmConfig.h $STX_INST_DIR/include/fmConfig.h
-    install -m 644 -p -D fmLog.h $STX_INST_DIR/include/fmLog.h
+    $STX_SUDO install -m 644 -p -D fmConfig.h $STX_INST_DIR/include/fmConfig.h
+    $STX_SUDO install -m 644 -p -D fmLog.h $STX_INST_DIR/include/fmLog.h
 
     # Make sure we can find it later
     # TODO: this should be managed better
@@ -325,7 +331,7 @@ function install_fm_mgr {
 
     # install to STX_INST_DIR
     # Note that DESTDIR prefixes the other locations in the Makefile
-    make \
+    $STX_SUDO make \
         DESTDIR=$STX_INST_DIR \
         BINDIR=/bin \
         MAJOR=$major \
