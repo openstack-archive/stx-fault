@@ -9,6 +9,8 @@ import datetime
 from oslo_utils import timeutils
 from oslo_log import log
 
+import webob.exc
+
 import pecan
 from pecan import rest
 
@@ -288,7 +290,10 @@ class EventLogController(rest.RestController):
 
         :param id: UUID of an event_log.
         """
-        rpc_ilog = objects.event_log.get_by_uuid(
-            pecan.request.context, id)
+        try:
+            rpc_ilog = objects.event_log.get_by_uuid(
+                pecan.request.context, id)
+        except exceptions.EventLogNotFound:
+            raise webob.exc.HTTPNotFound
 
         return EventLog.convert_with_links(rpc_ilog)

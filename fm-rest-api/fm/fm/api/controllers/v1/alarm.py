@@ -9,6 +9,8 @@ import datetime
 import pecan
 from pecan import rest
 
+import webob.exc
+
 import wsme
 from wsme import types as wtypes
 import wsmeext.pecan as wsme_pecan
@@ -319,10 +321,13 @@ class AlarmController(rest.RestController):
 
         :param id: UUID of an alarm.
         """
-        rpc_ialarm = objects.alarm.get_by_uuid(
-            pecan.request.context, id)
-        if str(rpc_ialarm['masked']) == 'True':
-            raise exceptions.HTTPNotFound
+        try:
+            rpc_ialarm = objects.alarm.get_by_uuid(
+                pecan.request.context, id)
+            if str(rpc_ialarm['masked']) == 'True':
+                raise webob.exc.HTTPNotFound
+        except exceptions.AlarmNotFound:
+            raise webob.exc.HTTPNotFound
 
         return Alarm.convert_with_links(rpc_ialarm)
 
@@ -332,7 +337,10 @@ class AlarmController(rest.RestController):
 
         :param id: uuid of an alarm.
         """
-        pecan.request.dbapi.alarm_destroy(id)
+        try:
+            pecan.request.dbapi.alarm_destroy(id)
+        except exceptions.AlarmNotFound:
+            raise webob.exc.HTTPNotFound
 
     @wsme_pecan.wsexpose(AlarmSummary, bool)
     def summary(self, include_suppress=False):
