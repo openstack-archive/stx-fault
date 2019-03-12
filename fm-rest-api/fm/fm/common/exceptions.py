@@ -16,7 +16,8 @@ class ApiError(Exception):
 
     message = _("An unknown exception occurred.")
 
-    code = webob.exc.HTTPInternalServerError
+    # 500 - HTTPInternalServerError
+    code = webob.exc.HTTPInternalServerError.code
 
     def __init__(self, message=None, **kwargs):
 
@@ -51,7 +52,8 @@ class ApiError(Exception):
 
 class NotFound(ApiError):
     message = _("Resource could not be found.")
-    code = webob.exc.HTTPNotFound
+    # 404 - HTTPNotFound
+    code = webob.exc.HTTPNotFound.code
 
 
 class HTTPNotFound(NotFound):
@@ -76,7 +78,8 @@ class ServerNotFound(NotFound):
 
 class Invalid(ApiError):
     message = _("Unacceptable parameters.")
-    code = webob.exc.HTTPBadRequest
+    # 400 - HTTPBadRequest
+    code = webob.exc.HTTPBadRequest.code
 
 
 class PatchError(Invalid):
@@ -97,12 +100,14 @@ class InvalidIdentity(Invalid):
 
 class PolicyNotAuthorized(ApiError):
     message = _("Policy doesn't allow %(action)s to be performed.")
-    code = webob.exc.HTTPUnauthorized
+    # 401 - HTTPUnauthorized
+    code = webob.exc.HTTPUnauthorized.code
 
 
 class Conflict(ApiError):
     message = _('HTTP Conflict.')
-    code = webob.exc.HTTPConflict
+    # 409 - HTTPConflict
+    code = webob.exc.HTTPConflict.code
 
 
 class AlarmAlreadyExists(Conflict):

@@ -6,6 +6,7 @@
 
 
 from fmclient import exc
+from fmclient.common import exceptions as exc_common
 from fmclient.common import utils
 from fmclient.common import wrapping_formatters
 from fmclient.common import options
@@ -28,7 +29,7 @@ def do_event_show(cc, args={}):
     '''Show a event log.'''
     try:
         log = cc.event_log.get(args.event_log)
-    except exc.HTTPNotFound:
+    except exc_common.HTTPNotFound:
         raise exc.CommandError('Event log not found: %s' % args.event_log)
     else:
         _display_event(log)
