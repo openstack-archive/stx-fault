@@ -6,6 +6,7 @@
 
 
 from fmclient import exc
+from fmclient.common import exceptions as exc_common
 from fmclient.common import utils
 from fmclient.common import wrapping_formatters
 from fmclient.common import options
@@ -26,7 +27,7 @@ def do_alarm_show(cc, args={}):
     '''Show an active alarm.'''
     try:
         fault = cc.alarm.get(args.alarm)
-    except exc.HTTPNotFound:
+    except exc_common.HttpServerError:
         raise exc.CommandError('Alarm not found: %s' % args.alarm)
     else:
         _display_fault(fault)
@@ -37,7 +38,7 @@ def do_alarm_delete(cc, args={}):
     '''Delete an active alarm.'''
     try:
         cc.alarm.delete(args.alarm)
-    except exc.HTTPNotFound:
+    except exc_common.HttpServerError:
         raise exc.CommandError('Alarm not found: %s' % args.alarm)
 
 
