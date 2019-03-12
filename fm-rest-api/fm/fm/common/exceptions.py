@@ -16,7 +16,7 @@ class ApiError(Exception):
 
     message = _("An unknown exception occurred.")
 
-    code = webob.exc.HTTPInternalServerError
+    code = 500
 
     def __init__(self, message=None, **kwargs):
 
@@ -51,7 +51,7 @@ class ApiError(Exception):
 
 class NotFound(ApiError):
     message = _("Resource could not be found.")
-    code = webob.exc.HTTPNotFound
+    code = 404
 
 
 class HTTPNotFound(NotFound):

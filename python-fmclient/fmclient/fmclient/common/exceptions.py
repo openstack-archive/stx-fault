@@ -85,6 +85,15 @@ class HTTPClientError(HttpError):
     message = _("HTTP Client Error")
 
 
+class HTTPNotFound(HTTPClientError):
+    """HTTP 404 - Not Found
+
+    Exception for cases in which the server did not find anything
+    matching the Request-URI.
+    """
+    message = _("HTTP Client Error: Not Found")
+
+
 class HttpServerError(HttpError):
     """Server-side HTTP error.
 
@@ -163,6 +172,8 @@ def from_response(response, method, url=None):
     except KeyError:
         if 500 <= response.status_code < 600:
             cls = HttpServerError
+        elif 404 == response.status_code:
+            cls = HTTPNotFound
         elif 400 <= response.status_code < 500:
             cls = HTTPClientError
         else:
