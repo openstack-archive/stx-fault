@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright (C) 2019 Intel Corporation
+#
 
 # devstack/plugin.sh
 # Triggers stx-fault specific functions to install and configure Fault Management
