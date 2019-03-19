@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2019 Intel Corporation
 ---
 prelude: >
     The StarlingX Fault project is a new repository that provides Alarm and
