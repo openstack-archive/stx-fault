@@ -7,17 +7,17 @@
       jobs:
         - build-openstack-api-ref
         - build-openstack-releasenotes
+        - flock-devstack-fault
         - openstack-tox-linters
         - openstack-tox-pep8
         - stx-fault-build
-        - stx-fault-devstack
     gate:
       jobs:
         - build-openstack-api-ref
         - build-openstack-releasenotes
+        - flock-devstack-fault
         - openstack-tox-linters
         - openstack-tox-pep8
-        - stx-fault-devstack
     post:
       jobs:
         - publish-stx-api-ref
@@ -36,6 +36,8 @@
     vars:
       tox_envlist: build
 
+# TODO(dtroyer): This job definition needs to stay here until none of
+#                the other plugins are using it...
 # This job is to begin testing a DevStack run here
 - job:
     name: stx-devstack-base
@@ -79,9 +81,8 @@
         FORCE: yes
 
 - job:
-    name: stx-fault-devstack
-    parent: stx-devstack-base
-    timeout: 7800
+    name: flock-devstack-fault
+    parent: flock-devstack-base-min
     required-projects:
       - name: openstack/stx-config
       - name: openstack/stx-integ
@@ -95,11 +96,7 @@
         fm-rest-api: true
         fm-mgr: true
       devstack_plugins:
-        stx-config: git://git.starlingx.io/stx-config
-        stx-fault: git://git.starlingx.io/stx-fault
-        stx-integ: git://git.starlingx.io/stx-integ
-        stx-update: git://git.starlingx.io/stx-update
-      devstack_localrc:
-        LIBS_FROM_GIT: keystone
-    files:
-      - ^devstack/.*
+        stx-config: https://git.starlingx.io/stx-config
+        stx-fault: https://git.starlingx.io/stx-fault
+        stx-integ: https://git.starlingx.io/stx-integ
+        stx-update: https://git.starlingx.io/stx-update
