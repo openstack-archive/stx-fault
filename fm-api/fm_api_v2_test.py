@@ -57,16 +57,22 @@ def create():
 
 def delete(alarm_id, instance_id):
     try:
-        ser.clear_fault(alarm_id, instance_id)
-        print("Delete fault success")
+        resp = ser.clear_fault(alarm_id, instance_id)
+        if resp:
+            print("Delete fault success")
+        else:
+            print("Alarm not found")
     except Exception:
         print("Fail to delete fault")
 
 
 def del_all(instance_id):
     try:
-        ser.clear_all(instance_id)
-        print("Delete faults success")
+        resp = ser.clear_all(instance_id)
+        if resp:
+            print("Delete faults success")
+        else:
+            print("Alarms not found")
     except Exception:
         print("Fail to delete faults")
 

@@ -441,24 +441,37 @@ void FmSocketServerProcessor::handle_delete_faults(int fd,
 	void * data = &(rdata[sizeof(SFmMsgHdrT)]);
 	fm_ent_inst_t *pid = (fm_ent_inst_t *)(data);
 	fm_ent_inst_t &id = *pid;
+	fm_db_result_t res;
 
 	hdr->msg_rc = FM_ERR_OK;
-	if (op.delete_alarms(sess,id)){
-		FM_DEBUG_LOG("Deleted alarms (%s)\n", id);
-		SFmAlarmDataT alarm;
-		memset(&alarm, 0, sizeof(alarm));
-		//only cares about entity_instance_id in hierarchical alarm clear trap
-		strncpy(alarm.entity_instance_id, id, sizeof(alarm.entity_instance_id)-1);
-		strncpy(alarm.reason_text,CLEAR_ALL_REASON_TEXT,
-				sizeof(alarm.reason_text)-1);
-		fm_uuid_create(alarm.uuid);
-		req.type = FM_ALARM_HIERARCHICAL_CLEAR;
-		req.set = false;
-		req.data = alarm;
-		enqueue_job(req);
-	}else{
-		FM_INFO_LOG("Fail to Delete alarms (%s)\n", id);
+	res.clear();
+	if ((op.get_alarms(sess, id, res)) != true){
 		hdr->msg_rc = FM_ERR_DB_OPERATION_FAILURE;
+	}else{
+		if (res.size() > 0){
+			if (op.delete_alarms(sess,id)){
+				FM_DEBUG_LOG("Deleted alarms (%s)\n", id);
+				SFmAlarmDataT alarm;
+				memset(&alarm, 0, sizeof(alarm));
+				//only cares about entity_instance_id in hierarchical alarm clear trap
+				strncpy(alarm.entity_instance_id, id, sizeof(alarm.entity_instance_id)-1);
+				strncpy(alarm.reason_text,CLEAR_ALL_REASON_TEXT,
+						sizeof(alarm.reason_text)-1);
+				fm_uuid_create(alarm.uuid);
+				req.type = FM_ALARM_HIERARCHICAL_CLEAR;
+				req.set = false;
+				req.data = alarm;
+				enqueue_job(req);
+			}else{
+				FM_INFO_LOG("Fail to Delete alarms (%s)\n", id);
+				hdr->msg_rc = FM_ERR_DB_OPERATION_FAILURE;
+			}
+       }else{
+			hdr->msg_rc = FM_ERR_ENTITY_NOT_FOUND;
+			FM_INFO_LOG("Deleted alarms failed: (%s) (%s)\n",
+					id,
+					fm_error_from_int((EFmErrorT)hdr->msg_rc).c_str());
+        }
 	}
 	send_response(fd,hdr,NULL,0);
 }
