@@ -260,6 +260,7 @@ static PyObject * _fm_clear(PyObject * self, PyObject *args) {
 
 	if (rc == FM_ERR_ENTITY_NOT_FOUND) {
 		DEBUG_LOG("No alarm found to clear: (%s) (%s)", af.alarm_id, af.entity_instance_id);
+		Py_RETURN_NONE;
 	} else if (rc == FM_ERR_NOCONNECT) {
 		WARNING_LOG("Failed to connect to FM manager");
 	} else {
@@ -285,11 +286,18 @@ static PyObject * _fm_clear_all(PyObject * self, PyObject *args) {
 	rc = fm_clear_all(&inst_id);
 	if (rc == FM_ERR_OK) {
 		Py_RETURN_TRUE;
+	}
+
+	if (rc == FM_ERR_ENTITY_NOT_FOUND) {
+		DEBUG_LOG("No alarm found to clear with entity id (%s)", inst_id);
+		Py_RETURN_NONE;
+	} else if (rc == FM_ERR_NOCONNECT) {
+		WARNING_LOG("Failed to connect to FM manager");
 	} else {
 		ERROR_LOG("Failed to clear alarms with entity id (%s), error code: (%d)",
 				inst_id, rc);
-		Py_RETURN_FALSE;
 	}
+	Py_RETURN_FALSE;
 }
 
 static PyMethodDef _methods [] = {

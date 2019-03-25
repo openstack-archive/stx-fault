@@ -441,9 +441,12 @@ void FmSocketServerProcessor::handle_delete_faults(int fd,
 	void * data = &(rdata[sizeof(SFmMsgHdrT)]);
 	fm_ent_inst_t *pid = (fm_ent_inst_t *)(data);
 	fm_ent_inst_t &id = *pid;
+	fm_db_result_t res;
+	int rc = 0;
 
 	hdr->msg_rc = FM_ERR_OK;
-	if (op.delete_alarms(sess,id)){
+	rc = op.delete_alarms(sess,id);
+	if (rc > 0){
 		FM_DEBUG_LOG("Deleted alarms (%s)\n", id);
 		SFmAlarmDataT alarm;
 		memset(&alarm, 0, sizeof(alarm));
@@ -456,10 +459,16 @@ void FmSocketServerProcessor::handle_delete_faults(int fd,
 		req.set = false;
 		req.data = alarm;
 		enqueue_job(req);
-	}else{
-		FM_INFO_LOG("Fail to Delete alarms (%s)\n", id);
+	} else if (rc == 0){
+		hdr->msg_rc = FM_ERR_ENTITY_NOT_FOUND;
+	} else {
 		hdr->msg_rc = FM_ERR_DB_OPERATION_FAILURE;
 	}
+
+	FM_INFO_LOG("Deleted alarms status: (%s) (%s)\n",
+		id,
+		fm_error_from_int((EFmErrorT)hdr->msg_rc).c_str());
+
 	send_response(fd,hdr,NULL,0);
 }
 
@@ -481,7 +490,7 @@ void FmSocketServerProcessor::handle_delete_fault(int fd,
 		hdr->msg_rc = FM_ERR_DB_OPERATION_FAILURE;
 	}else{
 		if (res.size() > 0){
-			if(op.delete_alarm(sess, *filter)){
+			if(op.delete_alarm(sess, *filter) > 0){
 				FM_INFO_LOG("Deleted alarm: (%s) (%s)\n",
 						filter->alarm_id, filter->entity_instance_id);
 				CFmDbAlarm::convert_to(res[0],&alarm);

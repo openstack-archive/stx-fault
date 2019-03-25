@@ -84,7 +84,7 @@ bool CFmEventSuppressionOperation::set_table_notify_listen(CFmDBSession &sess){
 		sql += FM_EVENT_SUPPRESSION_TABLE_NAME;
 		sql += ")";
 
-		if (sess.cmd(sql.c_str(), false) != true){
+		if (sess.cmd(sql.c_str(), false) < 0){
 			FM_INFO_LOG("Failed to set rule CMD: (%s)", sql.c_str());
 			return false;
 		}
@@ -97,5 +97,5 @@ bool CFmEventSuppressionOperation::set_table_notify_listen(CFmDBSession &sess){
 
 	FM_DEBUG_LOG("CMD:(%s)\n", sql.c_str());
 	// no row affected by LISTEN command
-	return sess.cmd(sql.c_str(), false);
+	return sess.cmd(sql.c_str(), false) < 0 ? false : true;
 }

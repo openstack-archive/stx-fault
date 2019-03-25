@@ -209,7 +209,9 @@ bool CFmDbAlarmOperation::create_alarm(CFmDBSession &sess,CFmDbAlarm &a) {
 	return sess.params_cmd(sql_params);
 }
 
-bool CFmDbAlarmOperation::delete_alarms(CFmDBSession &sess, const char *id) {
+// return value: -1: if cmd fail to execute
+//              row: Deleted row number, maybe 0.
+int CFmDbAlarmOperation::delete_alarms(CFmDBSession &sess, const char *id) {
 	std::string sql;
 
 	fm_db_util_build_sql_delete_all((const char*)FM_ALARM_TABLE_NAME, id, sql);
@@ -217,7 +219,9 @@ bool CFmDbAlarmOperation::delete_alarms(CFmDBSession &sess, const char *id) {
 	return sess.cmd(sql.c_str());
 }
 
-bool CFmDbAlarmOperation::delete_alarm(CFmDBSession &sess, AlarmFilter &af) {
+// return value: -1: if cmd fail to execute
+//              row: Deleted row number, maybe 0.
+int CFmDbAlarmOperation::delete_alarm(CFmDBSession &sess, AlarmFilter &af) {
 	std::string sql;
 
 	fm_db_util_build_sql_delete((const char*)FM_ALARM_TABLE_NAME, &af, sql);
