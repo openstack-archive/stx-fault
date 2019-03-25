@@ -51,8 +51,8 @@ class CFmDbAlarmOperation {
 public:
 	bool create_alarm(CFmDBSession &sess, CFmDbAlarm &a);
 
-	bool delete_alarms(CFmDBSession &sess, const char *id);
-	bool delete_alarm(CFmDBSession &sess, AlarmFilter &af);
+	int delete_alarms(CFmDBSession &sess, const char *id);
+	int delete_alarm(CFmDBSession &sess, AlarmFilter &af);
 
 	bool delete_row(CFmDBSession &sess, const char* db_table);
 
