@@ -185,7 +185,13 @@ class FaultAPIs(FaultAPIsBase):
         buff = (sep + self._check_val(alarm_id) + sep +
                 self._check_val(entity_instance_id) + sep)
         try:
-            return fm_core.clear(buff)
+            resp = fm_core.clear(buff)
+            # resp may be True/False/None after FaultAPIsV2 implementation.
+            # to keep FaultAPIs the same as before, return False for None case.
+            if resp is True:
+                return True
+            else:
+                return False
         except (RuntimeError, SystemError, TypeError):
             return False
 
@@ -203,7 +209,13 @@ class FaultAPIs(FaultAPIsBase):
 
     def clear_all(self, entity_instance_id):
         try:
-            return fm_core.clear_all(entity_instance_id)
+            resp = fm_core.clear_all(entity_instance_id)
+            # resp may be True/False/None after FaultAPIsV2 implementation.
+            # to keep FaultAPIs the same as before, return False for None case.
+            if resp is True:
+                return True
+            else:
+                return False
         except (RuntimeError, SystemError, TypeError):
             return False
 
@@ -234,6 +246,10 @@ class FaultAPIs(FaultAPIsBase):
 
 class FaultAPIsV2(FaultAPIsBase):
 
+    # Input: alarm data
+    # Return: Success: uuid for the alarm
+    # Exception: 1. Input Alarm format is not valid
+    #            2. When there is operation failure
     def set_fault(self, data):
         self._check_required_attributes(data)
         self._validate_attributes(data)
@@ -243,14 +259,28 @@ class FaultAPIsV2(FaultAPIsBase):
             raise APIException("Failed to execute set_fault.")
         return uuid
 
+    # Input: alarm_id, entity_instance_id
+    # Return: Success: True
+    #         Alarm doesn't exist: False
+    # Exception: When there is operation failure
     def clear_fault(self, alarm_id, entity_instance_id):
         sep = constants.FM_CLIENT_STR_SEP
         buff = (sep + self._check_val(alarm_id) + sep +
                 self._check_val(entity_instance_id) + sep)
         resp = fm_core.clear(buff)
         if resp is False:
+            # There is operation failure
             raise APIException("Failed to execute clear_fault.")
+        elif resp is None:
+            # alarm is not found
+            return False
+        else:
+            return True
 
+    # Input: alarm_id, entity_instance_id
+    # Return: Success: Alarm
+    #         Alarm doesn't exist: None
+    # Exception: When there is operation failure
     def get_fault(self, alarm_id, entity_instance_id):
         sep = constants.FM_CLIENT_STR_SEP
         buff = (sep + self._check_val(alarm_id) + sep +
@@ -261,11 +291,25 @@ class FaultAPIsV2(FaultAPIsBase):
         else:
             return self._str_to_alarm(resp) if resp else None
 
+    # Input: entity_instance_id
+    # Return: Success: True
+    #         Alarm doesn't exist: False
+    # Exception: When there is operation failure
     def clear_all(self, entity_instance_id):
         resp = fm_core.clear_all(entity_instance_id)
         if resp is False:
+            # There is operation failure
             raise APIException("Failed to execute clear_all.")
+        elif resp is None:
+            # alarm is not found
+            return False
+        else:
+            return True
 
+    # Input: entity_instance_id
+    # Return: Success: Alarm list
+    #         Alarm doesn't exist: None
+    # Exception: When there is operation failure
     def get_faults(self, entity_instance_id):
         resp = fm_core.get_by_eid(entity_instance_id)
         if resp is False:
@@ -278,6 +322,10 @@ class FaultAPIsV2(FaultAPIsBase):
         else:
             return None
 
+    # Input: alarm_id
+    # Return: Success: Alarm list
+    #         Alarm doesn't exist: None
+    # Exception: When there is operation failure
     def get_faults_by_id(self, alarm_id):
         resp = fm_core.get_by_aid(alarm_id)
         if resp is False:

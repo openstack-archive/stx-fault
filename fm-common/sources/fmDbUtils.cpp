@@ -565,7 +565,7 @@ bool fm_db_util_get_next_log_id(CFmDBSession &sess, int &id){
 		id = get_oldest_id(sess, FM_EVENT_LOG_TABLE_NAME);
 		fm_db_util_build_sql_delete_row(FM_EVENT_LOG_TABLE_NAME, id, sql);
 		FM_DEBUG_LOG("Delete row (%s)\n", sql.c_str());
-		if (false == sess.cmd(sql.c_str())){
+		if (sess.cmd(sql.c_str()) <= 0){
 			FM_INFO_LOG("Fail to delete the old event log: (%d)", id);
 			pthread_mutex_unlock(&mutex);
 			return false;

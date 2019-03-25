@@ -53,7 +53,7 @@ public:
 	bool reconnect();
 
 	bool query(const char *db_cmd,fm_db_result_t & result);
-	bool cmd(const char *db_cmd, bool check_row=true);
+	int  cmd(const char *db_cmd, bool check_row=true);
 	bool params_cmd(fm_db_util_sql_params & sql_params);
 
 	PGconn* get_pgconn(){

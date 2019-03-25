@@ -128,25 +128,27 @@ bool CFmDBSession::query(const char *db_cmd,fm_db_result_t & result) {
 	return true;
 }
 
-bool CFmDBSession::cmd(const char *db_cmd, bool check_row){
+// return value: -1: if there is PQ operation failure
+//                0: if cmd success and check_row == false
+//              row: row number if cmd success and check_row == true
+int CFmDBSession::cmd(const char *db_cmd, bool check_row){
 	PGresult *res;
-	bool rc = true;
+	int rc = -1;
 
 	if (check_conn() == false){
 		FM_ERROR_LOG("Failed to reconnect: %s", PQerrorMessage(m_conn.pgconn));
-		return false;
+		return rc;
 	}
 
 	res = PQexec(m_conn.pgconn, db_cmd);
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		FM_ERROR_LOG("Status:(%s)\n", PQresStatus(PQresultStatus(res)));
 		FM_ERROR_LOG("Failed to execute (%s) (%s)", db_cmd, PQresultErrorMessage(res));
-		rc = false;
-	}
-	if (rc && check_row){
-		int row = atoi(PQcmdTuples(res));
-		FM_DEBUG_LOG("SQL command returned successful: %d rows affected.\n", row);
-		if (row < 1) rc = false;
+	} else if (check_row){
+		rc = atoi(PQcmdTuples(res));
+		FM_DEBUG_LOG("SQL command returned successful: %d rows affected.\n", rc);
+	} else {
+		rc = 0;
 	}
 
 	PQclear(res);
