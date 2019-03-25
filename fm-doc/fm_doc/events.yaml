@@ -407,6 +407,30 @@
     Management_Affecting_Severity: none
     Degrade_Affecting_Severity: none
 
+100.119:
+    Type: Alarm
+    Description:
+        major: "PTP configuration or out-of-tolerance timestamping conditions"
+        minor: "PTP out-of-tolerance timestamping condition"
+    Entity_Instance_ID:
+        major: host=<hostname>.ptp
+        major: host=<hostname>.ptp=no-lock
+        major: host=<hostname>.ptp=<interface>.unsupported=hardware-timestamping
+        major: host=<hostname>.ptp=<interface>.unsupported=software-timestamping
+        major: host=<hostname>.ptp=<interface>.unsupported=legacy-timestamping
+        major: host=<hostname>.ptp=out-of-tolerance
+        minor: host=<hostname>.ptp=out-of-tolerance
+    Severity: [major, minor]
+    Proposed_Repair_Action: "Monitor and if condition persists, contact next level of support."
+    Maintenance_Action: none
+    Inhibit_Alarms:
+    Alarm_Type: communication
+    Probable_Cause: unknown
+    Service_Affecting: False
+    Suppression: False
+    Management_Affecting_Severity: none
+    Degrade_Affecting_Severity: none
+
 #---------------------------------------------------------------------------
 #   MAINTENANCE
 #---------------------------------------------------------------------------
