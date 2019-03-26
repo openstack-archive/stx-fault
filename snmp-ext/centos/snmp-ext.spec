@@ -14,7 +14,6 @@ Requires: fm-common
 Requires: net-snmp
 
 %define mib_ver 2.0
-%define cgcs_sdk_deploy_dir /opt/deploy/cgcs_sdk
 
 %description
 Titanium Cloud platform SNMP extension provides Wind River enterprise MIBs support
@@ -32,12 +31,6 @@ and it serves as SNMP based alarm surveillance module for Network Manager
 System.  This package contains symbolic links, header files, and related
 items necessary for software development.
 
-%package -n %{name}-cgts-sdk
-Summary: Titanium Cloud Platform SNMP extension Package - SDK
-Group: devel
-
-%description -n %{name}-cgts-sdk
-
 %prep
 %setup
 
@@ -53,7 +46,6 @@ make DEST_DIR=%{buildroot} \
      LIB_DIR=%{_libdir} \
      MAJOR=$MAJOR \
      MINOR=$MINOR \
-     SDK_DEPLOY_DIR=%{buildroot}%{cgcs_sdk_deploy_dir} \
      MIBVER=%{mib_ver} \
      PATCH=%{tis_patch_ver} install
 
@@ -66,6 +58,3 @@ make DEST_DIR=%{buildroot} \
 %files -n snmp-ext-devel
 %defattr(-,root,root,-)
 %{_libdir}/*.so
-
-%files -n %{name}-cgts-sdk
-%{cgcs_sdk_deploy_dir}/wrs-snmp-mib-*.%{mib_ver}.tgz
