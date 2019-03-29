@@ -32,6 +32,26 @@ from fm_api import constants as fm_constants
 
 LOG = log.getLogger(__name__)
 
+class AlarmBody(base.APIBase):
+    uuid = wtypes.text
+    alarm_id = wtypes.text
+    alarm_state = wtypes.text
+    entity_type_id = wtypes.text
+    entity_instance_id = wtypes.text
+    timestamp = wtypes.text
+    severity = wtypes.text
+    reason_text = wtypes.text
+    alarm_type = wtypes.text
+    probable_cause = wtypes.text
+    proposed_repair_action = wtypes.text
+    service_affecting = wtypes.text
+    suppression = wtypes.text
+    inhibit_alarms = wtypes.text
+    masked = wtypes.text
+    suppression_status = wtypes.text
+    mgmt_affecting = wtypes.text
+    degrade_affecting = wtypes.text
+
 
 class AlarmPatchType(types.JsonPatchType):
     pass
@@ -341,3 +361,33 @@ class AlarmController(rest.RestController):
         :param include_suppress: filter on suppressed alarms. Default: False
         """
         return self._get_alarm_summary(include_suppress)
+
+    @wsme_pecan.wsexpose(wtypes.text, body=AlarmBody)
+    def post(self, alarm_body):
+        """Create an alarm.
+
+        :param alarm_body: All information required to create an alarm.
+        """
+        alarm_data = {
+            "uuid": alarm_body.uuid,
+            "alarm_id": alarm_body.alarm_id,
+            "alarm_state": alarm_body.alarm_state,
+            "entity_type_id": alarm_body.entity_type_id,
+            "entity_instance_id": alarm_body.entity_instance_id,
+            "timestamp": alarm_body.timestamp,
+            "severity": alarm_body.severity,
+            "reason_text": alarm_body.reason_text,
+            "alarm_type": alarm_body.alarm_type,
+            "probable_cause": alarm_body.probable_cause,
+            "proposed_repair_action": alarm_body.proposed_repair_action,
+            "service_affecting": alarm_body.service_affecting,
+            "suppression": alarm_body.suppression,
+            "inhibit_alarms": alarm_body.inhibit_alarms,
+            "masked": alarm_body.masked,
+            "suppression_status": alarm_body.suppression_status,
+            "mgmt_affecting": alarm_body.mgmt_affecting,
+            "degrade_affecting": alarm_body.degrade_affecting
+        }
+
+        a = pecan.request.dbapi.alarm_create(alarm_data)
+        return "Alarm: {} insertion OK".format(alarm_data['uuid'])
