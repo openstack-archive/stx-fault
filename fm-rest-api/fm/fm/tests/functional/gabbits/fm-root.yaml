@@ -1,0 +1,23 @@
+defaults:
+    request_headers:
+        accept: application/json
+        x-auth-token: user
+
+tests:
+  - name: fm root
+    GET: /
+    status: 200
+    response_json_paths:
+        $.default_version.id: v1
+        $.versions[0].id: v1
+        $.versions[0].links[?rel = 'self'].href: /^http/
+
+  - name: fm v1
+    GET: /v1
+    status: 200
+    response_json_paths:
+        $.id: v1
+        $.alarms.`len`: 2
+        $.event_log.`len`: 2
+        $.event_suppression.`len`: 2
+        $.media_types.`len`: 1
