@@ -341,3 +341,28 @@ class AlarmController(rest.RestController):
         :param include_suppress: filter on suppressed alarms. Default: False
         """
         return self._get_alarm_summary(include_suppress)
+
+    @wsme_pecan.wsexpose(wtypes.text, body=Alarm)
+    def post(self, alarm_data):
+        """Create an alarm.
+
+        :param alarm_data: All information required to create an alarm.
+        """
+        try:
+            pecan.request.dbapi.alarm_create(alarm_data.as_dict())
+        except Exception as err:
+            return err
+        return "OK"
+
+    @wsme_pecan.wsexpose(wtypes.text, wtypes.text, body=Alarm)
+    def put(self, id, alarm_data):
+        """ Update an alarm
+
+        :param id: uuid of an alarm.
+        :param alarm_data: Information to be updated
+        """
+        try:
+            pecan.request.dbapi.alarm_update(id, alarm_data.as_dict())
+        except Exception as err:
+            return err
+        return "OK"
