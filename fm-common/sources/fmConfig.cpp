@@ -22,6 +22,17 @@ typedef std::map<std::string,std::string> configParams;
 static const char *conf = NULL;
 static int config_loaded = false;
 
+std::string trim(std::string str)
+{
+    if (str.length() == 0) {
+        return str;
+    }
+
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last-first+1));
+}
+
 CFmMutex & getConfMutex(){
 	static CFmMutex *m = new CFmMutex;
 	return *m;
@@ -60,8 +71,8 @@ void fm_get_config_paramters(){
 		if (line[0] == '#') continue;
 
 		pos = line.find(delimiter);
-		key = line.substr(0, pos);
-		value = line.erase(0, pos + delimiter.length());
+		key = trim(line.substr(0, pos));
+		value = trim(line.erase(0, pos + delimiter.length()));
 		getConfigMap()[key] = value;
 		if (key.compare(FM_SNMP_TRAPDEST) == 0){
 			set_trap_dest_list(value);
