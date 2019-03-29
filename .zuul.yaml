@@ -100,3 +100,17 @@
         stx-fault: https://git.starlingx.io/stx-fault
         stx-integ: https://git.starlingx.io/stx-integ
         stx-update: https://git.starlingx.io/stx-update
+
+- job:
+    name: fm-rest-api-functional
+    parent: flock-devstack-fault
+    description: |
+      Functional/API tests for fm-rest-api
+    environmnet:
+      # TODO(dtroyer): The test should learn to query the service catalog to get this
+      OS_TEST_URL: "http://{{ ansible_default_ipv4.address }}:18002/"
+    vars:
+      tox_envlist: functional
+      tox_extra_args: -c fm-rest-api/fm/tox.ini
+    files:
+      - ^fm-rest-api/.*
