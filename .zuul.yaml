@@ -8,6 +8,7 @@
         - build-openstack-api-ref
         - build-openstack-releasenotes
         - flock-devstack-fault
+        - fm-rest-api-functional
         - openstack-tox-linters
         - openstack-tox-pep8
         - stx-fault-build
@@ -16,6 +17,7 @@
         - build-openstack-api-ref
         - build-openstack-releasenotes
         - flock-devstack-fault
+        - fm-rest-api-functional
         - openstack-tox-linters
         - openstack-tox-pep8
     post:
@@ -100,3 +102,95 @@
         stx-fault: https://git.starlingx.io/stx-fault
         stx-integ: https://git.starlingx.io/stx-integ
         stx-update: https://git.starlingx.io/stx-update
+
+# Prototype a tox version
+- job:
+    name: flock-devstack-tox-base-x
+    parent: devstack-tox-functional
+    description: |
+      Base job for StarlingX Flock components DevStack tests that use tox
+    nodeset: openstack-single-node-bionic
+    roles:
+      - zuul: openstack-infra/devstack
+    timeout: 9000
+    required-projects:
+      - name: openstack-dev/devstack
+      - name: openstack/keystone
+      - name: openstack/requirements
+    vars:
+      devstack_services:
+        ceilometer-acentral: false
+        ceilometer-acompute: false
+        ceilometer-alarm-evaluator: false
+        ceilometer-alarm-notifier: false
+        ceilometer-anotification: false
+        ceilometer-api: false
+        ceilometer-collector: false
+        horizon: false
+        # Swift services
+        s-account: false
+        s-container: false
+        s-object: false
+        s-proxy: false
+        tempest: false
+        # Database
+        mysql: false
+        postgresql: true
+      devstack_localrc:
+        # LIBS_FROM_GIT: keystone
+        FORCE: yes
+
+- job:
+    name: fm-rest-api-functional
+    parent: flock-devstack-tox-base-x
+    description: |
+      Functional/API tests for fm-rest-api
+    required-projects:
+      - name: openstack/stx-config
+      - name: openstack/stx-integ
+      - name: openstack/stx-update
+    vars:
+      tox_envlist: functional
+      tox_extra_args: -c fm-rest-api/fm/tox.ini
+      tox_environment:
+        OS_CLOUD: devstack-admin
+      devstack_services:
+        # Cinder services
+        c-api: false
+        c-bak: false
+        c-sch: false
+        c-vol: false
+        cinder: false
+        # Glance services
+        g-api: false
+        g-reg: false
+        # Nova services
+        n-api: false
+        n-api-meta: false
+        n-cauth: false
+        n-cond: false
+        n-cpu: false
+        n-novnc: false
+        n-obj: false
+        n-sch: false
+        placement-api: false
+        # Neutron services
+        q-agt: true
+        q-dhcp: false
+        q-l3: false
+        q-meta: false
+        q-metering: false
+        q-svc: false
+        cgtsclient: true
+        # StarlingX services
+        fm-common: true
+        fm-api: true
+        fm-rest-api: true
+        fm-mgr: true
+      devstack_plugins:
+        stx-config: https://git.starlingx.io/stx-config
+        stx-fault: https://git.starlingx.io/stx-fault
+        stx-integ: https://git.starlingx.io/stx-integ
+        stx-update: https://git.starlingx.io/stx-update
+    files:
+      - fm-rest-api/*
