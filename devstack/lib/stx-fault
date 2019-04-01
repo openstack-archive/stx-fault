@@ -23,7 +23,6 @@
 _XTRACE_STX_FAULT=$(set +o | grep xtrace)
 set -o xtrace
 
-
 # Defaults
 # --------
 
