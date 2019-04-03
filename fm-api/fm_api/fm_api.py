@@ -171,90 +171,103 @@ class FaultAPIsBase(object):
 
 class FaultAPIs(FaultAPIsBase):
 
+    import threading
+    lock = threading.Lock()
+
     def set_fault(self, data):
-        self._check_required_attributes(data)
-        self._validate_attributes(data)
-        buff = self._alarm_to_str(data)
-        try:
-            return fm_core.set(buff)
-        except (RuntimeError, SystemError, TypeError):
-            return None
+        with FaultAPIs.lock:
+            self._check_required_attributes(data)
+            self._validate_attributes(data)
+            buff = self._alarm_to_str(data)
+            try:
+                return fm_core.set(buff)
+            except (RuntimeError, SystemError, TypeError):
+                return None
 
     def clear_fault(self, alarm_id, entity_instance_id):
-        sep = constants.FM_CLIENT_STR_SEP
-        buff = (sep + self._check_val(alarm_id) + sep +
-                self._check_val(entity_instance_id) + sep)
-        try:
-            resp = fm_core.clear(buff)
-            # resp may be True/False/None after FaultAPIsV2 implementation.
-            # to keep FaultAPIs the same as before, return False for None case.
-            if resp is True:
-                return True
-            else:
+        with FaultAPIs.lock:
+            sep = constants.FM_CLIENT_STR_SEP
+            buff = (sep + self._check_val(alarm_id) + sep +
+                    self._check_val(entity_instance_id) + sep)
+            try:
+                resp = fm_core.clear(buff)
+                # resp may be True/False/None after FaultAPIsV2 implementation.
+                # to keep FaultAPIs the same as before, return False for None case.
+                if resp is True:
+                    return True
+                else:
+                    return False
+            except (RuntimeError, SystemError, TypeError):
                 return False
-        except (RuntimeError, SystemError, TypeError):
-            return False
 
     def get_fault(self, alarm_id, entity_instance_id):
-        sep = constants.FM_CLIENT_STR_SEP
-        buff = (sep + self._check_val(alarm_id) + sep +
-                self._check_val(entity_instance_id) + sep)
-        try:
-            resp = fm_core.get(buff)
-            if resp:
-                return self._str_to_alarm(resp)
-        except (RuntimeError, SystemError, TypeError):
-            pass
-        return None
+        with FaultAPIs.lock:
+            sep = constants.FM_CLIENT_STR_SEP
+            buff = (sep + self._check_val(alarm_id) + sep +
+                    self._check_val(entity_instance_id) + sep)
+            try:
+                resp = fm_core.get(buff)
+                if resp:
+                    return self._str_to_alarm(resp)
+            except (RuntimeError, SystemError, TypeError):
+                pass
+            return None
 
     def clear_all(self, entity_instance_id):
-        try:
-            resp = fm_core.clear_all(entity_instance_id)
-            # resp may be True/False/None after FaultAPIsV2 implementation.
-            # to keep FaultAPIs the same as before, return False for None case.
-            if resp is True:
-                return True
-            else:
+        with FaultAPIs.lock:
+            try:
+                resp = fm_core.clear_all(entity_instance_id)
+                # resp may be True/False/None after FaultAPIsV2 implementation.
+                # to keep FaultAPIs the same as before, return False for None case.
+                if resp is True:
+                    return True
+                else:
+                    return False
+            except (RuntimeError, SystemError, TypeError):
                 return False
-        except (RuntimeError, SystemError, TypeError):
-            return False
 
     def get_faults(self, entity_instance_id):
-        try:
-            resp = fm_core.get_by_eid(entity_instance_id)
-            if resp:
-                data = []
-                for i in resp:
-                    data.append(self._str_to_alarm(i))
-                return data
-        except (RuntimeError, SystemError, TypeError):
-            pass
-        return None
+        with FaultAPIs.lock:
+            try:
+                resp = fm_core.get_by_eid(entity_instance_id)
+                if resp:
+                    data = []
+                    for i in resp:
+                        data.append(self._str_to_alarm(i))
+                    return data
+            except (RuntimeError, SystemError, TypeError):
+                pass
+            return None
 
     def get_faults_by_id(self, alarm_id):
-        try:
-            resp = fm_core.get_by_aid(alarm_id)
-            if resp:
-                data = []
-                for i in resp:
-                    data.append(self._str_to_alarm(i))
-                return data
-        except (RuntimeError, SystemError, TypeError):
-            pass
-        return None
+        with FaultAPIs.lock:
+            try:
+                resp = fm_core.get_by_aid(alarm_id)
+                if resp:
+                    data = []
+                    for i in resp:
+                        data.append(self._str_to_alarm(i))
+                    return data
+            except (RuntimeError, SystemError, TypeError):
+                pass
+            return None
 
 
 class FaultAPIsV2(FaultAPIsBase):
+
+    import threading
+    lock = threading.Lock()
 
     # Input: alarm data
     # Return: Success: uuid for the alarm
     # Exception: 1. Input Alarm format is not valid
     #            2. When there is operation failure
     def set_fault(self, data):
-        self._check_required_attributes(data)
-        self._validate_attributes(data)
-        buff = self._alarm_to_str(data)
-        uuid = fm_core.set(buff)
+        with FaultAPIsV2.lock:
+            self._check_required_attributes(data)
+            self._validate_attributes(data)
+            buff = self._alarm_to_str(data)
+            uuid = fm_core.set(buff)
         if uuid is None:
             raise APIException("Failed to execute set_fault.")
         return uuid
@@ -264,76 +277,81 @@ class FaultAPIsV2(FaultAPIsBase):
     #         Alarm doesn't exist: False
     # Exception: When there is operation failure
     def clear_fault(self, alarm_id, entity_instance_id):
-        sep = constants.FM_CLIENT_STR_SEP
-        buff = (sep + self._check_val(alarm_id) + sep +
-                self._check_val(entity_instance_id) + sep)
-        resp = fm_core.clear(buff)
-        if resp is False:
-            # There is operation failure
-            raise APIException("Failed to execute clear_fault.")
-        elif resp is None:
-            # alarm is not found
-            return False
-        else:
-            return True
+        with FaultAPIsV2.lock:
+            sep = constants.FM_CLIENT_STR_SEP
+            buff = (sep + self._check_val(alarm_id) + sep +
+                    self._check_val(entity_instance_id) + sep)
+            resp = fm_core.clear(buff)
+            if resp is False:
+                # There is operation failure
+                raise APIException("Failed to execute clear_fault.")
+            elif resp is None:
+                # alarm is not found
+                return False
+            else:
+                return True
 
     # Input: alarm_id, entity_instance_id
     # Return: Success: Alarm
     #         Alarm doesn't exist: None
     # Exception: When there is operation failure
     def get_fault(self, alarm_id, entity_instance_id):
-        sep = constants.FM_CLIENT_STR_SEP
-        buff = (sep + self._check_val(alarm_id) + sep +
-                self._check_val(entity_instance_id) + sep)
-        resp = fm_core.get(buff)
-        if resp is False:
-            raise APIException("Failed to execute get_fault.")
-        else:
-            return self._str_to_alarm(resp) if resp else None
+        with FaultAPIsV2.lock:
+            sep = constants.FM_CLIENT_STR_SEP
+            buff = (sep + self._check_val(alarm_id) + sep +
+                    self._check_val(entity_instance_id) + sep)
+            resp = fm_core.get(buff)
+            if resp is False:
+                raise APIException("Failed to execute get_fault.")
+            else:
+                return self._str_to_alarm(resp) if resp else None
 
     # Input: entity_instance_id
     # Return: Success: True
     #         Alarm doesn't exist: False
     # Exception: When there is operation failure
     def clear_all(self, entity_instance_id):
-        resp = fm_core.clear_all(entity_instance_id)
-        if resp is False:
-            # There is operation failure
-            raise APIException("Failed to execute clear_all.")
-        elif resp is None:
-            # alarm is not found
-            return False
-        else:
-            return True
+        with FaultAPIsV2.lock:
+            resp = fm_core.clear_all(entity_instance_id)
+            if resp is False:
+                # There is operation failure
+                raise APIException("Failed to execute clear_all.")
+            elif resp is None:
+                # alarm is not found
+                return False
+            else:
+                return True
 
     # Input: entity_instance_id
     # Return: Success: Alarm list
     #         Alarm doesn't exist: None
     # Exception: When there is operation failure
     def get_faults(self, entity_instance_id):
-        resp = fm_core.get_by_eid(entity_instance_id)
-        if resp is False:
-            raise APIException("Failed to execute get_faults.")
-        elif resp:
-            data = []
-            for i in resp:
-                data.append(self._str_to_alarm(i))
-            return data
-        else:
-            return None
+        with FaultAPIsV2.lock:
+            resp = fm_core.get_by_eid(entity_instance_id)
+            if resp is False:
+                raise APIException("Failed to execute get_faults.")
+            elif resp:
+                data = []
+                for i in resp:
+                    data.append(self._str_to_alarm(i))
+                return data
+            else:
+                return None
 
     # Input: alarm_id
     # Return: Success: Alarm list
     #         Alarm doesn't exist: None
     # Exception: When there is operation failure
     def get_faults_by_id(self, alarm_id):
-        resp = fm_core.get_by_aid(alarm_id)
-        if resp is False:
-            raise APIException("Failed to execute get_faults_by_id.")
-        elif resp:
-            data = []
-            for i in resp:
-                data.append(self._str_to_alarm(i))
-            return data
-        else:
-            return None
+        with FaultAPIsV2.lock:
+            resp = fm_core.get_by_aid(alarm_id)
+            if resp is False:
+                raise APIException("Failed to execute get_faults_by_id.")
+            elif resp:
+                data = []
+                for i in resp:
+                    data.append(self._str_to_alarm(i))
+                return data
+            else:
+                return None
