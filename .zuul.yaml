@@ -36,50 +36,6 @@
     vars:
       tox_envlist: build
 
-# TODO(dtroyer): This job definition needs to stay here until none of
-#                the other plugins are using it...
-# This job is to begin testing a DevStack run here
-- job:
-    name: stx-devstack-base
-    nodeset: openstack-single-node-bionic
-    parent: devstack
-    description: |
-      Base job for StarlingX DevStack tests
-    roles:
-      - zuul: openstack-infra/devstack
-    timeout: 9000
-    required-projects:
-      - name: git.openstack.org/openstack-dev/devstack
-#      - name: git.openstack.org/openstack/cinder
-#      - name: git.openstack.org/openstack/glance
-      - name: git.openstack.org/openstack/keystone
-#      - name: git.openstack.org/openstack/neutron
-#      - name: git.openstack.org/openstack/nova
-      - name: git.openstack.org/openstack/requirements
-    vars:
-      devstack_services:
-        ceilometer-acentral: false
-        ceilometer-acompute: false
-        ceilometer-alarm-evaluator: false
-        ceilometer-alarm-notifier: false
-        ceilometer-anotification: false
-        ceilometer-api: false
-        ceilometer-collector: false
-        horizon: false
-        # Swift services
-        s-account: false
-        s-container: false
-        s-object: false
-        s-proxy: false
-        tempest: false
-        # Database
-        mysql: false
-        postgresql: true
-      devstack_localrc:
-        # LIBS_FROM_GIT: cinder,glance,keystone,neutron,nova
-        LIBS_FROM_GIT: keystone
-        FORCE: yes
-
 - job:
     name: flock-devstack-fault
     parent: flock-devstack-base-min
