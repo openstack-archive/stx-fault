@@ -116,7 +116,7 @@ def cli_to_array(cli_query):
         return frags.group(1, 3) if frags else None
 
     opts = []
-    queries = cli_query.split(';')
+    queries = cli_query.split(',')
     for q in queries:
         query = split_by_op(q)
         opt = {}
